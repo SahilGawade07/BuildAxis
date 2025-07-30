@@ -4,7 +4,6 @@ import { Organisation } from "../../models/Organisation";
 import jwt from "jsonwebtoken";
 import { Types } from "mongoose";
 
-// Helper function to generate access token
 const generateAccessToken = (userId: string, email: string, role: string) => {
   return jwt.sign(
     { id: userId, email, role },
@@ -265,75 +264,6 @@ export const logout = async (req: Request, res: Response) => {
     return res.status(200).json({
       success: true,
       message: "Logged out successfully",
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
-  }
-};
-
-export const addSupervisor = async (req: Request, res: Response) => {
-  try {
-    const { supervisorPhone } = req.body;
-    const orgId = (req as any).user?.orgId;
-
-    if (!supervisorPhone) {
-      return res.status(400).json({
-        success: false,
-        message: "Supervisor phone number is required",
-      });
-    }
-
-    if (!orgId) {
-      return res.status(400).json({
-        success: false,
-        message: "Organisation ID is required",
-      });
-    }
-
-    // Check if supervisor exists in the app
-    const supervisor = await User.findOne({
-      phone: supervisorPhone,
-      role: "supervisor",
-    });
-
-    if (!supervisor) {
-      return res.status(404).json({
-        success: false,
-        message: "Supervisor not found. Please ask them to register first.",
-      });
-    }
-
-    const organisation = await Organisation.findById(orgId);
-    if (!organisation) {
-      return res.status(404).json({
-        success: false,
-        message: "Organisation not found",
-      });
-    }
-
-    if (organisation.supervisorsId.includes(supervisor._id as Types.ObjectId)) {
-      return res.status(400).json({
-        success: false,
-        message: "Supervisor is already added to this organisation",
-      });
-    }
-
-    organisation.supervisorsId.push(supervisor._id as Types.ObjectId);
-    await organisation.save();
-
-    return res.status(200).json({
-      success: true,
-      message: "Supervisor added successfully",
-      data: {
-        supervisorId: supervisor._id,
-        supervisorName: `${supervisor.fName} ${supervisor.lName}`,
-        supervisorPhone: supervisor.phone,
-        organisationId: orgId,
-      },
     });
   } catch (error) {
     return res.status(500).json({

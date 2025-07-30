@@ -14,6 +14,7 @@ export interface IUser extends Document {
   phone: string;
   password: string;
   sites: Types.ObjectId[];
+  orgId: Types.ObjectId;
   role: "promoter" | "supervisor";
   profilePic?: string;
   refreshToken?: string;
@@ -39,6 +40,7 @@ const userSchema = new Schema<IUser, UserModel>(
     phone: { type: String, required: true, unique: true, trim: true },
     password: { type: String, required: true },
     sites: [{ type: Schema.Types.ObjectId, ref: "Site" }],
+    orgId: { type: Schema.Types.ObjectId, ref: "Organisation", required: true },
     role: { type: String, enum: ["promoter", "supervisor"], required: true },
     profilePic: { type: String, default: "" },
     refreshToken: { type: String, default: "" },
