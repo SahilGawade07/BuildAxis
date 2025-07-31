@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import connectDB from "./db/index";
 import authRoutes from "./routes/authRoutes";
 import organisationRoutes from "./routes/organisationRoutes";
+import commonRoutes from "./routes/commonRoutes";
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use(express.static("public"));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/organisations", organisationRoutes);
+app.use("/api/common", commonRoutes);
 
 app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({
