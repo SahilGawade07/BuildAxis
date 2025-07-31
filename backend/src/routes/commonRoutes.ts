@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { getMyProfile } from "../controllers/common/MyProfile";
+import { getMyProfile, updateMyProfile, updatePassword } from "../controllers/common/MyProfile";
 import { authenticateJWT } from "../middlewares/auth";
 
 const router = Router();
 
-router.get("/", authenticateJWT,getMyProfile);
+router.get("/my-profile", authenticateJWT, getMyProfile);
+router.put("/my-profile", authenticateJWT, updateMyProfile);
+router.patch("/my-profile", authenticateJWT, updatePassword);
 
 export default router;
