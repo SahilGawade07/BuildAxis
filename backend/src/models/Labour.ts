@@ -1,10 +1,12 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document, Types } from "mongoose";
 
 export interface ILabour extends Document {
   fName: string;
   lName: string;
-  phoneNo: number;
+  profilePic: string;
+  phone: number;
   documentsUrl: string[];
+  orgId: Types.ObjectId;
   work: string;
   createdAt: Date;
   updatedAt: Date;
@@ -22,7 +24,12 @@ const labourSchema = new Schema<ILabour>(
       required: true,
       trim: true,
     },
-    phoneNo: {
+    profilePic: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    phone: {
       type: Number,
       required: true,
       unique: true,
@@ -32,6 +39,8 @@ const labourSchema = new Schema<ILabour>(
         type: String,
       },
     ],
+    orgId: { type: Schema.Types.ObjectId, ref: "Organisation" },
+
     work: {
       type: String,
       required: true,

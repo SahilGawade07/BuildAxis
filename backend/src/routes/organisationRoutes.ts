@@ -6,6 +6,8 @@ import {
   deleteOrganisation,
   addSupervisor,
   createSupervisor,
+  addLabour,
+  createLabour
 } from "../controllers/organisation/organisation";
 import { authenticateJWT } from "../middlewares/auth";
 
@@ -19,5 +21,9 @@ router.put("/:orgId", updateOrganisation);
 router.delete("/:orgId", deleteOrganisation);
 router.post("/add-supervisor", addSupervisor);
 router.post("/create-supervisor", createSupervisor);
+router.post("/add-labour", addLabour);
+router.post("/create-labour", createLabour);
+
+
 
 export default router;

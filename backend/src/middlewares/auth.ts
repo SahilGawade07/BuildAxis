@@ -21,6 +21,7 @@ export const authenticateJWT = (
             error: "TOKEN_EXPIRED",
           });
         }
+
         (req as any).user = user;
         next();
       }

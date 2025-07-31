@@ -8,16 +8,15 @@ const generateAccessToken = (userId: string, email: string, role: string) => {
   return jwt.sign(
     { id: userId, email, role },
     process.env.JWT_SECRET as string,
-    { expiresIn: "15m" } // Short-lived access token
+    { expiresIn: "15m" } 
   );
 };
 
-// Helper function to generate refresh token
 const generateRefreshToken = (userId: string) => {
   return jwt.sign(
     { id: userId },
     process.env.JWT_REFRESH_SECRET as string,
-    { expiresIn: "7d" } // Longer-lived refresh token
+    { expiresIn: "7d" } 
   );
 };
 

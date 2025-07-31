@@ -61,7 +61,6 @@ export const createOrganisation = async (req: Request, res: Response) => {
       siteId: [],
     });
 
-    // Update user's orgId to link them to the organisation
     user.orgId = newOrganisation._id as Types.ObjectId;
     await user.save();
 
@@ -103,7 +102,7 @@ export const getOrganisation = async (req: Request, res: Response) => {
     const organisation = await Organisation.findById(orgId)
       .populate("promoters", "fName lName email phone")
       .populate("supervisorsId", "fName lName email phone")
-      .populate("labourId", "name phone")
+      .populate("labourId", "fName lName phone")
       .populate("siteId", "name location");
 
     if (!organisation) {
@@ -113,12 +112,11 @@ export const getOrganisation = async (req: Request, res: Response) => {
       });
     }
 
-    // Check if user has access to this organisation
     const hasAccess =
       organisation.promoters.includes(userId as Types.ObjectId) ||
       organisation.supervisorsId.includes(userId as Types.ObjectId);
 
-    if (!hasAccess) {
+    if (hasAccess) {
       return res.status(403).json({
         success: false,
         message: "Access denied to this organisation",
@@ -275,7 +273,6 @@ export const addSupervisor = async (req: Request, res: Response) => {
       });
     }
 
-    // Fetch the complete user data from database
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({
@@ -283,8 +280,8 @@ export const addSupervisor = async (req: Request, res: Response) => {
         message: "User not found",
       });
     }
-
-    // Check if user has access to this organisation
+    console.log(user.orgId);
+    console.log(orgId);
     if (String(user.orgId) !== String(orgId)) {
       return res.status(403).json({
         success: false,
@@ -328,7 +325,6 @@ export const addSupervisor = async (req: Request, res: Response) => {
     organisation.supervisorsId.push(supervisor._id as Types.ObjectId);
     await organisation.save();
 
-    // Update supervisor's orgId to link them to the organisation
     supervisor.orgId = orgId as Types.ObjectId;
     await supervisor.save();
 
@@ -436,6 +432,191 @@ export const createSupervisor = async (req: Request, res: Response) => {
         supervisorName: `${newSupervisor.fName} ${newSupervisor.lName}`,
         supervisorEmail: newSupervisor.email,
         supervisorPhone: newSupervisor.phone,
+        organisationId: orgId,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+export const addLabour = async (req: Request, res: Response) => {
+  try {
+    const { orgId, labourPhone } = req.body;
+    const userId = (req as any).user?.id;
+
+    if (!orgId) {
+      return res.status(400).json({
+        success: false,
+        message: "Organisation ID is required",
+      });
+    }
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "User not authenticated",
+      });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    console.log(user.orgId);
+    console.log(orgId);
+    if (String(user.orgId) !== String(orgId)) {
+      return res.status(403).json({
+        success: false,
+        message: "You do not have access to this organisation",
+      });
+    }
+
+    const labour = await Labour.findOne({
+      phone: labourPhone,
+    });
+
+    if (!labour) {
+      return res.status(200).json({
+        success: false,
+        message: "Labour not found in the app",
+        action: "CREATE_LABOUR",
+        data: {
+          phone: labourPhone,
+          organisationId: orgId,
+        },
+      });
+    }
+
+    const organisation = await Organisation.findById(orgId);
+    if (!organisation) {
+      return res.status(404).json({
+        success: false,
+        message: "Organisation not found",
+      });
+    }
+
+    if (organisation.labourId.includes(labour._id as Types.ObjectId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Labour is already added to this organisation",
+      });
+    }
+
+    organisation.supervisorsId.push(labour._id as Types.ObjectId);
+    await organisation.save();
+
+    labour.orgId = orgId as Types.ObjectId;
+    await labour.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Labour added successfully",
+      action: "LABOUR_ADDED",
+      data: {
+        labourId: labour._id,
+        labourName: `${labour.fName} ${labour.lName}`,
+        labourPhone: labour.phone,
+        organisationId: orgId,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+export const createLabour = async (req: Request, res: Response) => {
+  try {
+    const { fName, lName, phone, profilePic, orgId, documentsUrl, work } =
+      req.body;
+    const userId = (req as any).user?.id;
+
+    if (
+      !fName ||
+      !lName ||
+      !phone ||
+      !orgId ||
+      !profilePic ||
+      !documentsUrl ||
+      !work
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "User not authenticated",
+      });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (String(user.orgId) !== String(orgId)) {
+      return res.status(403).json({
+        success: false,
+        message: "You do not have access to this organisation",
+      });
+    }
+
+    const existingLabour = await Labour.findOne({ $or: [{ phone }] });
+
+    if (existingLabour) {
+      return res.status(400).json({
+        success: false,
+        message: "User with this phone already exists",
+      });
+    }
+
+    const newLabour = await Labour.create({
+      fName,
+      lName,
+      phone,
+      profilePic:
+        profilePic ||
+        "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png",
+      orgId: orgId as Types.ObjectId,
+      work,
+      documentsUrl,
+    });
+
+    const organisation = await Organisation.findById(orgId);
+    if (!organisation) {
+      return res.status(404).json({
+        success: false,
+        message: "Organisation not found",
+      });
+    }
+
+    organisation.labourId.push(newLabour._id as Types.ObjectId);
+    await organisation.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "Labour created and added to organisation successfully",
+      data: {
+        labourId: newLabour._id,
+        labourName: `${newLabour.fName} ${newLabour.lName}`,
+        labourPhone: newLabour.phone,
         organisationId: orgId,
       },
     });
