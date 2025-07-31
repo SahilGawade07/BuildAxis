@@ -6,6 +6,7 @@ import connectDB from "./db/index";
 import authRoutes from "./routes/authRoutes";
 import organisationRoutes from "./routes/organisationRoutes";
 import commonRoutes from "./routes/commonRoutes";
+import promoterRoutes from "./routes/promoterRoutes";
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use(express.static("public"));
 app.use("/api/auth", authRoutes);
 app.use("/api/organisations", organisationRoutes);
 app.use("/api/common", commonRoutes);
+app.use("/api/promoter", promoterRoutes);
 
 app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({

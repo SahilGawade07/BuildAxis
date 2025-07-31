@@ -378,6 +378,8 @@ export const createSupervisor = async (req: Request, res: Response) => {
     }
 
     // Check if user has access to this organisation
+    console.log(user.orgId);
+    console.log(orgId);
     if (String(user.orgId) !== String(orgId)) {
       return res.status(403).json({
         success: false,
