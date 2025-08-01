@@ -414,7 +414,9 @@ export const createSupervisor = async (req: Request, res: Response) => {
     });
 
     // Add supervisor to organisation
-    const organisation = await Organisation.findById(orgId);
+    const organisation = await Organisation.findById(orgId as Types.ObjectId);
+    console.log(organisation);
+
     if (!organisation) {
       return res.status(404).json({
         success: false,

@@ -6,7 +6,7 @@ export interface IOrganisation extends Document {
   supervisorsId: Types.ObjectId[];
   labourId: Types.ObjectId[];
   siteId: Types.ObjectId[];
-  vendor: Types.ObjectId;
+  vendor: Types.ObjectId[]; // renamed and updated
   email: string;
   phone: number;
   logoUrl?: string;
@@ -45,10 +45,12 @@ const organisationSchema = new Schema<IOrganisation>(
         ref: "Site",
       },
     ],
-    vendor: {
-      type: Schema.Types.ObjectId,
-      ref: "Vendor",
-    },
+    vendor: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Vendor",
+      },
+    ],
     email: {
       type: String,
       required: true,
@@ -65,7 +67,7 @@ const organisationSchema = new Schema<IOrganisation>(
     },
   },
   {
-    timestamps: true, // adds createdAt and updatedAt
+    timestamps: true,
   }
 );
 
