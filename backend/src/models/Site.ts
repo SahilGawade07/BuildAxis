@@ -11,6 +11,7 @@ export interface ISite extends Document {
   supervisors: Types.ObjectId[];
   promoters: Types.ObjectId[];
   labours: Types.ObjectId[];
+  orgId: Types.ObjectId;
   customerName: string;
   tasks: Types.ObjectId[];
   createdAt: Date;
@@ -66,6 +67,7 @@ const siteSchema = new Schema<ISite>(
         ref: "Labour",
       },
     ],
+    orgId: { type: Schema.Types.ObjectId, ref: "Organisation" },
     customerName: {
       type: String,
       required: true,
@@ -78,7 +80,7 @@ const siteSchema = new Schema<ISite>(
     ],
   },
   {
-    timestamps: true, 
+    timestamps: true,
   }
 );
 
