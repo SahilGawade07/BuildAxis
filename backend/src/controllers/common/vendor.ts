@@ -15,15 +15,6 @@ export const createVendor = async (req: Request, res: Response) => {
       gstNumber,
       orgId,
     } = req.body;
-    console.log(
-      vendorName,
-      contactPerson,
-      phoneNo,
-      address,
-      services,
-      gstNumber,
-      orgId
-    );
 
     const userId = (req as any).user?.id;
 
