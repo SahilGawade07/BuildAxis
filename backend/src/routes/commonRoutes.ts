@@ -15,18 +15,18 @@ import { addService } from "../controllers/common/vendorServices";
 import { authenticateJWT } from "../middlewares/authenticateJWT";
 
 const router = Router();
+router.use(authenticateJWT);
 
-router.get("/my-profile", authenticateJWT, getMyProfile);
-router.put("/my-profile", authenticateJWT, updateMyProfile);
-router.patch("/my-profile", authenticateJWT, updatePassword);
+router.get("/my-profile", getMyProfile);
+router.put("/my-profile", updateMyProfile);
+router.patch("/my-profile", updatePassword);
 
-// Vendor routes
-router.post("/vendors", authenticateJWT, createVendor);
-router.get("/vendors", authenticateJWT, getAllVendors);
-router.get("/vendors/:vendorId", authenticateJWT, getVendor);
-router.put("/vendors/:vendorId", authenticateJWT, updateVendor);
-router.delete("/vendors/:vendorId", authenticateJWT, deleteVendor);
+router.post("/vendors", createVendor);
+router.get("/vendors", getAllVendors);
+router.get("/vendors/:vendorId", getVendor);
+router.put("/vendors/:vendorId", updateVendor);
+router.delete("/vendors/:vendorId", deleteVendor);
 
-router.post("/add-service", authenticateJWT, addService);
+router.post("/add-service", addService);
 
 export default router;

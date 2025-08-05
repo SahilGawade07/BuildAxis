@@ -22,7 +22,7 @@ export const authenticateJWT = (
           });
         }
 
-        (req as any).user = user;
+        (req as any).user = user;      
 
         next();
       }
