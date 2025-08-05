@@ -3,6 +3,8 @@ import { Site } from "../../models/Site";
 import { User } from "../../models/User";
 import { Organisation } from "../../models/Organisation";
 import { Types } from "mongoose";
+import { log } from "console";
+
 
 export const createSite = async (req: Request, res: Response) => {
   try {
@@ -21,7 +23,7 @@ export const createSite = async (req: Request, res: Response) => {
       orgId,
     } = req.body;
 
-    const userId = (req as any).user?.id;
+    const dbUser = (req as any).dbUser;
 
     if (
       !name ||
@@ -38,32 +40,10 @@ export const createSite = async (req: Request, res: Response) => {
       });
     }
 
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "User not authenticated",
-      });
-    }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    if (String(user.orgId) !== String(orgId)) {
+    if (String(dbUser.orgId) !== String(orgId)) {
       return res.status(403).json({
         success: false,
         message: "You do not have access to this organisation",
-      });
-    }
-
-    if (user.role !== "promoter") {
-      return res.status(403).json({
-        success: false,
-        message: "You are not a promoter and cannot create a site",
       });
     }
 
@@ -76,8 +56,9 @@ export const createSite = async (req: Request, res: Response) => {
       endDate,
       status: status || "active",
       supervisors: supervisors || [],
-      promoters: [...(promoters || []), user._id], // 👈 Add creator to promoters
+      promoters: [...(promoters || []), dbUser._id],
       labours: labours || [],
+      orgId,
       customerName,
     });
 
@@ -91,8 +72,10 @@ export const createSite = async (req: Request, res: Response) => {
 
     organisation.siteId.push(newSite._id as Types.ObjectId);
     await organisation.save();
-    user.sites.push(newSite._id as Types.ObjectId);
-    await user.save();
+
+    await User.findByIdAndUpdate(dbUser._id, {
+      $push: { sites: newSite._id },
+    });
 
     return res.status(201).json({
       success: true,
@@ -130,6 +113,7 @@ export const updateSite = async (req: Request, res: Response) => {
     } = req.body;
 
     const siteId = req.params.siteId;
+    const dbUser = (req as any).dbUser;
 
     if (!siteId) {
       return res.status(400).json({
@@ -150,29 +134,6 @@ export const updateSite = async (req: Request, res: Response) => {
       return res.status(403).json({
         success: false,
         message: "You do not have access to this organisation",
-      });
-    }
-
-    const userId = (req as any).user?.id;
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "User not authenticated",
-      });
-    }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    if (user.role !== "promoter") {
-      return res.status(403).json({
-        success: false,
-        message: "You are not a promoter and cannot update a site",
       });
     }
 
@@ -207,6 +168,8 @@ export const updateSite = async (req: Request, res: Response) => {
 export const deleteSite = async (req: Request, res: Response) => {
   try {
     const siteId = req.params.siteId;
+    const orgId = req.body.orgId;
+    const dbUser = (req as any).dbUser;
 
     if (!siteId) {
       return res.status(400).json({
@@ -223,38 +186,18 @@ export const deleteSite = async (req: Request, res: Response) => {
       });
     }
 
-    
-    if (String(site.orgId) !== String(req.body.orgId)) {
+    if (String(site.orgId) !== String(orgId)) {
       return res.status(403).json({
         success: false,
         message: "You do not have access to this organisation",
       });
     }
 
-    const userId = (req as any).user?.id;
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "User not authenticated",
-      });
-    }
+    await Organisation.updateMany(
+      { sites: siteId },
+      { $pull: { sites: siteId } }
+    );
 
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    if (user.role !== "promoter") {
-      return res.status(403).json({
-        success: false,
-        message: "You are not a promoter and cannot delete a site",
-      });
-    }
-
-    await Organisation.updateMany({ sites: siteId }, { $pull: { sites: siteId } });
     await User.updateMany({ sites: siteId }, { $pull: { sites: siteId } });
 
     await Site.findByIdAndDelete(siteId);
@@ -271,3 +214,4 @@ export const deleteSite = async (req: Request, res: Response) => {
     });
   }
 };
+
