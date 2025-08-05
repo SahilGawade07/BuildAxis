@@ -16,7 +16,7 @@ export const createOrganisation = async (req: Request, res: Response) => {
         message: "Name, email, and phone are required",
       });
     }
-
+    
     if (!userId) {
       return res.status(401).json({
         success: false,

@@ -12,7 +12,7 @@ import {
   deleteVendor,
 } from "../controllers/common/vendor";
 import { addService } from "../controllers/common/vendorServices";
-import { authenticateJWT } from "../middlewares/auth";
+import { authenticateJWT } from "../middlewares/authenticateJWT";
 
 const router = Router();
 

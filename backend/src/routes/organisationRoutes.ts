@@ -7,9 +7,9 @@ import {
   addSupervisor,
   createSupervisor,
   addLabour,
-  createLabour
+  createLabour,
 } from "../controllers/organisation/organisation";
-import { authenticateJWT } from "../middlewares/auth";
+import { authenticateJWT } from "../middlewares/authenticateJWT";
 
 const router = Router();
 
@@ -23,7 +23,5 @@ router.post("/add-supervisor", addSupervisor);
 router.post("/create-supervisor", createSupervisor);
 router.post("/add-labour", addLabour);
 router.post("/create-labour", createLabour);
-
-
 
 export default router;
