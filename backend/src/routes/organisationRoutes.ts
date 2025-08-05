@@ -10,12 +10,13 @@ import {
   createLabour,
 } from "../controllers/organisation/organisation";
 import { authenticateJWT } from "../middlewares/authenticateJWT";
+import { isPromoter } from "../middlewares/isPromoter";
 
 const router = Router();
 
 router.use(authenticateJWT);
 
-router.post("/", createOrganisation);
+router.post("/",isPromoter, createOrganisation);
 router.get("/:orgId", getOrganisation);
 router.put("/:orgId", updateOrganisation);
 router.delete("/:orgId", deleteOrganisation);
