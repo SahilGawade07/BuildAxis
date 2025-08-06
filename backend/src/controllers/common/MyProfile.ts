@@ -1,25 +1,9 @@
 import { Request, Response } from "express";
-import { User } from "../../models/User";
 import bcrypt from "bcrypt";
 
 export const getMyProfile = async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user?.id;
-
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized: No user ID found in token.",
-      });
-    }
-
-    const user = await User.findById(userId).select("-password");
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
+    const user = (req as any).dbUser;
 
     return res.status(200).json({
       success: true,
@@ -46,23 +30,7 @@ export const getMyProfile = async (req: Request, res: Response) => {
 
 export const updateMyProfile = async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user?.id;
-
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized: No user ID found in token.",
-      });
-    }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
+    const user = (req as any).dbUser;
     const { fName, lName, email, profilePic, phone, password } = req.body;
 
     if (fName) user.fName = fName;
@@ -102,7 +70,7 @@ export const updateMyProfile = async (req: Request, res: Response) => {
 
 export const updatePassword = async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user?.id;
+    const user = (req as any).dbUser;
     const { currentPassword, newPassword, confirmPassword } = req.body;
 
     if (!currentPassword || !newPassword || !confirmPassword) {
@@ -119,16 +87,20 @@ export const updatePassword = async (req: Request, res: Response) => {
       });
     }
 
-    const user = await User.findById(userId).select("+password");
+    // Need to fetch user with password field since middleware excludes it by default
+    const userWithPassword = await user.findById(user._id).select("+password");
 
-    if (!user) {
+    if (!userWithPassword) {
       return res.status(404).json({
         success: false,
         message: "User not found",
       });
     }
 
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    const isMatch = await bcrypt.compare(
+      currentPassword,
+      userWithPassword.password
+    );
     if (!isMatch) {
       return res.status(401).json({
         success: false,
@@ -138,9 +110,9 @@ export const updatePassword = async (req: Request, res: Response) => {
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
-    user.password = hashedPassword;
+    userWithPassword.password = hashedPassword;
 
-    await user.save();
+    await userWithPassword.save();
 
     return res.status(200).json({
       success: true,

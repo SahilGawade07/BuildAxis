@@ -1,14 +1,85 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { Organisation } from "../../models/Organisation";
 import { User } from "../../models/User";
 import { Site } from "../../models/Site";
 import { Labour } from "../../models/Labour";
 import { Types } from "mongoose";
 
+// Middleware for organization access control (from params or body)
+export const checkOrgAccessFromParams = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = (req as any).dbUser;
+    const orgId = req.params.orgId || req.body.orgId;
+
+    if (!orgId) {
+      return res.status(400).json({
+        success: false,
+        message: "Organisation ID is required",
+      });
+    }
+
+    if (String(user.orgId) !== String(orgId)) {
+      return res.status(403).json({
+        success: false,
+        message: "You do not have access to this organisation",
+      });
+    }
+
+    (req as any).orgId = orgId;
+    next();
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+// Middleware to check if user is a promoter
+export const checkPromoterAccess = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const orgId = req.params.orgId;
+    const userId = (req as any).dbUser._id;
+
+    const organisation = await Organisation.findById(orgId);
+    if (!organisation) {
+      return res.status(404).json({
+        success: false,
+        message: "Organisation not found",
+      });
+    }
+
+    if (!organisation.promoters.includes(userId as Types.ObjectId)) {
+      return res.status(403).json({
+        success: false,
+        message: "Only promoters can perform this action",
+      });
+    }
+
+    (req as any).organisation = organisation;
+    next();
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
 export const createOrganisation = async (req: Request, res: Response) => {
   try {
     const { name, email, phone, logoUrl } = req.body;
-    const userId = (req as any).user?.id;
+    const user = (req as any).dbUser;
 
     if (!name || !email || !phone) {
       return res.status(400).json({
@@ -16,23 +87,6 @@ export const createOrganisation = async (req: Request, res: Response) => {
         message: "Name, email, and phone are required",
       });
     }
-
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "User not authenticated",
-      });
-    }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    
 
     const existingOrg = await Organisation.findOne({
       $or: [{ email }, { phone }],
@@ -50,7 +104,7 @@ export const createOrganisation = async (req: Request, res: Response) => {
       email,
       phone,
       logoUrl,
-      promoters: [userId],
+      promoters: [user._id],
       supervisorsId: [],
       labourId: [],
       siteId: [],
@@ -85,7 +139,7 @@ export const createOrganisation = async (req: Request, res: Response) => {
 export const getOrganisation = async (req: Request, res: Response) => {
   try {
     const { orgId } = req.params;
-    const userId = (req as any).user?.id;
+    const userId = (req as any).dbUser._id;
 
     if (!orgId) {
       return res.status(400).json({
@@ -108,10 +162,10 @@ export const getOrganisation = async (req: Request, res: Response) => {
     }
 
     const hasAccess =
-      organisation.promoters.includes(userId as Types.ObjectId) ||
-      organisation.supervisorsId.includes(userId as Types.ObjectId);
+      organisation.promoters.some((p) => p._id.equals(userId)) ||
+      organisation.supervisorsId.some((s) => s._id.equals(userId));
 
-    if (hasAccess) {
+    if (!hasAccess) {
       return res.status(403).json({
         success: false,
         message: "Access denied to this organisation",
@@ -136,29 +190,7 @@ export const updateOrganisation = async (req: Request, res: Response) => {
   try {
     const { orgId } = req.params;
     const { name, email, phone, logoUrl } = req.body;
-    const userId = (req as any).user?.id;
-
-    if (!orgId) {
-      return res.status(400).json({
-        success: false,
-        message: "Organisation ID is required",
-      });
-    }
-
-    const organisation = await Organisation.findById(orgId);
-    if (!organisation) {
-      return res.status(404).json({
-        success: false,
-        message: "Organisation not found",
-      });
-    }
-
-    if (!organisation.promoters.includes(userId as Types.ObjectId)) {
-      return res.status(403).json({
-        success: false,
-        message: "Only promoters can update organisation details",
-      });
-    }
+    const organisation = (req as any).organisation;
 
     const updatedOrganisation = await Organisation.findByIdAndUpdate(
       orgId,
@@ -188,29 +220,6 @@ export const updateOrganisation = async (req: Request, res: Response) => {
 export const deleteOrganisation = async (req: Request, res: Response) => {
   try {
     const { orgId } = req.params;
-    const userId = (req as any).user?.id;
-
-    if (!orgId) {
-      return res.status(400).json({
-        success: false,
-        message: "Organisation ID is required",
-      });
-    }
-
-    const organisation = await Organisation.findById(orgId);
-    if (!organisation) {
-      return res.status(404).json({
-        success: false,
-        message: "Organisation not found",
-      });
-    }
-
-    if (!organisation.promoters.includes(userId as Types.ObjectId)) {
-      return res.status(403).json({
-        success: false,
-        message: "Only promoters can delete organisation",
-      });
-    }
 
     const sitesToDelete = await Site.find({ organisationId: orgId });
     const siteIds = sitesToDelete.map((site) => site._id);
@@ -231,9 +240,7 @@ export const deleteOrganisation = async (req: Request, res: Response) => {
     }
 
     await Site.deleteMany({ organisationId: orgId });
-
     await Labour.deleteMany({ organisationId: orgId });
-
     await Organisation.findByIdAndDelete(orgId);
 
     return res.status(200).json({
@@ -251,38 +258,8 @@ export const deleteOrganisation = async (req: Request, res: Response) => {
 
 export const addSupervisor = async (req: Request, res: Response) => {
   try {
-    const { orgId, supervisorPhone } = req.body;
-    const userId = (req as any).user?.id;
-
-    if (!orgId) {
-      return res.status(400).json({
-        success: false,
-        message: "Organisation ID is required",
-      });
-    }
-
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "User not authenticated",
-      });
-    }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-    console.log(user.orgId);
-    console.log(orgId);
-    if (String(user.orgId) !== String(orgId)) {
-      return res.status(403).json({
-        success: false,
-        message: "You do not have access to this organisation",
-      });
-    }
+    const { supervisorPhone } = req.body;
+    const orgId = (req as any).orgId;
 
     // Check if supervisor exists in the app
     const supervisor = await User.findOne({
@@ -345,40 +322,13 @@ export const addSupervisor = async (req: Request, res: Response) => {
 
 export const createSupervisor = async (req: Request, res: Response) => {
   try {
-    const { fName, lName, email, phone, password, profilePic, orgId } =
-      req.body;
-    const userId = (req as any).user?.id;
+    const { fName, lName, email, phone, password, profilePic } = req.body;
+    const orgId = (req as any).orgId;
 
-    if (!fName || !lName || !email || !phone || !password || !orgId) {
+    if (!fName || !lName || !email || !phone || !password) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
-      });
-    }
-
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "User not authenticated",
-      });
-    }
-
-    // Fetch the complete user data from database
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    // Check if user has access to this organisation
-    console.log(user.orgId);
-    console.log(orgId);
-    if (String(user.orgId) !== String(orgId)) {
-      return res.status(403).json({
-        success: false,
-        message: "You do not have access to this organisation",
       });
     }
 
@@ -410,7 +360,6 @@ export const createSupervisor = async (req: Request, res: Response) => {
 
     // Add supervisor to organisation
     const organisation = await Organisation.findById(orgId as Types.ObjectId);
-    console.log(organisation);
 
     if (!organisation) {
       return res.status(404).json({
@@ -445,38 +394,8 @@ export const createSupervisor = async (req: Request, res: Response) => {
 
 export const addLabour = async (req: Request, res: Response) => {
   try {
-    const { orgId, labourPhone } = req.body;
-    const userId = (req as any).user?.id;
-
-    if (!orgId) {
-      return res.status(400).json({
-        success: false,
-        message: "Organisation ID is required",
-      });
-    }
-
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "User not authenticated",
-      });
-    }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-    console.log(user.orgId);
-    console.log(orgId);
-    if (String(user.orgId) !== String(orgId)) {
-      return res.status(403).json({
-        success: false,
-        message: "You do not have access to this organisation",
-      });
-    }
+    const { labourPhone } = req.body;
+    const orgId = (req as any).orgId;
 
     const labour = await Labour.findOne({
       phone: labourPhone,
@@ -509,7 +428,8 @@ export const addLabour = async (req: Request, res: Response) => {
       });
     }
 
-    organisation.supervisorsId.push(labour._id as Types.ObjectId);
+    // Fixed: should be labourId, not supervisorsId
+    organisation.labourId.push(labour._id as Types.ObjectId);
     await organisation.save();
 
     labour.orgId = orgId as Types.ObjectId;
@@ -534,50 +454,20 @@ export const addLabour = async (req: Request, res: Response) => {
     });
   }
 };
+
 export const createLabour = async (req: Request, res: Response) => {
   try {
-    const { fName, lName, phone, profilePic, orgId, documentsUrl, work } =
-      req.body;
-    const userId = (req as any).user?.id;
+    const { fName, lName, phone, profilePic, documentsUrl, work } = req.body;
+    const orgId = (req as any).orgId;
 
-    if (
-      !fName ||
-      !lName ||
-      !phone ||
-      !orgId ||
-      !profilePic ||
-      !documentsUrl ||
-      !work
-    ) {
+    if (!fName || !lName || !phone || !profilePic || !documentsUrl || !work) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
     }
 
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "User not authenticated",
-      });
-    }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    if (String(user.orgId) !== String(orgId)) {
-      return res.status(403).json({
-        success: false,
-        message: "You do not have access to this organisation",
-      });
-    }
-
-    const existingLabour = await Labour.findOne({ $or: [{ phone }] });
+    const existingLabour = await Labour.findOne({ phone });
 
     if (existingLabour) {
       return res.status(400).json({

@@ -1,42 +1,22 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { Vendor } from "../../models/Vendor";
-import { User } from "../../models/User";
 import { Organisation } from "../../models/Organisation";
 import { Types } from "mongoose";
 
-export const createVendor = async (req: Request, res: Response) => {
+// Additional middleware for organization access control
+export const checkOrgAccess = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const {
-      vendorName,
-      contactPerson,
-      phoneNo,
-      address,
-      services,
-      gstNumber,
-      orgId,
-    } = req.body;
+    const user = (req as any).dbUser;
+    const orgId = req.body.orgId || req.query.orgId;
 
-    const userId = (req as any).user?.id;
-
-    if (!vendorName || !contactPerson || !phoneNo || !address || !orgId) {
+    if (!orgId) {
       return res.status(400).json({
         success: false,
-        message: "Required fields are missing",
-      });
-    }
-
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "User not authenticated",
-      });
-    }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
+        message: "Organisation ID is required",
       });
     }
 
@@ -44,6 +24,31 @@ export const createVendor = async (req: Request, res: Response) => {
       return res.status(403).json({
         success: false,
         message: "You do not have access to this organisation",
+      });
+    }
+
+    (req as any).orgId = orgId;
+    next();
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+export const createVendor = async (req: Request, res: Response) => {
+  try {
+    const { vendorName, contactPerson, phoneNo, address, services, gstNumber } =
+      req.body;
+
+    const orgId = (req as any).orgId;
+
+    if (!vendorName || !contactPerson || !phoneNo || !address) {
+      return res.status(400).json({
+        success: false,
+        message: "Required fields are missing",
       });
     }
 
@@ -97,42 +102,11 @@ export const createVendor = async (req: Request, res: Response) => {
 export const getVendor = async (req: Request, res: Response) => {
   try {
     const vendorId = req.params.vendorId;
-    const { orgId } = req.query;
 
     if (!vendorId) {
       return res.status(400).json({
         success: false,
         message: "Vendor ID is required",
-      });
-    }
-
-    if (!orgId) {
-      return res.status(400).json({
-        success: false,
-        message: "Organisation ID is required",
-      });
-    }
-
-    const userId = (req as any).user?.id;
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "User not authenticated",
-      });
-    }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    if (String(user.orgId) !== String(orgId)) {
-      return res.status(403).json({
-        success: false,
-        message: "You do not have access to this organisation",
       });
     }
 
@@ -160,37 +134,7 @@ export const getVendor = async (req: Request, res: Response) => {
 
 export const getAllVendors = async (req: Request, res: Response) => {
   try {
-    const { orgId } = req.query;
-
-    if (!orgId) {
-      return res.status(400).json({
-        success: false,
-        message: "Organisation ID is required",
-      });
-    }
-
-    const userId = (req as any).user?.id;
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "User not authenticated",
-      });
-    }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    if (String(user.orgId) !== String(orgId)) {
-      return res.status(403).json({
-        success: false,
-        message: "You do not have access to this organisation",
-      });
-    }
+    const orgId = (req as any).orgId;
 
     const organisation = await Organisation.findById(orgId);
     if (!organisation) {
@@ -218,15 +162,8 @@ export const getAllVendors = async (req: Request, res: Response) => {
 
 export const updateVendor = async (req: Request, res: Response) => {
   try {
-    const {
-      vendorName,
-      contactPerson,
-      phoneNo,
-      address,
-      services,
-      gstNumber,
-      orgId,
-    } = req.body;
+    const { vendorName, contactPerson, phoneNo, address, services, gstNumber } =
+      req.body;
 
     const vendorId = req.params.vendorId;
 
@@ -242,29 +179,6 @@ export const updateVendor = async (req: Request, res: Response) => {
       return res.status(404).json({
         success: false,
         message: "Vendor not found",
-      });
-    }
-
-    const userId = (req as any).user?.id;
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "User not authenticated",
-      });
-    }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    if (String(user.orgId) !== String(orgId)) {
-      return res.status(403).json({
-        success: false,
-        message: "You do not have access to this organisation",
       });
     }
 
@@ -324,33 +238,10 @@ export const deleteVendor = async (req: Request, res: Response) => {
       });
     }
 
-    const userId = (req as any).user?.id;
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "User not authenticated",
-      });
-    }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    if (String(user.orgId) !== String(req.body.orgId)) {
-      return res.status(403).json({
-        success: false,
-        message: "You do not have access to this organisation",
-      });
-    }
-
     // Remove vendor reference from organisation
     await Organisation.updateMany(
       { vendor: vendorId },
-      { $unset: { vendor: 1 } }
+      { $pull: { vendor: vendorId } } // Use $pull instead of $unset
     );
 
     // Delete the vendor

@@ -13,9 +13,11 @@ import {
 } from "../controllers/common/vendor";
 import { addService } from "../controllers/common/vendorServices";
 import { authenticateJWT } from "../middlewares/authenticateJWT";
+import { isAuthenticated } from "../middlewares/isAuthenticated";
 
 const router = Router();
 router.use(authenticateJWT);
+router.use(isAuthenticated);
 
 router.get("/my-profile", getMyProfile);
 router.put("/my-profile", updateMyProfile);
