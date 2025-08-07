@@ -1,4 +1,4 @@
-//theme/colors.ts
+
 
 const Colors = {
   primary: "#002C62",
