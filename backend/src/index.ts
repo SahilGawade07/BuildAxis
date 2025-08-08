@@ -7,6 +7,8 @@ import authRoutes from "./routes/authRoutes";
 import organisationRoutes from "./routes/organisationRoutes";
 import commonRoutes from "./routes/commonRoutes";
 import promoterRoutes from "./routes/promoterRoutes";
+import inventoryRoutes from "./routes/inventory";
+import supervisorRoutes from "./routes/supervisorRoutes";
 
 dotenv.config();
 
@@ -29,6 +31,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/organisations", organisationRoutes);
 app.use("/api/common", commonRoutes);
 app.use("/api/promoter", promoterRoutes);
+app.use("/api/inventory", inventoryRoutes);
+app.use("/api/supervisor", supervisorRoutes);
 
 app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({
