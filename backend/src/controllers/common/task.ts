@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { Task } from "../../models/Task";
 import { Site } from "../../models/Site";
 import { User } from "../../models/User";
+import { Labour } from "../../models/Labour";
 import { Types } from "mongoose";
 
 export const checkSiteAccess = async (
@@ -118,19 +119,46 @@ export const createTask = async (req: Request, res: Response) => {
       });
     }
 
-    // Validate assigned user belongs to same organization
-    if (assignedTo) {
-      const assignedUser = await User.findById(assignedTo);
-      if (!assignedUser || String(assignedUser.orgId) !== String(user.orgId)) {
+    // Validate assigned users/labourers belong to same organization and have appropriate roles
+    if (assignedTo && Array.isArray(assignedTo) && assignedTo.length > 0) {
+      // Fetch users and labourers separately
+      const assignedUsers = await User.find({
+        _id: { $in: assignedTo },
+        orgId: user.orgId,
+      });
+
+      const assignedLabourers = await Labour.find({
+        _id: { $in: assignedTo },
+        orgId: user.orgId,
+      });
+
+      // Combine and check if all assigned IDs are valid
+      const allAssigned = [...assignedUsers, ...assignedLabourers];
+      if (allAssigned.length !== assignedTo.length) {
         return res.status(400).json({
           success: false,
-          message: "Assigned user not found or not in your organization",
+          message:
+            "One or more assigned users or labourers not found or not in your organization",
         });
       }
+
+      // Check role-based assignment permissions for supervisors
+      if (user.role === "supervisor") {
+        const invalidAssignees = assignedUsers.some(
+          (u) => u.role !== "supervisor"
+        ); // Supervisors can't assign to other users (only labourers)
+        if (invalidAssignees || assignedUsers.length > 0) {
+          return res.status(403).json({
+            success: false,
+            message: "Supervisors can only assign tasks to labourers",
+          });
+        }
+      }
+      // Promoters can assign to both supervisors (users with role "supervisor") and labourers, so no additional check needed
     }
 
     // Validate supervisors belong to same organization
-    if (supervisors && supervisors.length > 0) {
+    if (supervisors && Array.isArray(supervisors) && supervisors.length > 0) {
       const supervisorUsers = await User.find({
         _id: { $in: supervisors },
         orgId: user.orgId,
@@ -144,7 +172,28 @@ export const createTask = async (req: Request, res: Response) => {
             "One or more supervisors not found or not in your organization",
         });
       }
+
+      // Supervisors cannot assign tasks to other supervisors
+      if (user.role === "supervisor") {
+        return res.status(403).json({
+          success: false,
+          message: "Supervisors cannot assign tasks to other supervisors",
+        });
+      }
     }
+
+    // Prepare assignedTo with model references
+    const assignedToWithModels = assignedTo
+      ? await Promise.all(
+          assignedTo.map(async (id: string) => {
+            const isUser = await User.findById(id);
+            return {
+              id,
+              model: isUser ? "User" : "Labour",
+            };
+          })
+        )
+      : [];
 
     const newTask = await Task.create({
       title,
@@ -152,7 +201,8 @@ export const createTask = async (req: Request, res: Response) => {
       images: images || [],
       site,
       createdBy: user._id,
-      assignedTo,
+      assignedTo: assignedToWithModels.map((item) => item.id), // Store only IDs
+      assignedToModel: assignedToWithModels.map((item) => item.model), // Store model references if needed
       status: status || "open",
       priority: priority || "medium",
       due,
@@ -164,7 +214,11 @@ export const createTask = async (req: Request, res: Response) => {
     const populatedTask = await Task.findById(newTask._id)
       .populate("site", "name location")
       .populate("createdBy", "fName lName email")
-      .populate("assignedTo", "fName lName email")
+      .populate({
+        path: "assignedTo",
+        model: (doc: any) => doc.assignedToModel,
+        select: "fName lName email",
+      } as any)
       .populate("supervisors", "fName lName email");
 
     return res.status(201).json({
@@ -181,7 +235,6 @@ export const createTask = async (req: Request, res: Response) => {
   }
 };
 
-// Get Task by ID
 export const getTask = async (req: Request, res: Response) => {
   try {
     const task = (req as any).task;
