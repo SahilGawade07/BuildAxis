@@ -3,11 +3,15 @@ import {
   View,Text,Image,StyleSheet,TouchableOpacity,StatusBar,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import {CompanyBar,Overview} from "@/Components/reusable"
+
+import {CompanyBar} from "@/Components/Common/company_bar"
+import {Overview} from "@/Components/Common/summary_4box"
+import { Safe_area } from "@/Components/Common/safe_area";
 
 export default function Home() {
   return (
     <View style={styles.container}>
+      <Safe_area/>
       <CompanyBar/>
       {/* Date Row */}
       <View style={styles.dateRow}>
@@ -34,7 +38,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingTop: 40,
+    
     // paddingHorizontal: 16,
   },
   header: {

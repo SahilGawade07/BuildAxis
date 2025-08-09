@@ -86,7 +86,7 @@ export default function AddOrganizationScreen() {
                 <Text style={styles.buttonText}>Add to Organization</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={[styles.button,{width:"20%", alignSelf:"flex-end"}]} onPress={() => router.push("/tabs/home")}>
+            <TouchableOpacity style={[styles.button,{width:"20%", alignSelf:"flex-end"}]} onPress={() => router.push("/tabs/Profile/profile")}>
                 <Text style={styles.buttonText}>Skip</Text>
             </TouchableOpacity>
         </ScrollView>

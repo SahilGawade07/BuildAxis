@@ -1,11 +1,14 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, ImageBackground, SafeAreaView, ScrollView } from "react-native";
 import React, { useState } from 'react';
+import { Safe_area } from '@/Components/Common/safe_area';
     
 const profile = () => {
 
-   return(
+   return(<>
+    <Safe_area/>
     <Text>Profile</Text>
+    </>
     );
 }
 
