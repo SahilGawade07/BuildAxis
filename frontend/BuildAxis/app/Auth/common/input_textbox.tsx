@@ -21,16 +21,16 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
-    backgroundColor: '#f9f9f9',
     padding: 15,
     borderRadius: 10,
     marginVertical:1,
     height:50,
   },
   name:{
-        fontSize: 14,
+        fontSize: 16,
         color: '#333',
         marginBottom: 3,
         marginTop: 16,
+        fontWeight:"600"
   },
 });

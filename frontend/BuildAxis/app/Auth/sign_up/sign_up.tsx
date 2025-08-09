@@ -1,4 +1,3 @@
-
 import React, { useState ,useEffect} from 'react';
 import {
     View,
@@ -11,14 +10,13 @@ import {
 import { useRouter } from "expo-router";
 const router = useRouter()
 
-
-import {TextHeaderTop} from "@/app/logins/Common_components/login_header"
-import {TextInputs} from "../common_components/input_textbox"
-import {PasswordTextInputs} from "../common_components/input_pass_textbox"
-import {TextHeaderSecondTop} from "../common_components/second_top_header"
-import {Continue} from "../common_components/continue_button"
-import {Signup_with} from "../common_components/Signup_with"
-import { SwitchScreens } from '../common_components/switch_to_signup';
+import {TextHeaderTop} from "../common/login_header"
+import {TextInputs} from "../common/input_textbox"
+import {PasswordTextInputs} from "../common/input_pass_textbox"
+import {TextHeaderSecondTop} from "../common/second_top_header"
+import {Continue} from "../common/continue_button"
+import {Signup_with} from "../common/Signup_with"
+import { SwitchScreens } from '../common/switch_to_signup';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState<string>('');
@@ -72,22 +70,29 @@ export default function LoginScreen() {
 
     const handleSubmit = async () => {
 
-        router.push("/logins/login_screens")
+        router.push("/Auth/login/login_screens")
     };
 
     return (
         <View style={styles.container}>
             {/* Top Header */}
-            <TextHeaderTop text="Login" />
+            <TextHeaderTop text="Sign up" />
 
             {/* Subheader */}
-            <TextHeaderSecondTop text="Join our community and experience a seamless way of finding your relationship" />
-
+            <TextHeaderSecondTop text="Let’s get you started on your journey! Please fill out the form below to create your account" />
+         {/* name Input */}
+            <TextInputs
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Siddharth Chemte"
+                keyboardType="default"
+                textname="Name "
+            />
             {/* Email Input */}
             <TextInputs
                 value={email}
                 onChangeText={setEmail}
-                placeholder="Enter your Email"
+                placeholder="abc@gmail.com"
                 keyboardType="email-address"
                 textname="Email"
             />
@@ -96,38 +101,33 @@ export default function LoginScreen() {
             <PasswordTextInputs
                 value={password}
                 onChangeText={setPassword}
-                placeholder="Enter your Password"
+                placeholder="Password"
                 keyboardType="default"
                 textname="Password"
             />
+                        {/* Password Input */}
+            <PasswordTextInputs
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Password Verifications"
+                keyboardType="default"
+                textname="Password Verifications"
+            />
 
-            {/* Forgot Password Link */}
-            <TouchableOpacity>
-                <Text style={styles.forgotText}>Forgot Password?</Text>
-            </TouchableOpacity>
 
             {/* Error Text */}
             <Text style={styles.error}>{err}</Text>
 
             {/* Continue Button */}
-//             <Continue text={"Login in"} touchable={continuebut} onPresss={handleSignup} />
+           <Continue text={"Sign Up"} touchable={continuebut} onPresss={handleSignup} />
 
-            {/* OR Divider */}
-            <View style={styles.orContainer}>
-                <View style={styles.line} />
-                <Text style={styles.orText}>OR</Text>
-                <View style={styles.line} />
-            </View>
 
-            {/* Social Logins */}
-            <Signup_with name="logo-apple" text="Login with Apple" />
-            <Signup_with name="logo-google" text="Login with Google" />
 
-            {/* Switch to Register Screen */}
+
             <SwitchScreens
-                text1="Haven't registered yet?"
-                text2="Register"
-                path="/logintabs/createaccount"
+                text1="Already have an account?"
+                text2=" Log in"
+                path="/Auth/login/login_screens"
             />
         </View>
     );
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     container: {
         padding: 24,
         flex: 1,
-        marginTop: 20,
+        marginTop: 25,
         backgroundColor: '#fff',
     },
     forgotText: {

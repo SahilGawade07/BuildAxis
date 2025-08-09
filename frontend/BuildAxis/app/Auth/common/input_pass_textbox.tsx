@@ -32,10 +32,11 @@ export const PasswordTextInputs=({ value, onChangeText, placeholder ,keyboardTyp
 const styles = StyleSheet.create({
 
   name:{
-        fontSize: 14,
+        fontSize: 16,
         color: '#333',
         marginBottom: 3,
         marginTop: 16,
+        fontWeight:"600"
   },
 
  passwordContainer: {
@@ -47,7 +48,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         paddingHorizontal: 12,
         fontSize: 16,
-        backgroundColor: '#f9f9f9',
+        
     },
 
 });

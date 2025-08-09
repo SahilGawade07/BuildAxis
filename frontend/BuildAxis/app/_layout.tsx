@@ -6,7 +6,7 @@ export default function RootLayout() {
   // const initialRoute = checks ? "Screens/login" : "tabs";
 
   return (
-    <Stack screenOptions={{ headerShown: false }} initialRouteName={"logins/login_screens"}>
+    <Stack screenOptions={{ headerShown: false }} initialRouteName={"Auth/login/login_screens"}>
       <Stack.Screen name="+not-found" />
     </Stack>
   );
