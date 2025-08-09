@@ -1,17 +1,12 @@
 import { Schema, model, Document, Types } from "mongoose";
 
-// ✅ Update interface to support arrays and multiple assignment types
+// Interface: ITask
 export interface ITask extends Document {
   title: string;
-  supervisors: Types.ObjectId[]; // Oversight: who is supervising the task
-  images: string[];
-  site: Types.ObjectId;
-  createdBy: Types.ObjectId;
-
-  // ✅ Replace single `assignedTo` with two arrays
-  assignedToSupervisors: Types.ObjectId[]; // Task is assigned TO these supervisors (Users)
-  assignedToLabourers: Types.ObjectId[]; // Task is assigned TO these labourers
-
+  site: Types.ObjectId; // Reference to Site model
+  createdBy: Types.ObjectId; // Promoter who created
+  supervisors: Types.ObjectId[]; // Multiple supervisors (User with role: 'supervisor')
+  labourers: Types.ObjectId[]; // Multiple labourers (from Labour collection)
   status:
     | "open"
     | "in_progress"
@@ -21,11 +16,13 @@ export interface ITask extends Document {
     | "cancelled";
   priority: "low" | "medium" | "high" | "urgent";
   due: Date;
-  inventoryUsed: Array<{ item: Types.ObjectId; quantity: number }>; // Better structure
-  description: string;
-  attachment?: string;
+  inventoryUsed: Types.ObjectId[]; // Multiple inventory items
+  description?: string;
+  attachment?: string; // e.g., PDF, document
+  images: string[]; // Array of image URLs
 }
 
+// Schema: taskSchema
 const taskSchema = new Schema<ITask>(
   {
     title: {
@@ -34,45 +31,33 @@ const taskSchema = new Schema<ITask>(
       trim: true,
     },
 
-    // Supervisors who oversee the task
-    supervisors: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-
-    images: [
-      {
-        type: String,
-      },
-    ],
-
+    // Site where task is assigned
     site: {
       type: Schema.Types.ObjectId,
       ref: "Site",
       required: true,
     },
 
+    // Promoter who created the task
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
 
-    // ✅ New: Multiple supervisors can be assigned to the task
-    assignedToSupervisors: [
+    // Multiple supervisors assigned
+    supervisors: [
       {
         type: Schema.Types.ObjectId,
-        ref: "User",
+        ref: "User", // These should be users with role: 'supervisor'
       },
     ],
 
-    // ✅ New: Multiple labourers can be assigned to the task
-    assignedToLabourers: [
+    // Multiple labourers assigned
+    labourers: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Labour", // Make sure "Labour" model is registered
+        ref: "Labour", // Reference to Labour collection
       },
     ],
 
@@ -97,35 +82,38 @@ const taskSchema = new Schema<ITask>(
 
     due: {
       type: Date,
+      required: true,
     },
 
-    // ✅ Improved: inventoryUsed as array of objects
+    // Multiple inventory items used in the task
     inventoryUsed: [
       {
-        item: {
-          type: Schema.Types.ObjectId,
-          ref: "Inventory",
-          required: true,
-        },
-        quantity: {
-          type: Number,
-          required: true,
-          min: 1,
-        },
+        type: Schema.Types.ObjectId,
+        ref: "Inventory",
       },
     ],
 
     description: {
       type: String,
+      trim: true,
     },
 
+    // Optional file (PDF, doc, etc.)
     attachment: {
       type: String,
     },
+
+    // Array of image URLs taken/uploaded for the task
+    images: [
+      {
+        type: String,
+      },
+    ],
   },
   {
     timestamps: true,
   }
 );
 
+// Export model
 export const Task = model<ITask>("Task", taskSchema);

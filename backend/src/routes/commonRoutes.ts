@@ -32,6 +32,6 @@ router.delete("/vendors/:vendorId", deleteVendor);
 
 router.post("/add-service", addService);
 
-router.post("/create-task", createTask);
+// router.post("/create-task", createTask);
 
 export default router;
