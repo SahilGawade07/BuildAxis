@@ -70,7 +70,7 @@ export default function LoginScreen() {
 
     const handleSubmit = async () => {
 
-        router.push("/Auth/login/login_screens")
+        router.push("/Auth/create_org/create_org")
     };
 
     return (
@@ -127,7 +127,7 @@ export default function LoginScreen() {
             <SwitchScreens
                 text1="Already have an account?"
                 text2=" Log in"
-                path="/Auth/login/login_screens"
+                path="/Auth/create_org/create_org"
             />
         </View>
     );
