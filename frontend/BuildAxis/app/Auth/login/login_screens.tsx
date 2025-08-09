@@ -126,7 +126,7 @@ export default function LoginScreen() {
             <SwitchScreens
                 text1="Haven't registered yet?"
                 text2="Register"
-                path="/Auth/sign_up/sign_up"
+                path="/Auth/sign_up/sign_u"
             />
         </View>
     );
