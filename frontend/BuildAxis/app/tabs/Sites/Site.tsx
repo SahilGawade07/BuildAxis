@@ -7,9 +7,13 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome6, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { CompanyBar } from "@/Components/reusable";
 import { Safe_area } from "@/Components/Common/safe_area";
+import { useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+const router = useRouter()
+
 
 export default function Site() {
   const projects = [
@@ -50,7 +54,8 @@ export default function Site() {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+     
       <Safe_area />
       <CompanyBar />
 
@@ -71,7 +76,14 @@ export default function Site() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingBottom: 20 }}
       />
-    </View>
+
+      <TouchableOpacity style={{height:50,width:50, borderRadius:25, backgroundColor:"#0247D3" , position:"absolute", right:20,bottom:40,alignItems:"center",justifyContent:"center" }} onPress={()=>{router.push("/create_task")}}>
+            <FontAwesome6 name="add" size={20} color="white" />
+
+      </TouchableOpacity>
+      
+    </SafeAreaView>
+    
   );
 }
 
@@ -120,7 +132,7 @@ const styles = StyleSheet.create({
   activeText: { color: "#fff", fontSize: 12, fontWeight: "500" },
 
   cardFooter: {
-    borderTopWidth: 2,
+    borderTopWidth: 1.5,
     marginTop: 10,
     paddingTop: 10,
     borderColor: "#B2B2B2",
@@ -149,3 +161,5 @@ const styles = StyleSheet.create({
   },
   sitename: { fontSize: 14, fontWeight: "500" },
 });
+
+

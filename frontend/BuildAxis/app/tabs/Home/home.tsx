@@ -7,10 +7,11 @@ import { Ionicons } from "@expo/vector-icons";
 import {CompanyBar} from "@/Components/Common/company_bar"
 import {Overview} from "@/Components/Common/summary_4box"
 import { Safe_area } from "@/Components/Common/safe_area";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Safe_area/>
       <CompanyBar/>
       {/* Date Row */}
@@ -30,7 +31,7 @@ export default function Home() {
         <Overview backgroundColor="#FEF2F2" circle_color="#FEE2E2" Ionicons_name="construct-outline" Ionicons_color="#C0392B" Text1="Sites" text2="Active: 7" text3="Inactive: 4"/>
         </View>
     
-    </View>
+    </SafeAreaView>
   );
 }
 
