@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  SafeAreaView,
   Image,
   TouchableOpacity
 } from "react-native";
@@ -17,6 +16,7 @@ import Add_items from "@/Components/Common/add_item";
 import Upload_img from "@/Components/Common/upload_images";
 import Submit_bbutt from "@/Components/Common/Submit_butt";
 import { Ionicons } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function main_site() {
 const [active, setActive] = useState("Assign Task");

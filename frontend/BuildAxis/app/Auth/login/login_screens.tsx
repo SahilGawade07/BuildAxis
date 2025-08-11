@@ -15,6 +15,7 @@ import { TextHeaderSecondTop } from "../common/second_top_header";
 import { Continue } from "../common/continue_button";
 import { Signup_with } from "../common/Signup_with";
 import { SwitchScreens } from "../common/switch_to_signup";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen() {
   const router = useRouter(); 
@@ -67,7 +68,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* Top heading */}
       <TextHeaderTop text="Login" />
 
@@ -124,7 +125,7 @@ export default function LoginScreen() {
         text2="Register"
         path="/Auth/sign_up/sign_up"
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

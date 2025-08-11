@@ -4,9 +4,10 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  SafeAreaView,
+  
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // Reusable components
 import { CompanyBar } from "@/Components/reusable";

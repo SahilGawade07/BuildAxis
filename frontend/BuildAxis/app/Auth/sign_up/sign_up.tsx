@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  
 } from "react-native";
 import { useRouter } from "expo-router"; 
 
@@ -13,6 +14,7 @@ import { PasswordTextInputs } from "../common/input_pass_textbox";
 import { TextHeaderSecondTop } from "../common/second_top_header";
 import { Continue } from "../common/continue_button";
 import { SwitchScreens } from "../common/switch_to_signup";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SignUpScreen() {
   const router = useRouter(); 
@@ -68,7 +70,7 @@ export default function SignUpScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* Top Header */}
       <TextHeaderTop text="Sign up" />
 
@@ -127,7 +129,7 @@ export default function SignUpScreen() {
         text2="Log in"
         path="/Auth/create_org/create_org"
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
