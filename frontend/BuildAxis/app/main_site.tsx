@@ -157,96 +157,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     justifyContent: "center",
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginTop: 15,
-    marginHorizontal: 15,
-  },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#F5F5F5",
-    margin: 15,
-    paddingHorizontal: 10,
-    borderRadius: 8,
-  },
-  searchInput: {
-    flex: 1,
-    height: 40,
-    color: "#000",
-  },
-  imageBox: {
-    width: 50,
-    height: 50,
-    backgroundColor: "#EAEFFF",
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 10,
-  },
-  cardHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  cardHeaderLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  activeBadge: {
-    backgroundColor: "#0057FF",
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 6,
-    alignItems: "center",
-  },
-  activeText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "500",
-  },
-  cardFooter: {
-    borderTopWidth: 1.5,
-    marginTop: 10,
-    paddingTop: 10,
-    borderColor: "#B2B2B2",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  progressRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  progressText: {
-    marginLeft: 4,
-    fontSize: 12,
-    color: "#000",
-  },
-  dateRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  dateText: {
-    marginLeft: 4,
-    fontSize: 12,
-    color: "#000",
-  },
-  sitecard: {
-    marginHorizontal: 15,
-    marginBottom: 20,
-    padding: 10,
-    borderRadius: 8,
-    borderWidth: 1.6,
-    borderColor: "#D0D5DD",
-    backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 1,
-  },
+  
   pageBox: {
     flex: 1,
     justifyContent: "center",
@@ -258,8 +169,5 @@ const styles = StyleSheet.create({
     color: "#444",
     fontWeight: "500",
   },
-  sitename: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
+
 });

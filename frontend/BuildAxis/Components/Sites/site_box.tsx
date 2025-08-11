@@ -11,7 +11,7 @@ import {
   FlatList
 } from "react-native";
 
-export  const Task_Box = ({ item }: any) => (
+export  const Site_box = ({ item }: any) => (
     <TouchableOpacity style={styles.sitecard} onPress={()=>{router.push("/main_site")}}>
       {/* Card Header */}
       <View style={styles.cardHeader}>
@@ -20,10 +20,10 @@ export  const Task_Box = ({ item }: any) => (
           <View style={styles.imageBox}>
             <Ionicons name="image-outline" size={28} color="#888" />
           </View>
-          <View>
+          
           <Text style={styles.sitename}>{item.name}</Text>
-          <Text style={[styles.text,{fontSize:12}]}>Soham Darade</Text>
-          </View>
+          
+          
         </View>
 
         {/* Right side: Active badge */}
