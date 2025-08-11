@@ -2,9 +2,9 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import Home from "@/app/tabs/home";
-import profile from "@/app/tabs/profile"
-import Site from "@/app/tabs/Site"
+import Home from "@/app/tabs/Home/home";
+import profile from "@/app/tabs/Profile/profile"
+import Site from "@/app/tabs/Sites/Site"
 
 
 const Tab = createBottomTabNavigator();
