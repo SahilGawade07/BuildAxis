@@ -26,7 +26,7 @@ export default function Site() {
 
   // Function to render each project card in FlatList
   const renderProject = ({ item }: any) => (
-    <View style={styles.sitecard}>
+    <TouchableOpacity style={styles.sitecard} onPress={()=>{router.push("/main_site")}}>
       {/* Card Header */}
       <View style={styles.cardHeader}>
         {/* Left side: Project image placeholder + name */}
@@ -62,7 +62,7 @@ export default function Site() {
           <MaterialIcons name="more-vert" size={22} color="#000" />
         </TouchableOpacity>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
