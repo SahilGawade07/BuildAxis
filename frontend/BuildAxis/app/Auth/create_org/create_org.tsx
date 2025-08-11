@@ -36,72 +36,77 @@ export default function AddOrganizationScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View >
-        {/* Top colored strip */}
-        <Safe_area/>
+      <ScrollView>
+        <View>
+          {/* Top colored strip */}
+          <Safe_area />
 
-        {/* Header */}
-        <View style={styles.headerWrapper}>
-          <ImageBackground
-            source={require("@/assets/images/Construction.png")}
-            style={styles.headerImage}
-          >
-            <View style={styles.logoWrapper}>
-              <Image
-                source={require("@/assets/images/logo.jpg")}
-                style={styles.logo}
-              />
-              <View style={styles.plusIcon}>
-                <FontAwesome6 name="add" size={15} color="black" />
+          {/* Header */}
+          <View style={styles.headerWrapper}>
+            <ImageBackground
+              source={require("@/assets/images/Construction.png")}
+              style={styles.headerImage}
+            >
+              <View style={styles.logoWrapper}>
+                <Image
+                  source={require("@/assets/images/logo.jpg")}
+                  style={styles.logo}
+                />
+                <View style={styles.plusIcon}>
+                  <FontAwesome6 name="add" size={15} color="black" />
+                </View>
               </View>
-            </View>
-          </ImageBackground>
+            </ImageBackground>
+          </View>
+
+          {/* Form */}
+          <View style={[styles.formSection, { marginTop: 70 }]}>
+            <TextInputs
+              value={orgName}
+              onChangeText={setOrgName}
+              placeholder="Enter The Organization Name"
+              keyboardType="default"
+              textname="Organization Name"
+            />
+            <TextInputs
+              value={email}
+              onChangeText={setEmail}
+              placeholder="Enter the Email"
+              keyboardType="email-address"
+              textname="Email"
+            />
+            <TextInputs
+              value={phone}
+              onChangeText={setPhone}
+              placeholder="Enter the Phone Number"
+              keyboardType="phone-pad"
+              textname="Phone No."
+            />
+            <TextInputs
+              value={address}
+              onChangeText={setAddress}
+              placeholder="Enter the Address"
+              keyboardType="default"
+              textname="Address"
+            />
+          </View>
+
+          {/* Buttons */}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleAddOrganization}
+          >
+            <Text style={styles.buttonText}>Add to Organization</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, { width: "20%", alignSelf: "flex-end" }]}
+            onPress={() => router.push("/tabs/Profile/profile")}
+          >
+            <Text style={styles.buttonText}>Skip</Text>
+          </TouchableOpacity>
         </View>
-
-        {/* Form */}
-        <View style={[styles.formSection, { marginTop: 70 }]}>
-          <TextInputs
-            value={orgName}
-            onChangeText={setOrgName}
-            placeholder="Enter The Organization Name"
-            keyboardType="default"
-            textname="Organization Name"
-          />
-          <TextInputs
-            value={email}
-            onChangeText={setEmail}
-            placeholder="Enter the Email"
-            keyboardType="email-address"
-            textname="Email"
-          />
-          <TextInputs
-            value={phone}
-            onChangeText={setPhone}
-            placeholder="Enter the Phone Number"
-            keyboardType="phone-pad"
-            textname="Phone No."
-          />
-          <TextInputs
-            value={address}
-            onChangeText={setAddress}
-            placeholder="Enter the Address"
-            keyboardType="default"
-            textname="Address"
-          />
-        </View>
-
-        {/* Buttons */}
-        <TouchableOpacity style={styles.button} onPress={handleAddOrganization}>
-          <Text style={styles.buttonText}>Add to Organization</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.button, { width: "20%", alignSelf: "flex-end" }]}
-          onPress={() => router.push("/tabs/Profile/profile")}
-        >
-          <Text style={styles.buttonText}>Skip</Text>
-        </TouchableOpacity>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
