@@ -9,16 +9,16 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import {CompanyBar} from "@/Components/Common/company_bar"
-import {Overview} from "@/Components/Common/summary_4box"
-import { Safe_area } from "@/Components/Common/safe_area";
+import { CompanyBar } from "@/Components/Common/company_bar";
+import { Overview } from "@/Components/Common/summary_4box";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Safe_area } from "@/Components/Common/safe_area";
 
 export default function Home() {
   return (
     <SafeAreaView style={styles.container}>
-      <Safe_area/>
-      <CompanyBar/>
+      <Safe_area />
+      <CompanyBar />
       {/* Date Row */}
       <View style={styles.dateRow}>
         <Text style={styles.todayText}>Today</Text>
@@ -30,12 +30,43 @@ export default function Home() {
 
       {/* Grid Cards */}
       <View style={styles.grid}>
-        <Overview backgroundColor="#DBEDFD" circle_color="#B6DEFF" Ionicons_name="people" Ionicons_color="#4682B4" Text1="Attendance" text2="Supervisor: 20" text3="Labours: 100"/>
-        <Overview backgroundColor="#F0FDF4" circle_color="#DCFCE7" Ionicons_name="cash-outline" Ionicons_color="#27AE60" Text1="Daily Expensces" text2="10000 Rs" text3=""/>
-        <Overview backgroundColor="#FEFCE8" circle_color="#FEF9C3" Ionicons_name="cube-outline" Ionicons_color="#D4AC0D" Text1="Inventory" text2="Crush sand is required." text3="Bricks are required."/>
-        <Overview backgroundColor="#FEF2F2" circle_color="#FEE2E2" Ionicons_name="construct-outline" Ionicons_color="#C0392B" Text1="Sites" text2="Active: 7" text3="Inactive: 4"/>
-        </View>
-    
+        <Overview
+          backgroundColor="#DBEDFD"
+          circle_color="#B6DEFF"
+          Ionicons_name="people"
+          Ionicons_color="#4682B4"
+          Text1="Attendance"
+          text2="Supervisor: 20"
+          text3="Labours: 100"
+        />
+        <Overview
+          backgroundColor="#F0FDF4"
+          circle_color="#DCFCE7"
+          Ionicons_name="cash-outline"
+          Ionicons_color="#27AE60"
+          Text1="Daily Expensces"
+          text2="10000 Rs"
+          text3=""
+        />
+        <Overview
+          backgroundColor="#FEFCE8"
+          circle_color="#FEF9C3"
+          Ionicons_name="cube-outline"
+          Ionicons_color="#D4AC0D"
+          Text1="Inventory"
+          text2="Crush sand is required."
+          text3="Bricks are required."
+        />
+        <Overview
+          backgroundColor="#FEF2F2"
+          circle_color="#FEE2E2"
+          Ionicons_name="construct-outline"
+          Ionicons_color="#C0392B"
+          Text1="Sites"
+          text2="Active: 7"
+          text3="Inactive: 4"
+        />
+      </View>
     </SafeAreaView>
   );
 }
