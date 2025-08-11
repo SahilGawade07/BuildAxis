@@ -4,22 +4,33 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  
+  Image,
+  StatusBar,
 } from "react-native";
-import { useRouter } from "expo-router"; 
+import { useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
+// Import reusable components
 import { TextHeaderTop } from "../common/login_header";
 import { TextInputs } from "../common/input_textbox";
 import { PasswordTextInputs } from "../common/input_pass_textbox";
-import { TextHeaderSecondTop } from "../common/second_top_header";
 import { Continue } from "../common/continue_button";
 import { SwitchScreens } from "../common/switch_to_signup";
-import { SafeAreaView } from "react-native-safe-area-context";
+
+const AppLogo = () => (
+  <View style={styles.logoContainer}>
+    <Image
+      source={require("../../../assets/images/logo.jpg")}
+      style={styles.logo}
+      resizeMode="contain"
+    />
+  </View>
+);
 
 export default function SignUpScreen() {
-  const router = useRouter(); 
+  const router = useRouter();
 
-  // Separate states for each field
+  // Form states
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,7 +38,7 @@ export default function SignUpScreen() {
   const [continueDisabled, setContinueDisabled] = useState(true);
   const [err, setError] = useState("");
 
-  // Enable/disable continue button based on validation
+  // Validate form and enable/disable button
   useEffect(() => {
     setError("");
     setContinueDisabled(true);
@@ -40,7 +51,7 @@ export default function SignUpScreen() {
     setContinueDisabled(false);
   }, [name, email, password, confirmPassword]);
 
-  // Validate inputs when pressing continue
+  // Handle sign-up submission
   const handleSignup = () => {
     setError("");
 
@@ -64,85 +75,127 @@ export default function SignUpScreen() {
     handleSubmit();
   };
 
-  // Navigate to next screen
+  // Navigate after validation
   const handleSubmit = () => {
     router.push("/Auth/create_org/create_org");
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Top Header */}
-      <TextHeaderTop text="Sign up" />
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
 
-      {/* Subheader */}
-      <TextHeaderSecondTop text="Let’s get you started on your journey! Please fill out the form below to create your account" />
+      <View style={styles.centeredContent}>
+        {/* Logo */}
+        <AppLogo />
 
-      {/* Name Input */}
-      <TextInputs
-        value={name}
-        onChangeText={setName}
-        placeholder="Siddharth Chemte"
-        keyboardType="default"
-        textname="Name"
-      />
+        {/* Headers */}
+        <TextHeaderTop text="Create Account" style={styles.headerTop} />
+        <Text style={styles.subHeader}>
+          Let&apos;s get you started! Please fill in the details below.
+        </Text>
 
-      {/* Email Input */}
-      <TextInputs
-        value={email}
-        onChangeText={setEmail}
-        placeholder="abc@gmail.com"
-        keyboardType="email-address"
-        textname="Email"
-      />
+        {/* Form */}
+        <View style={styles.form}>
+          <TextInputs
+            value={name}
+            onChangeText={setName}
+            placeholder="Enter your full name"
+            keyboardType="default"
+            textname="Name"
+            icon="person-outline"
+          />
 
-      {/* Password Input */}
-      <PasswordTextInputs
-        value={password}
-        onChangeText={setPassword}
-        placeholder="Password"
-        keyboardType="default"
-        textname="Password"
-      />
+          <TextInputs
+            value={email}
+            onChangeText={setEmail}
+            placeholder="Enter your email"
+            keyboardType="email-address"
+            textname="Email"
+            icon="mail-outline"
+          />
 
-      {/* Confirm Password Input */}
-      <PasswordTextInputs
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        placeholder="Confirm Password"
-        keyboardType="default"
-        textname="Password Verification"
-      />
+          <PasswordTextInputs
+            value={password}
+            onChangeText={setPassword}
+            placeholder="Enter your password"
+            textname="Password"
+            icon="lock-closed-outline"
+          />
 
-      {/* Error Message */}
-      {err ? <Text style={styles.error}>{err}</Text> : null}
+          <PasswordTextInputs
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            placeholder="Confirm your password"
+            textname="Confirm Password"
+            icon="lock-closed-outline"
+          />
 
-      {/* Continue Button */}
-      <Continue
-        text="Sign Up"
-        touchable={continueDisabled}
-        onPresss={handleSignup}
-      />
+          {/* Error Message */}
+          {err ? <Text style={styles.error}>{err}</Text> : null}
 
-      {/* Switch to Login */}
-      <SwitchScreens
-        text1="Already have an account?"
-        text2="Log in"
-        path="/Auth/create_org/create_org"
-      />
+          {/* Sign Up Button */}
+          <Continue
+            text="Sign Up"
+            touchable={!continueDisabled}
+            onPresss={handleSignup}
+          />
+        </View>
+
+        {/* Switch to Login */}
+        <SwitchScreens
+          text1="Already have an account?"
+          text2="Log in"
+          path="/Auth/create_org/create_org"
+        />
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 24,
     flex: 1,
-    marginTop: 25,
-    backgroundColor: "#fff",
+    backgroundColor: "#f9f9fb",
+    paddingHorizontal: 24,
+  },
+  centeredContent: {
+    flex: 1,
+    justifyContent: "center", // Centers content vertically
+    alignItems: "center", // Centers content horizontally
+  },
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  logo: {
+    width: 80,
+    height: 80,
+    borderRadius: 20,
+    backgroundColor: "#e3f2fd",
+    padding: 8,
+  },
+  headerTop: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#1a1a1a",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  subHeader: {
+    fontSize: 16,
+    color: "#666",
+    textAlign: "center",
+    marginBottom: 32,
+    lineHeight: 22,
+  },
+  form: {
+    width: "100%",
+    maxWidth: 320, // Keeps form narrow and centered on larger screens
   },
   error: {
-    color: "red",
-    marginTop: 8,
+    color: "#D32F2F", // Material Red
     fontSize: 14,
+    marginTop: 8,
+    textAlign: "center",
   },
 });
