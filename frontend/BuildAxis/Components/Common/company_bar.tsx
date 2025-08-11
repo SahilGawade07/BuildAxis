@@ -44,6 +44,8 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     flex: 1,
     marginLeft: 12,
+    //fontFamily:"Roboto-Regular"
+    fontFamily:"Roboto-Black"
   },
 
 
