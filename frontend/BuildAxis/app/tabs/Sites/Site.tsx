@@ -8,18 +8,42 @@ import {
   FlatList,
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { CompanyBar } from "@/Components/reusable";
-import { Safe_area } from "@/Components/Common/safe_area";
+import { CompanyBar } from "@/components/reusable";
+import { Safe_area } from "@/components/Common/safe_area";
 
 export default function Site() {
   const projects = [
-    { id: "1", name: "JJ Hormony", progress: "20%", date: "12/02/2022", status: "Active" },
-    { id: "2", name: "Green Heights", progress: "45%", date: "15/04/2023", status: "Active" },
-    { id: "3", name: "Sky Towers", progress: "75%", date: "01/10/2024", status: "Active" },
-    { id: "4", name: "Blue Ocean", progress: "60%", date: "20/08/2025", status: "Active" },
+    {
+      id: "1",
+      name: "JJ Hormony",
+      progress: "20%",
+      date: "12/02/2022",
+      status: "Active",
+    },
+    {
+      id: "2",
+      name: "Green Heights",
+      progress: "45%",
+      date: "15/04/2023",
+      status: "Active",
+    },
+    {
+      id: "3",
+      name: "Sky Towers",
+      progress: "75%",
+      date: "01/10/2024",
+      status: "Active",
+    },
+    {
+      id: "4",
+      name: "Blue Ocean",
+      progress: "60%",
+      date: "20/08/2025",
+      status: "Active",
+    },
   ];
 
-  const renderProject = ({ item }:any) => (
+  const renderProject = ({ item }: any) => (
     <View style={styles.sitecard}>
       <View style={styles.cardHeader}>
         <View style={styles.cardHeaderLeft}>
@@ -57,7 +81,12 @@ export default function Site() {
       <Text style={styles.sectionTitle}>Projects</Text>
 
       <View style={styles.searchContainer}>
-        <Ionicons name="search" size={18} color="#999" style={{ marginRight: 6 }} />
+        <Ionicons
+          name="search"
+          size={18}
+          color="#999"
+          style={{ marginRight: 6 }}
+        />
         <TextInput
           placeholder="Search"
           style={styles.searchInput}
@@ -141,7 +170,7 @@ const styles = StyleSheet.create({
     borderWidth: 1.6,
     borderColor: "#D0D5DD",
     shadowColor: "#000",
-    backgroundColor:"#fff",
+    backgroundColor: "#fff",
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,

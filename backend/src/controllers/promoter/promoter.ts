@@ -5,7 +5,6 @@ import { Organisation } from "../../models/Organisation";
 import { Types } from "mongoose";
 import { log } from "console";
 
-
 export const createSite = async (req: Request, res: Response) => {
   try {
     const {
@@ -214,4 +213,3 @@ export const deleteSite = async (req: Request, res: Response) => {
     });
   }
 };
-
