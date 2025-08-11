@@ -5,16 +5,30 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
-  ImageBackground,
   ScrollView,
   Alert,
+  StatusBar,
 } from "react-native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { TextInputs } from "../common/input_textbox";
-import Colors from "@/Thems/color";
+import { Continue } from "../common/continue_button";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Safe_area } from "@/Components/Common/safe_area";
+
+const AppLogo = () => (
+  <View style={styles.logoContainer}>
+    <View style={styles.logoWrapper}>
+      <Image
+        source={require("@/assets/images/logo.jpg")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
+      <View style={styles.plusIcon}>
+        <FontAwesome6 name="add" size={16} color="#1976D2" />
+      </View>
+    </View>
+  </View>
+);
 
 export default function AddOrganizationScreen() {
   const router = useRouter();
@@ -34,77 +48,84 @@ export default function AddOrganizationScreen() {
     router.push("/tabs/Profile/profile");
   };
 
+  const isFormValid = orgName && email && phone && address;
+
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <View>
-          {/* Top colored strip */}
-          <Safe_area />
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
 
-          {/* Header */}
-          <View style={styles.headerWrapper}>
-            <ImageBackground
-              source={require("@/assets/images/Construction.png")}
-              style={styles.headerImage}
-            >
-              <View style={styles.logoWrapper}>
-                <Image
-                  source={require("@/assets/images/logo.jpg")}
-                  style={styles.logo}
-                />
-                <View style={styles.plusIcon}>
-                  <FontAwesome6 name="add" size={15} color="black" />
-                </View>
-              </View>
-            </ImageBackground>
-          </View>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.centeredContent}>
+          {/* Logo with Add Icon */}
+          <AppLogo />
+
+          {/* Headers */}
+          <Text style={styles.headerTop}>Create Organization</Text>
+          <Text style={styles.subHeader}>
+            Create your organization profile to get started with BuildAxis
+          </Text>
 
           {/* Form */}
-          <View style={[styles.formSection, { marginTop: 70 }]}>
+          <View style={styles.form}>
             <TextInputs
               value={orgName}
               onChangeText={setOrgName}
-              placeholder="Enter The Organization Name"
+              placeholder="Enter organization name"
               keyboardType="default"
               textname="Organization Name"
+              icon="business-outline"
             />
+
             <TextInputs
               value={email}
               onChangeText={setEmail}
-              placeholder="Enter the Email"
+              placeholder="Enter organization email"
               keyboardType="email-address"
               textname="Email"
+              icon="mail-outline"
             />
+
             <TextInputs
               value={phone}
               onChangeText={setPhone}
-              placeholder="Enter the Phone Number"
+              placeholder="Enter phone number"
               keyboardType="phone-pad"
-              textname="Phone No."
+              textname="Phone Number"
+              icon="call-outline"
             />
+
             <TextInputs
               value={address}
               onChangeText={setAddress}
-              placeholder="Enter the Address"
+              placeholder="Enter organization address"
               keyboardType="default"
               textname="Address"
+              icon="location-outline"
             />
+
+            {/* Add Organization Button */}
+            <Continue
+              text="Create Organization"
+              touchable={isFormValid}
+              onPresss={handleAddOrganization}
+            />
+
+            {/* Skip Button */}
+            <TouchableOpacity
+              style={styles.skipButton}
+              onPress={() => router.push("/tabs/Profile/profile")}
+            >
+              <Text style={styles.skipButtonText}>Skip for now</Text>
+            </TouchableOpacity>
           </View>
 
-          {/* Buttons */}
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleAddOrganization}
-          >
-            <Text style={styles.buttonText}>Add to Organization</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, { width: "20%", alignSelf: "flex-end" }]}
-            onPress={() => router.push("/tabs/Profile/profile")}
-          >
-            <Text style={styles.buttonText}>Skip</Text>
-          </TouchableOpacity>
+          {/* Helper Text */}
+          <Text style={styles.helperText}>
+            You can always add this information later in your profile settings
+          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -114,65 +135,96 @@ export default function AddOrganizationScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f9f9fb",
   },
-  headerWrapper: {
-    height: 250,
-    borderBottomRightRadius: 30,
-    borderBottomLeftRadius: 30,
-    overflow: "hidden",
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 24,
+    paddingVertical: 20,
   },
-  headerImage: {
-    width: "100%",
-    height: "100%",
+  centeredContent: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: "100%",
+  },
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: 30,
   },
   logoWrapper: {
-    backgroundColor: "#fff",
+    position: "relative",
+    backgroundColor: "#e3f2fd",
     borderRadius: 50,
-    padding: 4,
-    position: "absolute",
-    bottom: -60,
-    left: 30,
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 6,
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.25,
+    padding: 8,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
     shadowRadius: 4,
   },
   logo: {
     width: 100,
     height: 100,
-    borderRadius: 60,
-    resizeMode: "contain",
+    borderRadius: 46,
   },
   plusIcon: {
     position: "absolute",
-    bottom: 1,
-    right: 1,
+    bottom: -2,
+    right: -2,
     backgroundColor: "#fff",
-    borderRadius: 15,
-    height: 30,
-    width: 30,
+    borderRadius: 18,
+    height: 36,
+    width: 36,
     borderWidth: 2,
-    borderColor: "#000",
+    borderColor: "#1976D2",
     justifyContent: "center",
     alignItems: "center",
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
-  formSection: {
-    padding: 15,
+  headerTop: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#1a1a1a",
+    textAlign: "center",
+    marginBottom: 8,
   },
-  button: {
-    backgroundColor: "#0057FF",
-    paddingVertical: 14,
+  subHeader: {
+    fontSize: 16,
+    color: "#666",
+    textAlign: "center",
+    marginBottom: 40,
+    lineHeight: 22,
+    maxWidth: 300,
+  },
+  form: {
+    width: "100%",
+    maxWidth: 320,
+  },
+  skipButton: {
+    backgroundColor: "transparent",
+    paddingVertical: 12,
     borderRadius: 8,
     alignItems: "center",
-    margin: 10,
+    marginTop: 16,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
   },
-  buttonText: {
-    color: "#fff",
+  skipButtonText: {
+    color: "#666",
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "500",
+  },
+  helperText: {
+    fontSize: 14,
+    color: "#999",
+    textAlign: "center",
+    marginTop: 24,
+    lineHeight: 20,
+    maxWidth: 280,
   },
 });
