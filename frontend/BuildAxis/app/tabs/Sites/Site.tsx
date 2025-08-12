@@ -1,20 +1,21 @@
+import { Safe_area } from "@/Components/Common/safeArea";
+import { CompanyBar } from "@/Components/reusable";
+import { Site_box } from "@/Components/Sites/siteBox";
+import { FontAwesome6, Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React from "react";
 import {
-  View,
-  Text,
+  FlatList,
+  StatusBar,
   StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
-  FlatList,
+  View,
 } from "react-native";
-import { StatusBar } from "react-native"; // ✅ Import StatusBar
-import { FontAwesome6, Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { CompanyBar } from "@/Components/reusable";
-import { Safe_area } from "@/Components/Common/safe_area";
-import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Site_box } from "@/Components/Sites/site_box";
-import Colors from "@/Thems/color";
+
+const router = useRouter();
 
 export default function Site() {
   const router = useRouter();

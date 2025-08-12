@@ -1,21 +1,21 @@
+import { Safe_area } from "@/Components/Common/safeArea";
+import Colors from "@/Thems/color";
+import { FontAwesome6 } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  StatusBar,
-  SafeAreaView,
-  Image,
-  ScrollView,
-  Alert,
-  ImageBackground,
+    Alert,
+    Image,
+    ImageBackground,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { TextInputs } from "../common/input_textbox";
-import { FontAwesome6 } from "@expo/vector-icons";
-import { Safe_area } from "@/Components/Common/safe_area";
-import Colors from "@/Thems/color";
 
 const ProfilePage = () => {
   const router = useRouter();
