@@ -12,6 +12,7 @@ const Colors = {
   success: "#34C759",
   error: "#FF3B30",
   warning: "#FFCC00",
+  boxex:["","",""]
   
 };
 
