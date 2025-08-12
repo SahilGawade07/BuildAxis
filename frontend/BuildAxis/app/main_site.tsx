@@ -16,8 +16,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Task_Box } from "@/Components/Sites/task_box";
 import { Inventory } from "@/Components/Sites/Inventory_screen";
-import Labour_list from"@/Components/Sites/labour_scree"
+import Labour_list from "@/Components/Sites/labour_scree"
 import AttendanceSummary from "@/Components/Sites/attandance_screen"
+import Report from "@/Components/Sites/report"
 export default function Main_Site() {
   const router = useRouter();
   const [active, setActive] = useState("Assign Task");
@@ -57,23 +58,19 @@ export default function Main_Site() {
         );
       case "Report":
         return (
-          <View style={styles.pageBox}>
-            <Text style={styles.pageText}>Report Screen Content</Text>
-          </View>
+          <Report />
         );
       case "Attendance":
         return (
-          <View style={styles.pageBox}>
-            <Text style={styles.pageText}>Attendance Screen Content</Text>
-          </View>
+          <AttendanceSummary />
         );
       case "Labour":
         return (
-<Labour_list/>
+          <Labour_list />
         );
       case "Inventory":
         return (
-<Inventory/>
+          <Inventory />
         );
       case "Material":
         return (

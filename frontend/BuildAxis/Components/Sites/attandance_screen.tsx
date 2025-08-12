@@ -16,7 +16,11 @@ export default function AttendanceSummary() {
         
         {/* Present */}
         <View style={[styles.card, { backgroundColor: "#E6F9EF" }]}>
-          <Ionicons name="people-outline" size={32} color="#28A745" />
+          <View style={{backgroundColor:"#ccc" }}>
+            <Ionicons name="people-outline" size={32} color="#28A745" />
+
+          </View>
+          
           <Text style={styles.cardTitle}>Present</Text>
           <Text style={styles.cardNumber}>155</Text>
         </View>
