@@ -15,7 +15,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Task_Box } from "@/Components/Sites/task_box";
-
+import { Inventory } from "@/Components/Sites/Inventory_screen";
+import Labour_list from"@/Components/Sites/labour_scree"
+import AttendanceSummary from "@/Components/Sites/attandance_screen"
 export default function Main_Site() {
   const router = useRouter();
   const [active, setActive] = useState("Assign Task");
@@ -26,6 +28,7 @@ export default function Main_Site() {
     "Report",
     "Attendance",
     "Labour",
+    "Inventory",
     "Material",
     "Expencess",
   ];
@@ -49,7 +52,7 @@ export default function Main_Site() {
             data={projects}
             renderItem={Task_Box}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={{ paddingBottom: 20 }}
+            contentContainerStyle={{ paddingTop: 10 }}
           />
         );
       case "Report":(
@@ -65,9 +68,11 @@ export default function Main_Site() {
         );
       case "Labour":
         return (
-          <View style={styles.pageBox}>
-            <Text style={styles.pageText}>Labour Screen Content</Text>
-          </View>
+<Labour_list/>
+        );
+      case "Inventory":
+        return (
+<Inventory/>
         );
       case "Material":
         return (
@@ -88,7 +93,7 @@ export default function Main_Site() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Safe_area  />
+      <Safe_area />
       <CompanyBar />
       <Back_Text_Butt path="/tabs/Sites/Site" text="Site Name" />
 
@@ -156,7 +161,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     justifyContent: "center",
   },
-  
+
   pageBox: {
     flex: 1,
     justifyContent: "center",

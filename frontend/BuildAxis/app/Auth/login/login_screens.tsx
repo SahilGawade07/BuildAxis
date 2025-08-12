@@ -4,47 +4,49 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  Image,
+  StatusBar,
 } from "react-native";
-import { useRouter } from "expo-router"; 
+import { useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-// Importing custom reusable components
+// Import reusable components
 import { TextHeaderTop } from "../common/login_header";
 import { TextInputs } from "../common/input_textbox";
 import { PasswordTextInputs } from "../common/input_pass_textbox";
-import { TextHeaderSecondTop } from "../common/second_top_header";
 import { Continue } from "../common/continue_button";
-import { Signup_with } from "../common/Signup_with";
 import { SwitchScreens } from "../common/switch_to_signup";
-import { SafeAreaView } from "react-native-safe-area-context";
+
+const AppLogo = () => (
+  <View style={styles.logoContainer}>
+    <Image
+      source={require("../../../assets/images/logo.jpg")}
+      style={styles.logo}
+      resizeMode="contain"
+    />
+  </View>
+);
 
 export default function LoginScreen() {
-  const router = useRouter(); 
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [continueDisabled, setContinueDisabled] = useState(true);
+  const [err, setError] = useState("");
 
-  // State variables
-  const [email, setEmail] = useState(""); // Stores email input
-  const [password, setPassword] = useState(""); // Stores password input
-  const [continueDisabled, setContinueDisabled] = useState(true); // Controls Continue button enable/disable
-  const [err, setError] = useState(""); // Stores validation error messages
-
-  // Runs every time email or password changes
   useEffect(() => {
-    setError(""); // Clear any previous error
-    setContinueDisabled(true); // Disable button by default
+    setError("");
+    setContinueDisabled(true);
 
-    // Validation: Disable button if fields are empty or invalid
     if (!email || !password) return;
     if (!email.includes("@") || !email.includes(".")) return;
     if (password.length < 6) return;
 
-    // If all validations pass → enable Continue button
     setContinueDisabled(false);
   }, [email, password]);
 
-  // Called when user presses the Continue button
-  const handleSignup = () => {
-    setError(""); // Clear error before checking
-
-    // Field validation
+  const handleLogin = () => {
+    setError("");
     if (!email || !password) {
       setError("All fields are required");
       return;
@@ -58,109 +60,139 @@ export default function LoginScreen() {
       return;
     }
 
-    // If valid  proceed to submission
-    handleSubmit();
-  };
-
-  // Function to navigate to signup screen
-  const handleSubmit = () => {
-    router.push("/Auth/sign_up/sign_up");
+    // Navigate to next screen
+    router.push("/Auth/common/Signup_with");
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Top heading */}
-      <TextHeaderTop text="Login" />
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />{" "}
+      <View style={styles.centeredContent}>
+        {/* Logo */}
+        <AppLogo />
 
-      {/* Subheading */}
-      <TextHeaderSecondTop text="Join our community and experience a seamless way of finding your relationship" />
+        {/* Headers */}
+        <TextHeaderTop text="Welcome Back" style={styles.headerTop} />
+        <Text style={styles.subHeader}>Log in to your BuildAxis account</Text>
 
-      {/* Email Input */}
-      <TextInputs
-        value={email}
-        onChangeText={setEmail}
-        placeholder="Enter your Email"
-        keyboardType="email-address"
-        textname="Email"
-      />
+        {/* Form */}
+        <View style={styles.form}>
+          <TextInputs
+            value={email}
+            onChangeText={setEmail}
+            placeholder="Enter your email"
+            keyboardType="email-address"
+            textname="Email"
+            icon="mail-outline"
+          />
 
-      {/* Password Input */}
-      <PasswordTextInputs
-        value={password}
-        onChangeText={setPassword}
-        placeholder="Enter your Password"
-        keyboardType="default"
-        textname="Password"
-      />
+          <PasswordTextInputs
+            value={password}
+            onChangeText={setPassword}
+            placeholder="Enter your password"
+            textname="Password"
+            icon="lock-closed-outline"
+          />
 
-      {/* Forgot Password Link */}
-      <TouchableOpacity>
-        <Text style={styles.forgotText}>Forgot Password?</Text>
-      </TouchableOpacity>
+          {/* Forgot Password */}
+          <TouchableOpacity>
+            <Text style={styles.forgotText}>Forgot password?</Text>
+          </TouchableOpacity>
 
-      {/* Error message */}
-      {err ? <Text style={styles.error}>{err}</Text> : null}
+          {/* Error Message */}
+          {err ? <Text style={styles.error}>{err}</Text> : null}
 
-      {/* Continue Button */}
-      <Continue
-        text="Login in"
-        touchable={continueDisabled} // This controls button disable state
-        onPresss={handleSignup}
-      />
+          {/* Continue Button */}
+          <Continue
+            text="Continue"
+            touchable={!continueDisabled}
+            onPresss={handleLogin}
+          />
+        </View>
 
-      {/* Divider: OR */}
-      <View style={styles.orContainer}>
-        <View style={styles.line} />
-        <Text style={styles.orText}>OR</Text>
-        <View style={styles.line} />
+        {/* Sign Up Link */}
+        <SwitchScreens
+          text1="Don’t have an account?"
+          text2="Sign up"
+          path="/Auth/sign_up/sign_up"
+        />
       </View>
-
-      {/* Social Login buttons */}
-      <Signup_with name="logo-apple" text="Login with Apple" />
-      <Signup_with name="logo-google" text="Login with Google" />
-
-      {/* Switch to Register Screen link */}
-      <SwitchScreens
-        text1="Haven't registered yet?"
-        text2="Register"
-        path="/Auth/sign_up/sign_up"
-      />
     </SafeAreaView>
   );
 }
 
-// Styles for the screen
 const styles = StyleSheet.create({
   container: {
-    padding: 24,
     flex: 1,
-    marginTop: 25,
-    backgroundColor: "#fff",
+    backgroundColor: "#f9f9fb",
+    paddingHorizontal: 24,
+  },
+  centeredContent: {
+    flex: 1,
+    justifyContent: "center", // Centers content vertically
+    alignItems: "center", // Centers content horizontally
+  },
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  logo: {
+    width: 80,
+    height: 80,
+    borderRadius: 20,
+    backgroundColor: "#e3f2fd",
+    padding: 8,
+  },
+  headerTop: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#1a1a1a",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  subHeader: {
+    fontSize: 16,
+    color: "#666",
+    textAlign: "center",
+    marginBottom: 32,
+    lineHeight: 22,
+  },
+  form: {
+    width: "100%",
+    maxWidth: 320, // Keeps form narrow and centered on larger screens
   },
   forgotText: {
-    alignSelf: "flex-end",
-    marginTop: 8,
-    color: "#999",
     fontSize: 14,
+    color: "#1976D2", // Google Blue
+    textAlign: "right",
+    marginTop: 8,
+    fontWeight: "500",
+  },
+  error: {
+    color: "#D32F2F", // Material Red
+    fontSize: 14,
+    marginTop: 8,
+    textAlign: "center",
   },
   orContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 24,
+    paddingHorizontal: 16,
   },
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: "#ddd",
+    backgroundColor: "#BDBDBD",
   },
   orText: {
     marginHorizontal: 12,
-    color: "#999",
     fontSize: 14,
+    color: "#757575",
+    fontWeight: "500",
   },
-  error: {
-    color: "red",
-    marginTop: 8,
-    fontSize: 14,
+  socialButtons: {
+    gap: 12,
+    marginBottom: 20,
   },
 });

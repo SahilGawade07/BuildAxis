@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { Task } from "../../models/Task";
 import { Site } from "../../models/Site";
 import { User } from "../../models/User";
+import { Labour } from "../../models/Labour";
 import { Types } from "mongoose";
 
 export const checkSiteAccess = async (
@@ -97,10 +98,10 @@ export const createTask = async (req: Request, res: Response) => {
   try {
     const {
       title,
-      supervisors,
-      images,
       site,
-      assignedTo,
+      supervisors,
+      assignedToSupervisors,
+      assignedToLabourers,
       status,
       priority,
       due,
@@ -111,6 +112,7 @@ export const createTask = async (req: Request, res: Response) => {
 
     const user = (req as any).dbUser;
 
+    // ✅ Validate required fields
     if (!title || !site) {
       return res.status(400).json({
         success: false,
@@ -118,41 +120,72 @@ export const createTask = async (req: Request, res: Response) => {
       });
     }
 
-    // Validate assigned user belongs to same organization
-    if (assignedTo) {
-      const assignedUser = await User.findById(assignedTo);
-      if (!assignedUser || String(assignedUser.orgId) !== String(user.orgId)) {
-        return res.status(400).json({
-          success: false,
-          message: "Assigned user not found or not in your organization",
-        });
-      }
-    }
+    const supervisorAssignIds = Array.isArray(assignedToSupervisors)
+      ? assignedToSupervisors
+      : [];
 
-    // Validate supervisors belong to same organization
-    if (supervisors && supervisors.length > 0) {
-      const supervisorUsers = await User.find({
-        _id: { $in: supervisors },
+    if (supervisorAssignIds.length > 0) {
+      const supervisorsToAssign = await User.find({
+        _id: { $in: supervisorAssignIds },
         orgId: user.orgId,
         role: "supervisor",
       });
 
-      if (supervisorUsers.length !== supervisors.length) {
+      if (supervisorsToAssign.length !== supervisorAssignIds.length) {
         return res.status(400).json({
           success: false,
           message:
-            "One or more supervisors not found or not in your organization",
+            "One or more assigned supervisors are invalid, not in your organization, or not supervisors",
         });
       }
     }
 
+    // --- Validate assignedToLabourers ---
+    const labourerAssignIds = Array.isArray(assignedToLabourers)
+      ? assignedToLabourers
+      : [];
+
+    if (labourerAssignIds.length > 0) {
+      const labourersToAssign = await Labour.find({
+        _id: { $in: labourerAssignIds },
+        orgId: user.orgId,
+      });
+
+      if (labourersToAssign.length !== labourerAssignIds.length) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "One or more assigned labourers are invalid or not in your organization",
+        });
+      }
+    }
+
+    // --- Validate supervisors (task overseers) ---
+    const supervisorIds = Array.isArray(supervisors) ? supervisors : [];
+    if (supervisorIds.length > 0) {
+      const validSupervisors = await User.find({
+        _id: { $in: supervisorIds },
+        orgId: user.orgId,
+        role: "supervisor",
+      });
+
+      if (validSupervisors.length !== supervisorIds.length) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "One or more supervisors (overseers) are invalid or not in your organization",
+        });
+      }
+    }
+
+    // --- Create the task ---
     const newTask = await Task.create({
       title,
-      supervisors: supervisors || [],
-      images: images || [],
+      supervisors: supervisorIds,
       site,
       createdBy: user._id,
-      assignedTo,
+      assignedToSupervisors: supervisorAssignIds,
+      assignedToLabourers: labourerAssignIds,
       status: status || "open",
       priority: priority || "medium",
       due,
@@ -164,8 +197,9 @@ export const createTask = async (req: Request, res: Response) => {
     const populatedTask = await Task.findById(newTask._id)
       .populate("site", "name location")
       .populate("createdBy", "fName lName email")
-      .populate("assignedTo", "fName lName email")
-      .populate("supervisors", "fName lName email");
+      .populate("assignedToSupervisors", "fName lName email role") // Populate assigned supervisors
+      .populate("assignedToLabourers", "fName lName phone email") // Adjust fields as per Labour schema
+      .populate("supervisors", "fName lName email"); // Task overseers
 
     return res.status(201).json({
       success: true,
@@ -173,6 +207,7 @@ export const createTask = async (req: Request, res: Response) => {
       data: populatedTask,
     });
   } catch (error) {
+    console.error("Error creating task:", error);
     return res.status(500).json({
       success: false,
       message: "Server error",
@@ -181,7 +216,6 @@ export const createTask = async (req: Request, res: Response) => {
   }
 };
 
-// Get Task by ID
 export const getTask = async (req: Request, res: Response) => {
   try {
     const task = (req as any).task;
