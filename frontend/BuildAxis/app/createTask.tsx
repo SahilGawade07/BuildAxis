@@ -1,22 +1,21 @@
+import { Picker } from "@react-native-picker/picker";
 import React, { useState } from "react";
 import {
-  View,
-  Text,
   ScrollView,
   StyleSheet,
-  
+  Text,
+  View,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Reusable components
-import { CompanyBar } from "@/Components/reusable";
-import { Safe_area } from "@/Components/Common/safe_area";
-import { TextInputs } from "./Auth/common/input_textbox";
-import Back_Text_Butt from "@/Components/Common/back_butt";
 import Add_items from "@/Components/Common/add_item";
-import Upload_img from "@/Components/Common/upload_images";
-import Submit_bbutt from "@/Components/Common/Submit_butt";
+import Back_Text_Butt from "@/Components/Common/backBtn";
+import { Safe_area } from "@/Components/Common/safeArea";
+import Submit_bbutt from "@/Components/Common/SubmitBtn";
+import Upload_img from "@/Components/Common/uploadImages";
+import { CompanyBar } from "@/Components/reusable";
+import { TextInputs } from "./Auth/common/input_textbox";
 
 export default function CreateTaskScreen() {
   // State for dropdown
@@ -35,7 +34,7 @@ export default function CreateTaskScreen() {
       <CompanyBar />
 
       {/* Back Button + Title */}
-      <Back_Text_Butt path="/tabs/Sites/Site" text="Create Task" />
+      <Back_Text_Butt path="" text="Create Task" />
 
       <ScrollView style={styles.form} showsVerticalScrollIndicator={false}>
         

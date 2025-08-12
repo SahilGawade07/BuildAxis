@@ -1,23 +1,25 @@
-import React, { useState, useEffect } from "react";
+import Back_Text_Butt from "@/Components/Common/backBtn";
+import { Safe_area } from "@/Components/Common/safeArea";
+import { CompanyBar } from "@/Components/reusable";
+import AttendanceSummary from "@/Components/Sites/attandanceScreen";
+import { Inventory } from "@/Components/Sites/InventoryScreen";
+import Labour_list from "@/Components/Sites/labourScreen";
+import { Task_Box } from "@/Components/Sites/taskBox";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { ExpencessScreen } from "@/Components/Sites/expencessScreen"
+import ItemTable from "@/Components/Sites/itemScreen"
+import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
+  FlatList,
+  Image,
   ScrollView,
   StyleSheet,
-  Image,
+  Text,
   TouchableOpacity,
-  FlatList,
+  View,
 } from "react-native";
-import { CompanyBar } from "@/Components/reusable";
-import { Safe_area } from "@/Components/Common/safe_area";
-import Back_Text_Butt from "@/Components/Common/back_butt";
-import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
-import { Task_Box } from "@/Components/Sites/task_box";
-import { Inventory } from "@/Components/Sites/Inventory_screen";
-import Labour_list from "@/Components/Sites/labour_scree"
-import AttendanceSummary from "@/Components/Sites/attandance_screen"
 export default function Main_Site() {
   const router = useRouter();
   const [active, setActive] = useState("Assign Task");
@@ -75,15 +77,11 @@ export default function Main_Site() {
         );
       case "Material":
         return (
-          <View style={styles.pageBox}>
-            <Text style={styles.pageText}>Material Screen Content</Text>
-          </View>
+          <ItemTable />
         );
       case "Expencess":
         return (
-          <View style={styles.pageBox}>
-            <Text style={styles.pageText}>Expenses Screen Content</Text>
-          </View>
+          <ExpencessScreen />
         );
       default:
         return null;
@@ -97,10 +95,10 @@ export default function Main_Site() {
       <Back_Text_Butt path="/tabs/Sites/Site" text="Site Name" />
 
       {/* Header Image */}
-      <View style={{ height: 300, padding: 5, alignItems: "center" }}>
+      <View style={{ height: 200, padding: 5, alignItems: "center" }}>
         <Image
           source={require("@/assets/images/Construction.png")}
-          style={{ width: 450, height: "100%" }}
+          style={{ width: "100%", height: "100%" }}
         />
       </View>
 

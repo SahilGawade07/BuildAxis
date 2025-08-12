@@ -3,8 +3,7 @@ import {
   View,Text,Image,StyleSheet,TouchableOpacity,StatusBar,
 } from "react-native";
 import Colors from "@/Thems/color";
-import Fonts from "@/Thems/font";
-import { Ionicons } from "@expo/vector-icons";
+
 
 //This is top company Bar
 export function CompanyBar() {
