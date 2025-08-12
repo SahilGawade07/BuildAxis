@@ -52,10 +52,7 @@ export default function Site() {
   return (
     <SafeAreaView style={styles.container}>
       {/* ✅ Set Status Bar color independently */}
-      <StatusBar 
-        backgroundColor="#0247D3"  // 🔵 Blue status bar (Android)
-        barStyle="light-content"  // Light text/icons (white)
-      />
+
 
       {/* Custom Safe Area (if needed) */}
       <Safe_area />

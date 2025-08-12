@@ -91,6 +91,7 @@ export default function Main_Site() {
   return (
     <SafeAreaView style={styles.container}>
       <Safe_area />
+       <ScrollView>
       <CompanyBar />
       <Back_Text_Butt path="/tabs/Sites/Site" text="Site Name" />
 
@@ -104,6 +105,7 @@ export default function Main_Site() {
 
       {/* Menu */}
       <View style={{ flexDirection: "row" }}>
+    
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -128,6 +130,7 @@ export default function Main_Site() {
 
       {/* Page Content */}
       {renderPageContent()}
+      </ScrollView>
     </SafeAreaView>
   );
 }
