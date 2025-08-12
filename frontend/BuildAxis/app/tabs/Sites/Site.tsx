@@ -87,8 +87,18 @@ export default function Site() {
 
       {/* Floating Action Button */}
       <TouchableOpacity
-        style={styles.fab}
-        onPress={() => router.push("/create_task")}
+        style={{
+          height: 50,
+          width: 50,
+          borderRadius: 25,
+          backgroundColor: "#0247D3",
+          position: "absolute",
+          right: 20,
+          bottom: 40,
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+        onPress={() => { router.push("/createTask"); }}
       >
         <FontAwesome6 name="add" size={20} color="white" />
       </TouchableOpacity>
