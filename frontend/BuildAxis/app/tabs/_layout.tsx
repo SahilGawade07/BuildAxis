@@ -4,7 +4,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 import Home from "@/app/tabs/Home/home";
 import profile from "@/app/tabs/Profile/profile"
-import Site from "@/app/tabs/Sites/Site"
+import Site from "@/app/tabs/Sites/Site";
 
 
 const Tab = createBottomTabNavigator();

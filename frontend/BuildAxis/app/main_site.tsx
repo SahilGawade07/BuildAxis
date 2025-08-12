@@ -52,12 +52,11 @@ export default function Main_Site() {
             contentContainerStyle={{ paddingBottom: 20 }}
           />
         );
-      case "Report":
-        return (
-          <View style={styles.pageBox}>
+      case "Report":(
+        <View style={styles.pageBox}>
             <Text style={styles.pageText}>Report Screen Content</Text>
           </View>
-        );
+      );
       case "Attendance":
         return (
           <View style={styles.pageBox}>

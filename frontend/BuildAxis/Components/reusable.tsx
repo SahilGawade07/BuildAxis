@@ -23,6 +23,7 @@ export function CompanyBar() {
 }
 
 
+
 //This is 4 grid box
 export  function Overview ({ backgroundColor,circle_color,Ionicons_name,Ionicons_color,Text1,text2,text3}:any) {
     return(
@@ -40,6 +41,22 @@ export  function Overview ({ backgroundColor,circle_color,Ionicons_name,Ionicons
     )
 }
 
+
+// C:\Users\Shraddha Sawant\OneDrive\Desktop\internship\BuildAxis\frontend\BuildAxis\Components\reusable.tsx
+export function ReportCard({ type, name, dateRange }: any) {
+  return (
+    <>
+      <View style={[styles.card, { backgroundColor: Colors.lightGray }]}>
+        <View style={[styles.circle, { backgroundColor: Colors.blue }]}>
+          <Ionicons name="document-text" size={60} color={Colors.white} />
+        </View>
+        <Text style={styles.cardTitle}>{type}</Text>
+        <Text>{name}</Text>
+        <Text>{dateRange}</Text>
+      </View>
+    </>
+  );
+}
 
 const styles = StyleSheet.create({
 
