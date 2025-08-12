@@ -12,7 +12,7 @@ import {
 } from "react-native";
 
 export  const Task_Box = ({ item }: any) => (
-    <TouchableOpacity style={styles.sitecard} onPress={()=>{router.push("/main_site")}}>
+    <TouchableOpacity style={styles.sitecard} onPress={()=>{router.push("/tasksInfo")}}>
       {/* Card Header */}
       <View style={styles.cardHeader}>
         {/* Left side: Project image placeholder + name */}
