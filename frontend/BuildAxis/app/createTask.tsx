@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 // Reusable components
 import { CompanyBar } from "@/Components/reusable";
 import { Safe_area } from "@/Components/Common/safe_area";
-import { TextInputs } from "../app/Auth/common/input_textbox";
+import { TextInputs } from "./Auth/common/input_textbox";
 import Back_Text_Butt from "@/Components/Common/back_butt";
 import Add_items from "@/Components/Common/add_item";
 import Upload_img from "@/Components/Common/upload_images";

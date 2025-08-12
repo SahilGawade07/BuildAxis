@@ -12,7 +12,11 @@ const Colors = {
   success: "#34C759",
   error: "#FF3B30",
   warning: "#FFCC00",
-  
+  boxes01: ["#DBEDFD", "#B6DEFF", "#4682B4"],
+  boxes02: ["#F0FDF4", "#DCFCE7", "#27AE60"],
+  boxes03: ["#FEFCE8", "#FEF9C3", "#D4AC0D"],
+  boxes04: ["#FEF2F2", "#FEE2E2", "#C0392B"],
+
 };
 
 export default Colors;
