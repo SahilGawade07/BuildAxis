@@ -12,7 +12,7 @@ import {
 } from "react-native";
 
 export  const Site_box = ({ item }: any) => (
-    <TouchableOpacity style={styles.sitecard} onPress={()=>{router.push("/main_site")}}>
+    <TouchableOpacity style={styles.sitecard} onPress={()=>{router.push("/mainSite")}}>
       {/* Card Header */}
       <View style={styles.cardHeader}>
         {/* Left side: Project image placeholder + name */}

@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, SafeAreaView } from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons"; // Icons
+import Colors from "@/Thems/color"; // Make sure this exists
 
 export default function AttendanceSummary() {
   return (
@@ -15,26 +16,32 @@ export default function AttendanceSummary() {
       <View style={styles.cardContainer}>
         
         {/* Present */}
-        <View style={[styles.card, { backgroundColor: "#E6F9EF" }]}>
-          <Ionicons name="people-outline" size={32} color="#28A745" />
+        <View style={[styles.card, { backgroundColor: Colors.boxes02[0] }]}>
+          <View style={[styles.iconCircle, { backgroundColor: Colors.boxes02[0] }]}>
+            <Ionicons name="people-outline" size={28} color={Colors.boxes02[3]} />
+          </View>
           <Text style={styles.cardTitle}>Present</Text>
           <Text style={styles.cardNumber}>155</Text>
         </View>
 
         {/* Absent */}
         <View style={[styles.card, { backgroundColor: "#FDECEC" }]}>
-          <AntDesign name="user" size={32} color="#DC3545" />
+          <View style={[styles.iconCircle, { backgroundColor: "#FDECEC" }]}>
+            <AntDesign name="user" size={28} color="#DC3545" />
+          </View>
           <Text style={styles.cardTitle}>Absent</Text>
           <Text style={styles.cardNumber}>10</Text>
         </View>
 
         {/* Half Day */}
         <View style={[styles.card, { backgroundColor: "#FFF8E6" }]}>
-          <Ionicons name="time-outline" size={32} color="#D39E00" />
+          <View style={[styles.iconCircle, { backgroundColor: "#FFF8E6" }]}>
+            <Ionicons name="time-outline" size={28} color="#D39E00" />
+          </View>
           <Text style={styles.cardTitle}>Half Day</Text>
           <Text style={styles.cardNumber}>155</Text>
         </View>
-
+    
       </View>
     </SafeAreaView>
   );
@@ -66,6 +73,13 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     marginHorizontal: 4,
     borderRadius: 12,
+  },
+  iconCircle: {
+    height: 50,
+    width: 50,
+    borderRadius: 25,
+    alignItems: "center",
+    justifyContent: "center",
   },
   cardTitle: {
     fontSize: 14,

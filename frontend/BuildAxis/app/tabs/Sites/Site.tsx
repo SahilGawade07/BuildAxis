@@ -97,7 +97,7 @@ export default function Site() {
           alignItems: "center",
           justifyContent: "center"
         }}
-        onPress={() => { router.push("/create_task"); }}
+        onPress={() => { router.push("/createTask"); }}
       >
         <FontAwesome6 name="add" size={20} color="white" />
       </TouchableOpacity>
