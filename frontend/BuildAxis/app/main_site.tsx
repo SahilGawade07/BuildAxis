@@ -58,7 +58,9 @@ export default function Main_Site() {
         );
       case "Report":
         return (
-          <Report />
+          <View style={styles.pageBox}>
+            <Text style={styles.pageText}>Report Screen Content</Text>
+          </View>
         );
       case "Attendance":
         return (

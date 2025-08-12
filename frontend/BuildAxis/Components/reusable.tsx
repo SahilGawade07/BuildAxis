@@ -23,6 +23,7 @@ export function CompanyBar() {
 }
 
 
+
 //This is 4 grid box
 export  function Overview ({ backgroundColor,circle_color,Ionicons_name,Ionicons_color,Text1,text2,text3}:any) {
     return(
@@ -39,6 +40,7 @@ export  function Overview ({ backgroundColor,circle_color,Ionicons_name,Ionicons
          </>
     )
 }
+
 
 
 const styles = StyleSheet.create({
