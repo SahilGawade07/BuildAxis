@@ -124,31 +124,31 @@ export default function TaskDetailsScreen() {
 
                 <View style={styles.cardContainer}>
 
-                    {/* Present */}
+                    {/* Labours */}
                     <AttendancaceBox
                         backgroundColor={Colors.boxes02[0]}
                         circle_color={Colors.boxes02[1]}
                         Ionicons_name="people-outline"
                         Ionicons_color={Colors.boxes02[2]}
-                        Text1="Present"
+                        Text1="Labours"
                         text2="155"
                     />
-                    {/* Absent */}
+                    {/* expenses */}
                     <AttendancaceBox
                         backgroundColor={Colors.boxes04[0]}
                         circle_color={Colors.boxes04[1]}
                         Ionicons_name="people-outline"
                         Ionicons_color={Colors.boxes04[2]}
-                        Text1="Absent"
+                        Text1="Expenses"
                         text2="05"
                     />
-                    {/* Half Day */}
+                    {/* Attachments */}
                     <AttendancaceBox
                         backgroundColor={Colors.boxes03[0]}
                         circle_color={Colors.boxes03[1]}
-                        Ionicons_name="time-outline"
+                        Ionicons_name="attach"
                         Ionicons_color={Colors.boxes03[2]}
-                        Text1="Half Day"
+                        Text1="Attachments"
                         text2="155"
                     />
 
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "#002B5B",
         paddingVertical: 12,
-        paddingHorizontal: 10,
+        paddingHorizontal: 15,
     },
     logo: { width: 30, height: 30, marginRight: 10 },
     headerTitle: { color: "#fff", fontSize: 16, fontWeight: "600" },
