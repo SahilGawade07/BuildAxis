@@ -8,55 +8,32 @@ import {
 } from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
 
+// Define type for each item
+type MaterialItem = {
+  id: string;
+  name: string;
+  qty: string;
+  unit: string;
+  srNo: string;
+};
+
 export default function ItemTable() {
-  const data = [
-    {
-      id: "1",
-      name: "Bricks",
-      itemNumber: "Item #1",
-      qty: "10000",
-      unit: "pcs",
-      srNo: "1",
-      iconBg: "#E3F2FD",
-    },
-    {
-      id: "2",
-      name: "Cement",
-      itemNumber: "Item #2",
-      qty: "500",
-      unit: "bags",
-      srNo: "2",
-      iconBg: "#E8F5E8",
-    },
-    {
-      id: "3",
-      name: "Sand",
-      itemNumber: "Item #3",
-      qty: "20",
-      unit: "trucks",
-      srNo: "3",
-      iconBg: "#FFF3E0",
-    },
-    {
-      id: "4",
-      name: "Wood Planks",
-      itemNumber: "Item #4",
-      qty: "1500",
-      unit: "pcs",
-      srNo: "4",
-      iconBg: "#F3E5F5",
-    },
+  // Typed array
+  const data: MaterialItem[] = [
+    { id: "1", name: "Bricks", qty: "10000", unit: "pcs", srNo: "1" },
+    { id: "2", name: "Cement", qty: "500", unit: "bags", srNo: "2" },
+    { id: "3", name: "Sand", qty: "20", unit: "trucks", srNo: "3" },
+    { id: "4", name: "Wood Planks", qty: "1500", unit: "pcs", srNo: "4" },
   ];
 
-  const renderItem = ({ item }) => (
+  // Add type to renderItem parameter
+  const renderItem = ({ item }: { item: MaterialItem }) => (
     <View style={styles.itemCard}>
       <View style={styles.itemLeft}>
-        <View style={[styles.iconContainer, { backgroundColor: item.iconBg }]}>
-          <FontAwesome6 name={item.icon} size={20} color="#666" />
-        </View>
         <View style={styles.itemInfo}>
-          <Text style={styles.itemName}>{item.name}</Text>
-          <Text style={styles.itemNumber}>{item.itemNumber}</Text>
+          <Text style={styles.itemName}>
+            {item.srNo}. {item.name}
+          </Text>
         </View>
       </View>
       <View style={styles.itemRight}>
@@ -127,10 +104,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 1,
@@ -140,14 +114,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
   },
-  iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 16,
-  },
   itemInfo: {
     flex: 1,
   },
@@ -155,11 +121,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: "#333",
-    marginBottom: 4,
-  },
-  itemNumber: {
-    fontSize: 13,
-    color: "#888",
   },
   itemRight: {
     alignItems: "flex-end",
