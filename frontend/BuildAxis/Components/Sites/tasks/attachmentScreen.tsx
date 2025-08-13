@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,10 +6,13 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Addmaterial from "@/Components/Sites/tasks/common/addmaterial";
-
+import { BlurView } from "expo-blur";
+import Addtools from "../popupScreens/addToolsPopup";
+import Uploadblueprints from "@/Components/Sites/popupScreens/uploadBlueprints"
 export default function MaterialsScreen() {
   const data = [
     { id: "1", name: "Blue print" },
@@ -19,7 +22,15 @@ export default function MaterialsScreen() {
 
   ];
 
-  const renderItem = ({ item }:any) => (
+  const [popup, setpopup] = useState(false);
+
+  const activepopup = () => {
+    const update = !popup;
+    setpopup(update);
+
+  }
+
+  const renderItem = ({ item }: any) => (
     <View style={styles.item}>
       <View style={styles.imageBox}>
         <Ionicons name="image" size={40} color="#4A90E2" />
@@ -31,7 +42,7 @@ export default function MaterialsScreen() {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <Addmaterial text="Attachment" text2="Add attachments" />
+      <Addmaterial text="Attachment" text2="Add attachments" funcations={activepopup} />
 
 
       {/* Grid */}
@@ -43,6 +54,26 @@ export default function MaterialsScreen() {
         columnWrapperStyle={{ justifyContent: "space-between" }}
         contentContainerStyle={{ paddingTop: 10 }}
       />
+
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={popup}
+        onRequestClose={() => setpopup(false)}
+      >
+
+        <BlurView
+          style={[StyleSheet.absoluteFill, { backgroundColor: "rgba(65, 65, 65, 0.84)" }]}
+          tint="light"   // "light", "dark", "xlight"
+          intensity={20}
+        />
+        <View style={styles.overlay}>
+
+          <Uploadblueprints fun={activepopup} />
+        </View>
+      </Modal>
+
     </View>
   );
 }
@@ -78,4 +109,11 @@ const styles = StyleSheet.create({
     borderColor: "#EAF1FF",
   },
   itemText: { fontSize: 12, marginTop: 5, color: "#555" },
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    
+
+  },
 });

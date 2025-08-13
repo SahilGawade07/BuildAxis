@@ -2,9 +2,9 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import Home from "@/app/tabs/Home/home";
-import profile from "@/app/tabs/Profile/profile";
-import Site from "@/app/tabs/Sites/Site";
+import Home from "@/app/tabs/Home";
+import profile from "@/app/tabs/Profile";
+import Site from "@/app/tabs/Sites";
 
 const Tab = createBottomTabNavigator();
 
@@ -21,7 +21,7 @@ export default function TabNavigator() {
           height: 80,
         },
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
+          let iconName:any;
 
           switch (route.name) {
             case "Home":

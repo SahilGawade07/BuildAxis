@@ -17,6 +17,9 @@ import Labour_list from "@/Components/Sites/labourScreen";
 import ItemTable from "@/Components/Sites/itemScreen";
 import MaterialsScreen from "@/Components/Sites/tasks/attachmentScreen"
 import ImageScreen from "@/Components/Sites/tasks/ImageScreen";
+import CircularProgress from "@/Components/Sites/tasks/common/circleprgressbar"
+import { SafeAreaView } from "react-native-safe-area-context";
+
 export default function TaskDetailsScreen() {
     const members = [
         { id: 1, img: "https://randomuser.me/api/portraits/men/32.jpg" },
@@ -61,7 +64,7 @@ export default function TaskDetailsScreen() {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             {/* Header */}
             {/* Custom Safe Area (if needed) */}
             <Safe_area />
@@ -73,7 +76,7 @@ export default function TaskDetailsScreen() {
                 <View style={styles.taskRow}>
                     {/* Back Button + Task Name */}
                     <View style={{ flexDirection: "row", alignItems: "center" }}>
-                        <Ionicons name="arrow-back" size={20} color="black" />
+                        <Entypo name="chevron-left" size={30} color="black" />
                         <Text style={styles.taskName}>Task Name</Text>
                     </View>
 
@@ -84,32 +87,7 @@ export default function TaskDetailsScreen() {
                 {/* Progress + Members */}
                 <View style={styles.progressRow}>
                     {/* Progress Circle */}
-                    <View style={styles.progressContainer}>
-                        <Svg height="60" width="60">
-                            <Circle
-                                stroke="#ddd"
-                                fill="none"
-                                cx="30"
-                                cy="30"
-                                r={radius}
-                                strokeWidth={strokeWidth}
-                            />
-                            <Circle
-                                stroke="#007AFF"
-                                fill="none"
-                                cx="30"
-                                cy="30"
-                                r={radius}
-                                strokeWidth={strokeWidth}
-                                strokeDasharray={circumference}
-                                strokeDashoffset={strokeDashoffset}
-                                strokeLinecap="round"
-                            />
-                        </Svg>
-                        <View style={styles.progressTextContainer}>
-                            <Text style={styles.progressText}>40%</Text>
-                        </View>
-                    </View>
+                    <CircularProgress />
 
                     {/* Members */}
                     <View style={styles.memberRow}>
@@ -126,28 +104,28 @@ export default function TaskDetailsScreen() {
 
                     {/* Labours */}
                     <AttendancaceBox
-                        backgroundColor={Colors.boxes02[0]}
-                        circle_color={Colors.boxes02[1]}
+                        backgroundColor={Colors.boxes03[0]}
+                        circle_color={Colors.boxes03[1]}
                         Ionicons_name="people-outline"
-                        Ionicons_color={Colors.boxes02[2]}
+                        Ionicons_color={Colors.boxes03[2]}
                         Text1="Labours"
                         text2="155"
                     />
                     {/* expenses */}
                     <AttendancaceBox
-                        backgroundColor={Colors.boxes04[0]}
-                        circle_color={Colors.boxes04[1]}
+                        backgroundColor={Colors.boxes02[0]}
+                        circle_color={Colors.boxes02[1]}
                         Ionicons_name="people-outline"
-                        Ionicons_color={Colors.boxes04[2]}
+                        Ionicons_color={Colors.boxes02[2]}
                         Text1="Expenses"
                         text2="05"
                     />
                     {/* Attachments */}
                     <AttendancaceBox
-                        backgroundColor={Colors.boxes03[0]}
-                        circle_color={Colors.boxes03[1]}
+                        backgroundColor={Colors.boxes01[0]}
+                        circle_color={Colors.boxes01[1]}
                         Ionicons_name="attach"
-                        Ionicons_color={Colors.boxes03[2]}
+                        Ionicons_color={Colors.boxes01[2]}
                         Text1="Attachments"
                         text2="155"
                     />
@@ -175,7 +153,7 @@ export default function TaskDetailsScreen() {
             <ScrollView>
                 {renderPageContent()}
             </ScrollView>
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -197,11 +175,11 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         alignItems: "center",
     },
-    taskName: { fontSize: 15, fontWeight: "600", marginLeft: 5 },
-    userName: { fontSize: 14, color: "#555" },
+    taskName: { fontSize: 18, fontWeight: "600", marginLeft: 5 },
+    userName: { fontSize: 16, color: "#555",fontWeight: "600" },
     progressRow: {
         flexDirection: "row",
-        justifyContent: "space-between",
+        justifyContent: "space-evenly",
         paddingHorizontal: 12,
         alignItems: "center",
     },
@@ -214,9 +192,9 @@ const styles = StyleSheet.create({
     progressText: { fontSize: 12, fontWeight: "600" },
     memberRow: { flexDirection: "row", alignItems: "center" },
     memberImg: {
-        width: 30,
-        height: 30,
-        borderRadius: 15,
+        width: 40,
+        height: 40,
+        borderRadius: 20,
         marginRight: -10,
         borderWidth: 2,
         borderColor: "#fff",
@@ -230,7 +208,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#fff",
-        marginLeft: 5,
+        marginLeft: 15,
     },
     cardRow: {
         flexDirection: "row",

@@ -6,7 +6,7 @@ import AttendancaceBox from "@/Components/Common/attandanceBox"
 import Submit_bbutt from "../Common/SubmitBtn";
 import LabourList from "../Common/labourList";
 import { BlurView } from "expo-blur";
-
+import AttendanceModal from "@/Components/Sites/popupScreens/attandancePopup"
 const data = [
   { id: "1", name: "Shraddha Swant" },
   { id: "2", name: "Shraddha Swant" },
@@ -30,7 +30,8 @@ export default function AttendanceSummary() {
   const [popup, setpopup] = useState(false);
 
   const activepopup = () => {
-    setpopup(true)
+    const update=!popup;
+    setpopup(update);
 
   }
   return (
@@ -112,7 +113,7 @@ export default function AttendanceSummary() {
           intensity={20}
         />
         <View style={styles.overlay}>
-          <View style={styles.popup}>
+          {/* <View style={styles.popup}>
             <Text style={styles.popupTitle}>Hello!</Text>
             <Text>This is a popup screen in React Native.</Text>
 
@@ -122,7 +123,8 @@ export default function AttendanceSummary() {
             >
               <Text style={styles.buttonText}>Close</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
+          <AttendanceModal fun={activepopup}/>
         </View>
       </Modal>
 

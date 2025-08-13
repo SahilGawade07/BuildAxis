@@ -7,11 +7,11 @@ type AddMaterialProps = {
   onPress?: () => void;
 };
 
-export default function AddMaterial({ text, text2}: any) {
+export default function AddMaterial({ text, text2,funcations}: any) {
   return (
       <View style={styles.header}>
         <Text style={styles.headerTitle}>{text}</Text>
-        <TouchableOpacity style={styles.addButton}>
+        <TouchableOpacity style={styles.addButton} onPress={funcations}>
           <FontAwesome6 name="plus" size={16} color="#0247D3" />
           <Text style={styles.addButtonText}>{text2}</Text>
         </TouchableOpacity>

@@ -3,20 +3,20 @@ import { View, Text, StyleSheet } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 
 export default function CircularProgress({ percentage = 40 }) {
-  const radius = 50;
+  const radius = 60;
   const strokeWidth = 10;
   const circumference = 2 * Math.PI * radius;
   const progress = (percentage / 100) * circumference;
 
   return (
     <View style={styles.container}>
-      <Svg width={120} height={120}>
+      <Svg width={140} height={140}>
         {/* Background circle */}
         <Circle
           stroke="#f4f0ff"
           fill="none"
-          cx="60"
-          cy="60"
+          cx="70"
+          cy="70"
           r={radius}
           strokeWidth={strokeWidth}
         />
@@ -24,15 +24,15 @@ export default function CircularProgress({ percentage = 40 }) {
         <Circle
           stroke="#0057ff"
           fill="none"
-          cx="60"
-          cy="60"
+          cx="70"
+          cy="70"
           r={radius}
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           strokeDashoffset={circumference - progress}
           strokeLinecap="round"
           rotation="-90"
-          origin="60,60"
+          origin="70,70"
         />
       </Svg>
       <View style={styles.labelContainer}>

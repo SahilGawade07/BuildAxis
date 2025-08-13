@@ -77,7 +77,7 @@ export default function SignUpScreen() {
 
   // Navigate after validation
   const handleSubmit = () => {
-    router.push("/Auth/create_org/create_org");
+    router.push("/Auth/create_org");
   };
 
   return (
