@@ -8,6 +8,7 @@ import {
   Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import Addmaterial from "@/Components/Sites/tasks/common/addmaterial";
 
 export default function MaterialsScreen() {
   const data = [
@@ -31,13 +32,8 @@ export default function MaterialsScreen() {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.headerRow}>
-        <Text style={styles.headerText}>Materials</Text>
-        <TouchableOpacity style={styles.addBtn}>
-          <Ionicons name="add-circle-outline" size={18} color="#007AFF" />
-          <Text style={styles.addText}>Add Material</Text>
-        </TouchableOpacity>
-      </View>
+      <Addmaterial text="Attachment" text2="Add attachments" />
+
 
       {/* Grid */}
       <FlatList

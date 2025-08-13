@@ -6,7 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
-import { FontAwesome6 } from "@expo/vector-icons";
+import Addmaterial from "./tasks/common/addmaterial";
 
 // Define type for each item
 type MaterialItem = {
@@ -46,13 +46,7 @@ export default function ItemTable() {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Materials</Text>
-        <TouchableOpacity style={styles.addButton}>
-          <FontAwesome6 name="plus" size={16} color="#0247D3" />
-          <Text style={styles.addButtonText}>Add Material</Text>
-        </TouchableOpacity>
-      </View>
+      <Addmaterial text="material" text2="Add materials" />
 
       {/* List */}
       <FlatList
