@@ -15,8 +15,7 @@ export default function MaterialsScreen() {
     { id: "2", name: "Blue print" },
     { id: "3", name: "Blue print" },
     { id: "4", name: "Blue print" },
-    { id: "5", name: "Blue print" },
-    { id: "6", name: "Blue print" },
+
   ];
 
   const renderItem = ({ item }:any) => (
@@ -64,8 +63,8 @@ const styles = StyleSheet.create({
   addText: { fontSize: 13, color: "#007AFF", marginLeft: 4 },
   item: { alignItems: "center", marginBottom: 20 },
   imageBox: {
-    width: 80,
-    height: 80,
+    width: 110,
+    height: 110,
     borderRadius: 8,
     backgroundColor: "#EAF1FF",
     justifyContent: "center",
