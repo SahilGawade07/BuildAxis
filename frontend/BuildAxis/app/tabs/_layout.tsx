@@ -3,9 +3,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import Home from "@/app/tabs/Home/home";
-import profile from "@/app/tabs/Profile/profile"
+import profile from "@/app/tabs/Profile/profile";
 import Site from "@/app/tabs/Sites/Site";
-
 
 const Tab = createBottomTabNavigator();
 
@@ -15,17 +14,21 @@ export default function TabNavigator() {
       screenOptions={({ route }) => ({
         tabBarStyle: {
           backgroundColor: "white",
-          borderTopWidth: 0,
+          borderTopWidth: 0.5,
+          borderTopColor: "#E5E5EA",
+          paddingTop: 8,
+          paddingBottom: 20,
+          height: 80,
         },
-        tabBarIcon: ({ color, size }) => {
-          let iconName: string;
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
 
           switch (route.name) {
             case "Home":
               iconName = "home-outline";
               break;
-            case "discover":
-              iconName = "compass-outline";
+            case "Sites":
+              iconName = "location-outline";
               break;
             case "Profile":
               iconName = "person-outline";
@@ -34,11 +37,18 @@ export default function TabNavigator() {
               iconName = "ellipse-outline";
           }
 
-          return <Ionicons name={iconName as any} size={size} color={color} />;
+          return (
+            <Ionicons name={iconName} size={focused ? 26 : 24} color={color} />
+          );
         },
-        tabBarActiveTintColor: "#0247D3",
-        tabBarInactiveTintColor: "black",
+        tabBarActiveTintColor: "#007AFF",
+        tabBarInactiveTintColor: "#8E8E93",
         headerShown: false,
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontWeight: "400",
+          marginTop: 4,
+        },
       })}
     >
       <Tab.Screen name="Home" component={Home} />

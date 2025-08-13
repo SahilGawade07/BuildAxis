@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, StyleSheet, SafeAreaView, FlatList } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons"; // Icons
 import Colors from "@/Thems/color"; // Make sure this exists
 import AttendancaceBox from "@/Components/Common/attandanceBox"
@@ -10,16 +10,20 @@ const data = [
   { id: "2", name: "Shraddha Swant" },
   { id: "3", name: "Shraddha Swant" },
   { id: "4", name: "Shraddha Swant" },
-    { id: "1", name: "Shraddha Swant" },
+  { id: "1", name: "Shraddha Swant" },
   { id: "2", name: "Shraddha Swant" },
   { id: "3", name: "Shraddha Swant" },
   { id: "4", name: "Shraddha Swant" },
-    { id: "1", name: "Shraddha Swant" },
+  { id: "1", name: "Shraddha Swant" },
   { id: "2", name: "Shraddha Swant" },
   { id: "3", name: "Shraddha Swant" },
   { id: "4", name: "Shraddha Swant" },
 ];
+
+// const [active, setActive] = useState("Present");
+
 export default function AttendanceSummary() {
+  const [active, setActive] = useState("Present");
   return (
     <SafeAreaView style={styles.container}>
       {/* Date */}
@@ -60,22 +64,28 @@ export default function AttendanceSummary() {
         />
 
 
-
-
-
-
-
-
-
-
-
       </View>
-      
-                    <FlatList
-                data={data}
-                renderItem={LabourList}
-                keyExtractor={(item) => item.id}
-              />
+
+      <View style={{flexDirection:"row"}}>
+        {["Present", "Absent"].map((item) => (
+          <TouchableOpacity
+            key={item}
+            onPress={() => setActive(item)}
+            style={styles.menuItem}
+          >
+            <Text style={[styles.text, active === item && styles.activeText1]}>
+              {item}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+
+      <FlatList
+        data={data}
+        renderItem={LabourList}
+        keyExtractor={(item) => item.id}
+      />
       <Submit_bbutt text="Mark Attandance" />
 
     </SafeAreaView>
@@ -125,5 +135,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginTop: 4,
+  },
+  menuItem: {
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  text: {
+    fontSize: 18,
+    color: "gray",
+  },
+  activeText1: {
+    color: "#000000ff",
+    textDecorationLine: "underline",
+    textDecorationColor: "#1976D2",
+    fontWeight: "500",
   },
 });

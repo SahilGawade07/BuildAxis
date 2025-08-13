@@ -18,6 +18,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const router = useRouter();
 
 export default function Site() {
+  const router = useRouter();
+
   const projects = [
     {
       id: "1",
@@ -52,9 +54,9 @@ export default function Site() {
   return (
     <SafeAreaView style={styles.container}>
       {/* ✅ Set Status Bar color independently */}
-      <StatusBar 
-        backgroundColor="#0247D3"  // 🔵 Blue status bar (Android)
-        barStyle="light-content"  // Light text/icons (white)
+      <StatusBar
+        backgroundColor="#0247D3" // 🔵 Blue status bar (Android)
+        barStyle="light-content" // Light text/icons (white)
       />
 
       {/* Custom Safe Area (if needed) */}
@@ -68,7 +70,12 @@ export default function Site() {
 
       {/* Search bar */}
       <View style={styles.searchContainer}>
-        <Ionicons name="search" size={18} color="#999" style={{ marginRight: 6 }} />
+        <Ionicons
+          name="search"
+          size={18}
+          color="#999"
+          style={{ marginRight: 6 }}
+        />
         <TextInput
           placeholder="Search"
           style={styles.searchInput}
@@ -95,9 +102,11 @@ export default function Site() {
           right: 20,
           bottom: 40,
           alignItems: "center",
-          justifyContent: "center"
+          justifyContent: "center",
         }}
-        onPress={() => { router.push("/createTask"); }}
+        onPress={() => {
+          router.push("/createTask");
+        }}
       >
         <FontAwesome6 name="add" size={20} color="white" />
       </TouchableOpacity>
