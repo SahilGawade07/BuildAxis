@@ -16,6 +16,7 @@ import Colors from "@/Thems/color";
 import Labour_list from "@/Components/Sites/labourScreen";
 import ItemTable from "@/Components/Sites/itemScreen";
 import MaterialsScreen from "@/Components/Sites/tasks/attachmentScreen"
+import ImageScreen from "@/Components/Sites/tasks/ImageScreen";
 export default function TaskDetailsScreen() {
     const members = [
         { id: 1, img: "https://randomuser.me/api/portraits/men/32.jpg" },
@@ -39,7 +40,7 @@ export default function TaskDetailsScreen() {
         switch (page) {
             case "Images":
                 return (
-                    <Text style={styles.sectionTitle}>Task Images</Text>
+                    <ImageScreen />
                 );
             case "Labours":
                 return (
@@ -51,7 +52,7 @@ export default function TaskDetailsScreen() {
                 );
             case "Attachment":
                 return (
-                    <MaterialsScreen/>
+                    <MaterialsScreen />
                 )
 
             default:
@@ -271,7 +272,7 @@ const styles = StyleSheet.create({
     cardContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
-        padding:15,
+        padding: 15,
     },
     menuItem: {
         paddingHorizontal: 10,
