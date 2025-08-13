@@ -276,10 +276,10 @@ const styles = StyleSheet.create({
     },
     menuItem: {
         paddingHorizontal: 5,
-        paddingVertical: 8,
+        paddingVertical: 2,
     },
     text: {
-        fontSize: 18,
+        fontSize: 15,
         color: "black",
     },
     activeText1: {

@@ -5,127 +5,112 @@ import {
   StyleSheet,
   ScrollView,
   Image,
-  Animated,
   Dimensions,
 } from "react-native";
 
 type TaskImage = { url: string };
+type Task = { images: TaskImage[]; description: string; date: string; time: string };
 
-// Mock API call
-const getTaskImages = async (): Promise<TaskImage[]> => {
+const getTasks = async (): Promise<Task[]> => {
   return [
-    { url: "https://images.unsplash.com/photo-1503387762-592deb58ef4e" },
-    { url: "https://images.unsplash.com/photo-1590490360182-c33d57733427" },
-    { url: "https://images.unsplash.com/photo-1556910103-1c02745aae4d" },
+    {
+      images: [
+        { url: "https://images.unsplash.com/photo-1503387762-592deb58ef4e" },
+        { url: "https://images.unsplash.com/photo-1590490360182-c33d57733427" },
+        { url: "https://images.unsplash.com/photo-1556910103-1c02745aae4d" },
+      ],
+      description:
+        "If you want the text itself to be blurred, you’d need a completely different approach using Skia or by rendering it as an image first.",
+      date: "2025-08-13",
+      time: "12:26 PM",
+    },
+    {
+      images: [
+        { url: "https://images.unsplash.com/photo-1517816428104-797678c7cf14" },
+        { url: "https://images.unsplash.com/photo-1532910404447-129d4b0dcd3b" },
+      ],
+      description:
+        "This is another task description with some extra info about it.",
+      date: "2025-08-14",
+      time: "10:45 AM",
+    },
+    {
+      images: [
+        { url: "https://images.unsplash.com/photo-1473187983305-f615310e7daa" },
+      ],
+      description:
+        "Final task example. Images are fewer here, but still shown in a scrollable row.",
+      date: "2025-08-15",
+      time: "4:10 PM",
+    },
   ];
 };
 
 export default function ImageBanner() {
-  const [taskImages, setTaskImages] = useState<TaskImage[]>([]);
-  const [date, setDate] = useState<string>("2025-08-13");
-  const [time, setTime] = useState<string>("12:26 PM");
+  const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
-    const fetchImages = async () => {
+    const fetchTasks = async () => {
       try {
-        const data = await getTaskImages();
-        setTaskImages(data);
+        const data = await getTasks();
+        setTasks(data);
       } catch (error) {
-        console.error("Error fetching task images:", error);
+        console.error("Error fetching tasks:", error);
       }
     };
-    fetchImages();
+    fetchTasks();
   }, []);
 
   return (
-    <View style={styles.container}>
-
-
-      {/* Horizontal Image Scroll */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 10, paddingTop:20}}
-      >
-        {taskImages.map((item, index) => (
-          <View key={index} style={styles.bannerCard}>
-            <Image source={{ uri: item.url }} style={styles.bannerImage} />
+    <ScrollView style={styles.page} showsVerticalScrollIndicator={false}>
+      {tasks.map((task, idx) => (
+        <View key={idx} style={styles.taskCard}>
+          {/* Header */}
+          <View style={styles.header}>
+            <View style={styles.userInfo}>
+              <Image
+                source={require("@/assets/images/logo.jpg")}
+                style={styles.profileImage}
+              />
+              <Text style={styles.username}>Shraddha Swant</Text>
+            </View>
+            <Text style={styles.dateText}>{task.date}</Text>
           </View>
-        ))}
-      </ScrollView>
 
-      {/* Info Container */}
-      <View style={styles.infoContainer}>
-        <Text style={styles.description}>
-          If you want the text itself to be blurred, you’d need a completely
-          different approach using Skia or by rendering it as an image first.
-        </Text>
-        <View style={styles.dateTimeContainer}>
-          <Text style={styles.dateTime}>{date}</Text>
-          <Text style={styles.dateTime}>{time}</Text>
-        </View>
-        <View style={{borderWidth:1}}></View>
-      </View>
+          {/* Horizontal Image Scroll */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.imageRow}
+          >
+            {task.images.map((item, index) => (
+              <View key={index} style={styles.bannerCard}>
+                <Image source={{ uri: item.url }} style={styles.bannerImage} />
+              </View>
+            ))}
+          </ScrollView>
 
-      {/* Horizontal Image Scroll */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 10 }}
-      >
-        {taskImages.map((item, index) => (
-          <View key={index} style={styles.bannerCard}>
-            <Image source={{ uri: item.url }} style={styles.bannerImage} />
+          {/* Description */}
+          <View style={styles.infoContainer}>
+            <Text style={styles.description}>{task.description}</Text>
           </View>
-        ))}
-      </ScrollView>
-
-      {/* Info Container */}
-      <View style={styles.infoContainer}>
-        <Text style={styles.description}>
-          If you want the text itself to be blurred, you’d need a completely
-          different approach using Skia or by rendering it as an image first.
-        </Text>
-        <View style={styles.dateTimeContainer}>
-          <Text style={styles.dateTime}>{date}</Text>
-          <Text style={styles.dateTime}>{time}</Text>
         </View>
-      </View>
-      {/* Horizontal Image Scroll */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 10 }}
-      >
-        {taskImages.map((item, index) => (
-          <View key={index} style={styles.bannerCard}>
-            <Image source={{ uri: item.url }} style={styles.bannerImage} />
-          </View>
-        ))}
-      </ScrollView>
-
-      {/* Info Container */}
-      <View style={styles.infoContainer}>
-        <Text style={styles.description}>
-          If you want the text itself to be blurred, you’d need a completely
-          different approach using Skia or by rendering it as an image first.
-        </Text>
-        <View style={styles.dateTimeContainer}>
-          <Text style={styles.dateTime}>{date}</Text>
-          <Text style={styles.dateTime}>{time}</Text>
-        </View>
-      </View>
-    </View>
+      ))}
+    </ScrollView>
   );
 }
 
 const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
-  container: {
+  page: {
+    flex: 1,
+    backgroundColor: "#f5f6fa",
+    padding: 12,
+  },
+  taskCard: {
     backgroundColor: "#fff",
-    margin: 12,
-    paddingBottom: 16,
+    marginBottom: 20,
     borderRadius: 16,
     overflow: "hidden",
     shadowColor: "#000",
@@ -133,13 +118,36 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 8,
     elevation: 3,
-
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    margin: 14,
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 14,
+    paddingTop: 14,
+    alignItems: "center",
+  },
+  userInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+  },
+  username: {
+    fontSize: 15,
+    fontWeight: "bold",
     color: "#333",
+  },
+  dateText: {
+    fontSize: 12,
+    color: "#999",
+  },
+  imageRow: {
+    paddingHorizontal: 10,
+    paddingTop: 12,
   },
   bannerCard: {
     width: width * 0.8,
@@ -147,7 +155,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: "#f9f9f9",
     marginRight: 14,
-    elevation: 3,
+    elevation: 2,
   },
   bannerImage: {
     width: "100%",
@@ -156,23 +164,11 @@ const styles = StyleSheet.create({
   infoContainer: {
     paddingHorizontal: 16,
     paddingTop: 12,
+    paddingBottom: 16,
   },
   description: {
     fontSize: 14,
     color: "#555",
     lineHeight: 20,
-  },
-  dateTimeContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10,
-
-    padding: 8,
-    borderRadius: 8,
-  },
-  dateTime: {
-    fontSize: 13,
-    color: "#444",
-    fontWeight: "600",
   },
 });
