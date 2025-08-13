@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity, Modal } from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons"; // Icons
 import Colors from "@/Thems/color"; // Make sure this exists
 import AttendancaceBox from "@/Components/Common/attandanceBox"
 import Submit_bbutt from "../Common/SubmitBtn";
 import LabourList from "../Common/labourList";
+import { BlurView } from "expo-blur";
+
 const data = [
   { id: "1", name: "Shraddha Swant" },
   { id: "2", name: "Shraddha Swant" },
@@ -24,6 +26,13 @@ const data = [
 
 export default function AttendanceSummary() {
   const [active, setActive] = useState("Present");
+
+  const [popup, setpopup] = useState(false);
+
+  const activepopup = () => {
+    setpopup(true)
+
+  }
   return (
     <SafeAreaView style={styles.container}>
       {/* Date */}
@@ -66,7 +75,7 @@ export default function AttendanceSummary() {
 
       </View>
 
-      <View style={{flexDirection:"row"}}>
+      <View style={{ flexDirection: "row" }}>
         {["Present", "Absent"].map((item) => (
           <TouchableOpacity
             key={item}
@@ -86,7 +95,36 @@ export default function AttendanceSummary() {
         renderItem={LabourList}
         keyExtractor={(item) => item.id}
       />
-      <Submit_bbutt text="Mark Attandance" />
+
+
+
+      <Submit_bbutt text="Mark Attandance" funcations={activepopup} />
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={popup}
+        onRequestClose={() => setpopup(false)}
+      >
+
+        <BlurView
+          style={StyleSheet.absoluteFill}
+          tint="light"   // "light", "dark", "xlight"
+          intensity={20}
+        />
+        <View style={styles.overlay}>
+          <View style={styles.popup}>
+            <Text style={styles.popupTitle}>Hello!</Text>
+            <Text>This is a popup screen in React Native.</Text>
+
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: "#FF5555" }]}
+              onPress={() => setpopup(false)}
+            >
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
     </SafeAreaView>
   );
@@ -149,5 +187,32 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     textDecorationColor: "#1976D2",
     fontWeight: "500",
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  popup: {
+    width: 300,
+    padding: 20,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    alignItems: "center"
+  },
+  popupTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10
+  },
+  button: {
+    backgroundColor: "#007BFF",
+    padding: 12,
+    borderRadius: 8
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold"
   },
 });

@@ -116,98 +116,178 @@
 // });
 
 
-import React, { useRef } from "react";
+// import React, { useRef } from "react";
+// import {
+//   Animated,
+//   StyleSheet,
+//   Text,
+//   View,
+//   ScrollView,
+//   StatusBar
+// } from "react-native";
+
+// const HEADER_MAX_HEIGHT = 120;
+// const HEADER_MIN_HEIGHT = 60;
+// const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
+
+// export default function DynamicHeaderScreen() {
+//   const scrollY = useRef(new Animated.Value(0)).current;
+
+//   const headerHeight = scrollY.interpolate({
+//     inputRange: [0, HEADER_SCROLL_DISTANCE],
+//     outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
+//     extrapolate: "clamp",
+//   });
+
+//   const headerOpacity = scrollY.interpolate({
+//     inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
+//     outputRange: [1, 0.5, 0],
+//     extrapolate: "clamp",
+//   });
+
+//   return (
+//     <View style={styles.container}>
+//       <StatusBar barStyle="light-content" />
+
+//       {/* Dynamic Header */}
+//       <Animated.View style={[styles.header, { height: headerHeight }]}>
+//         <Animated.Text style={[styles.headerText, { opacity: headerOpacity }]}>
+//           Dynamic Header
+//         </Animated.Text>
+//       </Animated.View>
+
+//       {/* Scrollable content */}
+//       <Animated.ScrollView
+//         contentContainerStyle={styles.scrollContent}
+//         scrollEventThrottle={16}
+//         onScroll={Animated.event(
+//           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+//           { useNativeDriver: false }
+//         )}
+//       >
+//         {Array.from({ length: 30 }).map((_, i) => (
+//           <View key={i} style={styles.item}>
+//             <Text style={styles.itemText}>Item {i + 1}</Text>
+//           </View>
+//         ))}
+//       </Animated.ScrollView>
+//     </View>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: "#f4f4f4",
+//   },
+//   header: {
+//     position: "absolute",
+//     top: 0,
+//     left: 0,
+//     right: 0,
+//     backgroundColor: "#4a90e2",
+//     justifyContent: "center",
+//     alignItems: "center",
+//     zIndex: 1,
+//     elevation: 4,
+//   },
+//   headerText: {
+//     color: "white",
+//     fontSize: 22,
+//     fontWeight: "bold",
+//   },
+//   scrollContent: {
+//     paddingTop: HEADER_MAX_HEIGHT,
+//   },
+//   item: {
+//     backgroundColor: "white",
+//     marginVertical: 5,
+//     marginHorizontal: 10,
+//     padding: 20,
+//     borderRadius: 8,
+//     elevation: 2,
+//   },
+//   itemText: {
+//     fontSize: 18,
+//   },
+// });
+
+
+import React, { useState } from "react";
 import {
-  Animated,
-  StyleSheet,
-  Text,
   View,
-  ScrollView,
-  StatusBar
+  Text,
+  StyleSheet,
+  Modal,
+  TouchableOpacity,
+  SafeAreaView
 } from "react-native";
 
-const HEADER_MAX_HEIGHT = 120;
-const HEADER_MIN_HEIGHT = 60;
-const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
-
-export default function DynamicHeaderScreen() {
-  const scrollY = useRef(new Animated.Value(0)).current;
-
-  const headerHeight = scrollY.interpolate({
-    inputRange: [0, HEADER_SCROLL_DISTANCE],
-    outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
-    extrapolate: "clamp",
-  });
-
-  const headerOpacity = scrollY.interpolate({
-    inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
-    outputRange: [1, 0.5, 0],
-    extrapolate: "clamp",
-  });
+export default function App() {
+  const [visible, setVisible] = useState(false);
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+    <SafeAreaView style={styles.container}>
+      <TouchableOpacity style={styles.button} onPress={() => setVisible(true)}>
+        <Text style={styles.buttonText}>Show Popup</Text>
+      </TouchableOpacity>
 
-      {/* Dynamic Header */}
-      <Animated.View style={[styles.header, { height: headerHeight }]}>
-        <Animated.Text style={[styles.headerText, { opacity: headerOpacity }]}>
-          Dynamic Header
-        </Animated.Text>
-      </Animated.View>
-
-      {/* Scrollable content */}
-      <Animated.ScrollView
-        contentContainerStyle={styles.scrollContent}
-        scrollEventThrottle={16}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: false }
-        )}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={visible}
+        onRequestClose={() => setVisible(false)}
       >
-        {Array.from({ length: 30 }).map((_, i) => (
-          <View key={i} style={styles.item}>
-            <Text style={styles.itemText}>Item {i + 1}</Text>
+        <View style={styles.overlay}>
+          <View style={styles.popup}>
+            <Text style={styles.popupTitle}>Hello!</Text>
+            <Text>This is a popup screen in React Native.</Text>
+
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: "#FF5555" }]}
+              onPress={() => setVisible(false)}
+            >
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
           </View>
-        ))}
-      </Animated.ScrollView>
-    </View>
+        </View>
+      </Modal>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f4f4f4",
-  },
-  header: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "#4a90e2",
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 1,
-    elevation: 4,
+    backgroundColor: "#F5F5F5"
   },
-  headerText: {
-    color: "white",
-    fontSize: 22,
-    fontWeight: "bold",
+  button: {
+    backgroundColor: "#007BFF",
+    padding: 12,
+    borderRadius: 8
   },
-  scrollContent: {
-    paddingTop: HEADER_MAX_HEIGHT,
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold"
   },
-  item: {
-    backgroundColor: "white",
-    marginVertical: 5,
-    marginHorizontal: 10,
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  popup: {
+    width: 300,
     padding: 20,
-    borderRadius: 8,
-    elevation: 2,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    alignItems: "center"
   },
-  itemText: {
-    fontSize: 18,
-  },
+  popupTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10
+  }
 });

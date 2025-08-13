@@ -3,14 +3,14 @@ import { router } from "expo-router";
 import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 
-export default function Submit_bbutt({path,text}:any) {
-    return (
+export default function Submit_bbutt({ path, text, funcations }: any) {
+  return (
 
-                <TouchableOpacity style={styles.assignBtn}>
-          <Text style={styles.assignBtnText}>{text}</Text>
-        </TouchableOpacity>
+    <TouchableOpacity style={styles.assignBtn} onPress={funcations}>
+      <Text style={styles.assignBtnText}>{text}</Text>
+    </TouchableOpacity>
 
-    )
+  )
 
 }
 

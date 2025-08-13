@@ -129,6 +129,8 @@ export default function Main_Site() {
       </View>
 
       {/* Page Content */}
+
+      
       {renderPageContent()}
       </ScrollView>
     </SafeAreaView>
