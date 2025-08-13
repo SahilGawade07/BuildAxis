@@ -107,7 +107,7 @@ export default function AttendanceSummary() {
       >
 
         <BlurView
-          style={StyleSheet.absoluteFill}
+          style={[StyleSheet.absoluteFill, {backgroundColor: "rgba(65, 65, 65, 0.84)"}]}
           tint="light"   // "light", "dark", "xlight"
           intensity={20}
         />
