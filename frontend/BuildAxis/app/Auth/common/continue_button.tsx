@@ -31,3 +31,5 @@ forwordbutt:{
  
 
 });
+
+export default Continue;

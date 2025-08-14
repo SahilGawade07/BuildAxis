@@ -1,272 +1,214 @@
 import React, { useEffect, useState } from "react";
 import {
-    View,
-    Text,
-    StyleSheet,
-    Image,
-    TouchableOpacity,
-    ScrollView,
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ScrollView,
 } from "react-native";
-import { Ionicons, Entypo } from "@expo/vector-icons";
-import Svg, { Circle } from "react-native-svg";
+import { Entypo } from "@expo/vector-icons";
 import { Safe_area } from "@/Components/Common/safeArea";
-import { CompanyBar } from "@/Components/reusable";
+import { CompanyBar } from "@/app/reusable";
 import AttendancaceBox from "@/Components/Common/attandanceBox";
-import Colors from "@/Thems/color";
+import { Colors } from "@/Thems/color"; // ✅ Updated import
 import Labour_list from "@/Components/Sites/labourScreen";
 import ItemTable from "@/Components/Sites/itemScreen";
-import MaterialsScreen from "@/Components/Sites/tasks/attachmentScreen"
+import MaterialsScreen from "@/Components/Sites/tasks/attachmentScreen";
 import ImageScreen from "@/Components/Sites/tasks/ImageScreen";
-import CircularProgress from "@/Components/Sites/tasks/common/circleprgressbar"
+import CircularProgress from "@/Components/Sites/tasks/common/circleprgressbar";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TaskDetailsScreen() {
-    const members = [
-        { id: 1, img: "https://randomuser.me/api/portraits/men/32.jpg" },
-        { id: 2, img: "https://randomuser.me/api/portraits/women/65.jpg" },
-        { id: 3, img: "https://randomuser.me/api/portraits/men/85.jpg" },
-        { id: 4, img: "https://randomuser.me/api/portraits/women/45.jpg" },
-    ];
+  const members = [
+    { id: 1, img: "https://randomuser.me/api/portraits/men/32.jpg" },
+    { id: 2, img: "https://randomuser.me/api/portraits/women/65.jpg" },
+    { id: 3, img: "https://randomuser.me/api/portraits/men/85.jpg" },
+    { id: 4, img: "https://randomuser.me/api/portraits/women/45.jpg" },
+  ];
 
-    const percentage = 40;
-    const radius = 25;
-    const strokeWidth = 5;
-    const circumference = 2 * Math.PI * radius;
-    const strokeDashoffset = circumference - (percentage / 100) * circumference;
-    const [active, setActive] = useState("Images");
-    const [page, setPage] = useState("Assign Task");
-    useEffect(() => {
-        setPage(active);
-    }, [active]);
+  const [active, setActive] = useState("Images");
+  const [page, setPage] = useState("Assign Task");
 
-    const renderPageContent = () => {
-        switch (page) {
-            case "Images":
-                return (
-                    <ImageScreen />
-                );
-            case "Labours":
-                return (
-                    <Labour_list />
-                );
-            case "Materials":
-                return (
-                    <ItemTable />
-                );
-            case "Attachment":
-                return (
-                    <MaterialsScreen />
-                )
+  useEffect(() => {
+    setPage(active);
+  }, [active]);
 
-            default:
-                return null;
-        }
-    };
+  const renderPageContent = () => {
+    switch (page) {
+      case "Images":
+        return <ImageScreen />;
+      case "Labours":
+        return <Labour_list />;
+      case "Materials":
+        return <ItemTable />;
+      case "Attachment":
+        return <MaterialsScreen />;
+      default:
+        return null;
+    }
+  };
 
-    return (
-        <SafeAreaView style={styles.container}>
-            {/* Header */}
-            {/* Custom Safe Area (if needed) */}
-            <Safe_area />
+  return (
+    <SafeAreaView style={styles.container}>
+      <Safe_area />
+      <CompanyBar />
 
-            {/* Company header bar */}
-            <CompanyBar />
-            <View style={{ backgroundColor: "#fff", borderBottomLeftRadius: 20, borderBottomRightRadius: 20, paddingBottom: 30 }}>
-                {/* Task Row */}
-                <View style={styles.taskRow}>
-                    {/* Back Button + Task Name */}
-                    <View style={{ flexDirection: "row", alignItems: "center" }}>
-                        <Entypo name="chevron-left" size={30} color="black" />
-                        <Text style={styles.taskName}>Task Name</Text>
-                    </View>
+      <View
+        style={{
+          backgroundColor: Colors.background,
+          borderBottomLeftRadius: 20,
+          borderBottomRightRadius: 20,
+          paddingBottom: 30,
+        }}
+      >
+        {/* Task Row */}
+        <View style={styles.taskRow}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Entypo name="chevron-left" size={30} color={Colors.text} />
+            <Text style={[styles.taskName, { color: Colors.text }]}>
+              Task Name
+            </Text>
+          </View>
+          <Text style={[styles.userName, { color: Colors.text }]}>
+            Mr.Chemate
+          </Text>
+        </View>
 
-                    {/* User */}
-                    <Text style={styles.userName}>Mr.Chemate</Text>
-                </View>
+        {/* Progress + Members */}
+        <View style={styles.progressRow}>
+          <CircularProgress />
+          <View style={styles.memberRow}>
+            {members.map((m) => (
+              <Image
+                key={m.id}
+                source={{ uri: m.img }}
+                style={styles.memberImg}
+              />
+            ))}
+            <TouchableOpacity style={styles.addMember}>
+              <Entypo name="plus" size={20} color={Colors.secondary} />
+            </TouchableOpacity>
+          </View>
+        </View>
 
-                {/* Progress + Members */}
-                <View style={styles.progressRow}>
-                    {/* Progress Circle */}
-                    <CircularProgress />
+        {/* Cards */}
+        <View style={styles.cardContainer}>
+          <AttendancaceBox
+            backgroundColor={Colors.boxes03[0]}
+            circle_color={Colors.boxes03[1]}
+            Ionicons_name="people-outline"
+            Ionicons_color={Colors.boxes03[2]}
+            Text1="Labours"
+            text2="155"
+          />
+          <AttendancaceBox
+            backgroundColor={Colors.boxes02[0]}
+            circle_color={Colors.boxes02[1]}
+            Ionicons_name="cash-outline"
+            Ionicons_color={Colors.boxes02[2]}
+            Text1="Expenses"
+            text2="100"
+          />
+          <AttendancaceBox
+            backgroundColor={Colors.boxes01[0]}
+            circle_color={Colors.boxes01[1]}
+            Ionicons_name="attach"
+            Ionicons_color={Colors.boxes01[2]}
+            Text1="Attachments"
+            text2="155"
+          />
+        </View>
+      </View>
 
-                    {/* Members */}
-                    <View style={styles.memberRow}>
-                        {members.map((m) => (
-                            <Image key={m.id} source={{ uri: m.img }} style={styles.memberImg} />
-                        ))}
-                        <TouchableOpacity style={styles.addMember}>
-                            <Entypo name="plus" size={20} color="#007AFF" />
-                        </TouchableOpacity>
-                    </View>
-                </View>
+      {/* Tabs */}
+      <View style={styles.tabRow}>
+        {["Images", "Labours", "Materials", "Attachment"].map((item) => (
+          <TouchableOpacity
+            key={item}
+            onPress={() => setActive(item)}
+            style={styles.menuItem}
+          >
+            <Text style={[styles.text, active === item && styles.activeText1]}>
+              {item}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
 
-                <View style={styles.cardContainer}>
-
-                    {/* Labours */}
-                    <AttendancaceBox
-                        backgroundColor={Colors.boxes03[0]}
-                        circle_color={Colors.boxes03[1]}
-                        Ionicons_name="people-outline"
-                        Ionicons_color={Colors.boxes03[2]}
-                        Text1="Labours"
-                        text2="155"
-                    />
-                    {/* expenses */}
-                    <AttendancaceBox
-                        backgroundColor={Colors.boxes02[0]}
-                        circle_color={Colors.boxes02[1]}
-                        Ionicons_name="people-outline"
-                        Ionicons_color={Colors.boxes02[2]}
-                        Text1="Expenses"
-                        text2="05"
-                    />
-                    {/* Attachments */}
-                    <AttendancaceBox
-                        backgroundColor={Colors.boxes01[0]}
-                        circle_color={Colors.boxes01[1]}
-                        Ionicons_name="attach"
-                        Ionicons_color={Colors.boxes01[2]}
-                        Text1="Attachments"
-                        text2="155"
-                    />
-
-
-                </View>
-            </View>
-            {/* Tabs */}
-            <View style={styles.tabRow}>
-                {["Images", "Labours", "Materials", "Attachment"].map((item) => (
-
-
-                    <TouchableOpacity
-                        key={item}
-                        onPress={() => setActive(item)}
-                        style={styles.menuItem}
-                    >
-                        <Text style={[styles.text, active === item && styles.activeText1]}>
-                            {item}
-                        </Text>
-                    </TouchableOpacity>
-                ))}
-            </View>
-
-            <ScrollView>
-                {renderPageContent()}
-            </ScrollView>
-        </SafeAreaView>
-    );
+      <ScrollView>{renderPageContent()}</ScrollView>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#F4F6FB" },
-    header: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#002B5B",
-        paddingVertical: 12,
-        paddingHorizontal: 15,
-    },
-    logo: { width: 30, height: 30, marginRight: 10 },
-    headerTitle: { color: "#fff", fontSize: 16, fontWeight: "600" },
-    taskRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        alignItems: "center",
-    },
-    taskName: { fontSize: 18, fontWeight: "600", marginLeft: 5 },
-    userName: { fontSize: 16, color: "#555",fontWeight: "600" },
-    progressRow: {
-        flexDirection: "row",
-        justifyContent: "space-evenly",
-        paddingHorizontal: 12,
-        alignItems: "center",
-    },
-    progressContainer: { alignItems: "center", justifyContent: "center" },
-    progressTextContainer: {
-        position: "absolute",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    progressText: { fontSize: 12, fontWeight: "600" },
-    memberRow: { flexDirection: "row", alignItems: "center" },
-    memberImg: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        marginRight: -10,
-        borderWidth: 2,
-        borderColor: "#fff",
-    },
-    addMember: {
-        width: 30,
-        height: 30,
-        borderRadius: 15,
-        borderWidth: 1,
-        borderColor: "#007AFF",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#fff",
-        marginLeft: 15,
-    },
-    cardRow: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        marginTop: 15,
-        paddingHorizontal: 10,
-    },
-    card: {
-        backgroundColor: "#f9f9f9",
-        borderRadius: 10,
-        alignItems: "center",
-        paddingVertical: 10,
-        width: "30%",
-    },
-    cardText: { fontSize: 12, color: "#333", marginTop: 5 },
-    cardCount: { fontSize: 14, fontWeight: "bold", marginTop: 3 },
-    tabRow: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        marginVertical: 15,
-        borderBottomWidth: 1,
-        borderColor: "#eee",
-        backgroundColor: "#fff",
-        padding: 10,
-        marginHorizontal: 15,
-        borderRadius: 15,
-    },
-    tab: { paddingBottom: 6 },
-    tabText: { fontSize: 14, color: "#888" },
-    activeTabText: { color: "#007AFF", fontWeight: "600" },
-    sectionTitle: { fontSize: 16, fontWeight: "600", margin: 12 },
-    taskImage: {
-        width: "90%",
-        height: 180,
-        borderRadius: 10,
-        alignSelf: "center",
-        marginBottom: 20,
-    },
-    cardContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        padding: 15,
-    },
-    menuItem: {
-        paddingHorizontal: 5,
-        paddingVertical: 2,
-    },
-    text: {
-        fontSize: 15,
-        color: "black",
-    },
-    activeText1: {
-        color: "#ffffffff",
-        textDecorationLine: "underline",
-        textDecorationColor: "#ffffffff",
-        fontWeight: "500",
-        backgroundColor: "#1976D2",
-        padding: 5,
-        borderRadius: 10
-    },
+  container: { flex: 1, backgroundColor: Colors.backgroundgrey },
+  taskRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    alignItems: "center",
+  },
+  taskName: { fontSize: 18, fontWeight: "600", marginLeft: 5 },
+  userName: { fontSize: 16, fontWeight: "600" },
+  progressRow: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    paddingHorizontal: 12,
+    alignItems: "center",
+  },
+  memberRow: { flexDirection: "row", alignItems: "center" },
+  memberImg: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: -10,
+    borderWidth: 2,
+    borderColor: Colors.background,
+  },
+  addMember: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: Colors.secondary,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.background,
+    marginLeft: 15,
+  },
+  cardContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 15,
+  },
+  tabRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginVertical: 15,
+    borderBottomWidth: 1,
+    borderColor: "#eee",
+    backgroundColor: Colors.background,
+    padding: 10,
+    marginHorizontal: 15,
+    borderRadius: 15,
+  },
+  menuItem: {
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+  },
+  text: {
+    fontSize: 15,
+    color: Colors.text,
+  },
+  activeText1: {
+    color: Colors.background,
+    textDecorationLine: "underline",
+    textDecorationColor: Colors.background,
+    fontWeight: "500",
+    backgroundColor: Colors.primary,
+    padding: 5,
+    borderRadius: 10,
+  },
 });

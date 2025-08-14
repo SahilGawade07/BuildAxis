@@ -5,3 +5,4 @@ export const TextHeaderSecondTop=({text}:any)=>{
     <Text style={{ fontSize:18,marginVertical:10,}}>{text}</Text>)
 }
 
+export default TextHeaderSecondTop;

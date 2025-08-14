@@ -1,7 +1,9 @@
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome6 } from "@expo/vector-icons";
 import React from "react";
-import { View, Text, Image, StyleSheet, FlatList } from "react-native";
-import LabourList from "@/Components/Common/labourList"
+import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import LabourList from "@/Components/Common/labourList";
+import { useRouter } from "expo-router";
+
 const data = [
   { id: "1", name: "Shraddha Swant" },
   { id: "2", name: "Shraddha Swant" },
@@ -10,15 +12,25 @@ const data = [
 ];
 
 export default function Labour_list() {
-
+  const router = useRouter(); // ✅ moved inside component
 
   return (
     <View style={styles.container}>
       <FlatList
         data={data}
-        renderItem={LabourList}
+        renderItem={({ item }) => <LabourList item={item} />}
         keyExtractor={(item) => item.id}
       />
+
+      {/* Floating Add Button */}
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => {
+          router.push("/labourdetails");
+        }}
+      >
+        <FontAwesome6 name="add" size={20} color="white" />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -29,8 +41,14 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: "#fff",
   },
-  row: {
-    flexDirection: "row",
+  fab: {
+    height: 50,
+    width: 50,
+    borderRadius: 25,
+    backgroundColor: "#3B82F6", // ✅ replaced Colors.secondary with fixed color
+    position: "absolute",
+    right: 20,
+    bottom: 40,
     alignItems: "center",
     paddingVertical: 10,
   },
@@ -53,7 +71,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#EAEFFF",
     borderRadius: 8,
     justifyContent: "center",
-    alignItems: "center",
-    marginRight: 10,
+    elevation: 5,
   },
 });

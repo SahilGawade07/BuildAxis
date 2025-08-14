@@ -1,10 +1,10 @@
-// screens/HomeScreen.tsx
-import React, { useContext } from "react";
+// screens/ThemeSelector.tsx
+import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { ThemeProvider, ThemeContext } from "../context/ThemeContext"; // Make sure alias works or use relative path
+import { useTheme } from "../context/ThemeContext";
 
-function HomeScreen() {
-  const { theme, themeMode, changeTheme } = useContext(ThemeContext);
+export default function ThemeSelector() {
+  const { theme, themeMode, changeTheme } = useTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -16,31 +16,29 @@ function HomeScreen() {
         style={[styles.button, { backgroundColor: theme.primary }]}
         onPress={() => changeTheme("light")}
       >
-        <Text style={styles.buttonText}>Light Mode</Text>
+        <Text style={[styles.buttonText, { color: theme.background }]}>
+          Light Mode
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={[styles.button, { backgroundColor: theme.secondary }]}
         onPress={() => changeTheme("dark")}
       >
-        <Text style={styles.buttonText}>Dark Mode</Text>
+        <Text style={[styles.buttonText, { color: theme.background }]}>
+          Dark Mode
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={[styles.button, { backgroundColor: theme.gray }]}
+        style={[styles.button, { backgroundColor: theme.backgroundgrey }]}
         onPress={() => changeTheme("system")}
       >
-        <Text style={styles.buttonText}>System Default</Text>
+        <Text style={[styles.buttonText, { color: theme.text }]}>
+          System Default
+        </Text>
       </TouchableOpacity>
     </View>
-  );
-}
-
-export default function App() {
-  return (
-    <ThemeProvider>
-      <HomeScreen />
-    </ThemeProvider>
   );
 }
 
@@ -51,11 +49,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
   },
-  title: {
-    fontSize: 22,
-    fontWeight: "600",
-    marginBottom: 30,
-  },
+  title: { fontSize: 22, fontWeight: "600", marginBottom: 30 },
   button: {
     paddingVertical: 12,
     paddingHorizontal: 24,
@@ -65,9 +59,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     elevation: 2,
   },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
+  buttonText: { fontWeight: "bold", fontSize: 16 },
 });

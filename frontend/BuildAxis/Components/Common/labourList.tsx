@@ -1,13 +1,15 @@
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { View, Text, Image, StyleSheet, FlatList } from "react-native";
-
+import { View, Text, Image, StyleSheet, FlatList ,TouchableOpacity,Button} from "react-native";
+import { Colors } from "react-native/Libraries/NewAppScreen";
+import { useRouter } from "expo-router";
 const data = [
   { id: "1", name: "Shraddha Swant" },
   { id: "2", name: "Shraddha Swant" },
   { id: "3", name: "Shraddha Swant" },
   { id: "4", name: "Shraddha Swant" },
 ];
+ const router = useRouter();
 
 export default function LabourList({ item }:any) {
 
@@ -20,7 +22,13 @@ export default function LabourList({ item }:any) {
         <Text style={styles.name}>{item.name}</Text>
       </View>
       <View style={styles.separator} />
-    </View>
+         
+        
+        
+         </View>
+       
+ 
+   
 
   );
 }
@@ -54,4 +62,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 10,
   },
+  addButton: {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
+  marginTop: 20,
+  backgroundColor: "#3B82F6",
+  paddingVertical: 12,
+  borderRadius: 8,
+},
+addButtonText: {
+  color: "#fff",
+  fontSize: 16,
+  fontWeight: "500",
+  marginLeft: 5,
+},
+
 });
