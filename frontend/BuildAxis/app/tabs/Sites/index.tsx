@@ -1,5 +1,5 @@
 import { Safe_area } from "@/Components/Common/safeArea";
-import { CompanyBar } from "@/Components/reusable";
+import { CompanyBar } from "@/app/reusable";
 import { Site_box } from "@/Components/Sites/siteBox";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -22,7 +22,7 @@ export default function Site() {
   const router = useRouter();
 
   const projects = [
-    
+
     {
       id: "1",
       name: "JJ Hormony",
@@ -115,7 +115,7 @@ export default function Site() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:Colors.background ,
+    backgroundColor: Colors.background,
   },
   sectionTitle: {
     fontSize: 18,
