@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { View, Text, Image, StyleSheet, FlatList } from "react-native";
-
+import LabourList from "@/Components/Common/labourList"
 const data = [
   { id: "1", name: "Shraddha Swant" },
   { id: "2", name: "Shraddha Swant" },
@@ -10,23 +10,13 @@ const data = [
 ];
 
 export default function Labour_list() {
-  const renderItem = ({ item }:any) => (
-    <View>
-      <View style={styles.row}>
-          <View style={styles.imageBox}>
-            <Ionicons name="image-outline" size={28} color="#888" />
-          </View>
-        <Text style={styles.name}>{item.name}</Text>
-      </View>
-      <View style={styles.separator} />
-    </View>
-  );
+
 
   return (
     <View style={styles.container}>
       <FlatList
         data={data}
-        renderItem={renderItem}
+        renderItem={LabourList}
         keyExtractor={(item) => item.id}
       />
     </View>

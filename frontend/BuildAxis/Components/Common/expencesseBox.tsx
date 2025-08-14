@@ -11,8 +11,8 @@ import {
   FlatList
 } from "react-native";
 
-export  const Task_Box = ({ item }: any) => (
-    <TouchableOpacity style={styles.sitecard} onPress={()=>{router.push("/main_site")}}>
+export  const Expencess = ({ item }: any) => (
+    <TouchableOpacity style={styles.sitecard} onPress={()=>{router.push("/mainSite")}}>
       {/* Card Header */}
       <View style={styles.cardHeader}>
         {/* Left side: Project image placeholder + name */}
@@ -36,7 +36,7 @@ export  const Task_Box = ({ item }: any) => (
       <View style={styles.cardFooter}>
         {/* Project progress */}
         <View style={styles.progressRow}>
-          <Ionicons name="radio-button-off" size={18} color="#0057FF" />
+         
           <Text style={styles.progressText}>{item.progress}</Text>
         </View>
 
@@ -46,10 +46,7 @@ export  const Task_Box = ({ item }: any) => (
           <Text style={styles.dateText}>{item.date}</Text>
         </View>
 
-        {/* Menu button */}
-        <TouchableOpacity>
-          <MaterialIcons name="more-vert" size={22} color="#000" />
-        </TouchableOpacity>
+
       </View>
     </TouchableOpacity>
   );

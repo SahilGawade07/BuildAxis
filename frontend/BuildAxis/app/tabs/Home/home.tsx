@@ -1,18 +1,15 @@
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
-  View,
-  Text,
-  Image,
   StyleSheet,
-  TouchableOpacity,
-  StatusBar,
+  Text,
+  View
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
-import { CompanyBar } from "@/Components/Common/company_bar";
-import { Overview } from "@/Components/Common/summary_4box";
+import { CompanyBar } from "@/Components/Common/companyBar";
+import { Safe_area } from "@/Components/Common/safeArea";
+import { Overview } from "@/Components/Common/summaryBoxes";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Safe_area } from "@/Components/Common/safe_area";
 
 export default function Home() {
   return (

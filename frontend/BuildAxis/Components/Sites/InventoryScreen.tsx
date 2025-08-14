@@ -1,11 +1,9 @@
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import React from "react";
 import {
-  View,
-  StyleSheet
+  StyleSheet,
+  View
 } from "react-native";
-import { Overview } from "../Common/summary_4box";
+import { Overview } from "../Common/summaryBoxes";
 
 export const Inventory = ({ item }: any) => {
   return (

@@ -1,22 +1,25 @@
+import { Safe_area } from "@/Components/Common/safeArea";
+import { CompanyBar } from "@/Components/reusable";
+import { Site_box } from "@/Components/Sites/siteBox";
+import { FontAwesome6, Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React from "react";
 import {
-  View,
-  Text,
+  FlatList,
+  StatusBar,
   StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
-  FlatList,
+  View,
 } from "react-native";
-import { FontAwesome6, Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { CompanyBar } from "@/Components/reusable";
-import { Safe_area } from "@/Components/Common/safe_area";
-import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Site_box } from "@/Components/Sites/site_box";
-const router = useRouter(); // Navigation hook from expo-router
+
+const router = useRouter();
 
 export default function Site() {
-  // Dummy project list data
+  const router = useRouter();
+
   const projects = [
     {
       id: "1",
@@ -48,11 +51,15 @@ export default function Site() {
     },
   ];
 
-  
-
   return (
     <SafeAreaView style={styles.container}>
-      {/* Custom Safe Area component */}
+      {/* ✅ Set Status Bar color independently */}
+      <StatusBar
+        backgroundColor="#0247D3" // 🔵 Blue status bar (Android)
+        barStyle="light-content" // Light text/icons (white)
+      />
+
+      {/* Custom Safe Area (if needed) */}
       <Safe_area />
 
       {/* Company header bar */}
@@ -84,7 +91,7 @@ export default function Site() {
         contentContainerStyle={{ paddingBottom: 20 }}
       />
 
-      {/* Floating action button (FAB) to create new task */}
+      {/* Floating Action Button */}
       <TouchableOpacity
         style={{
           height: 50,
@@ -95,9 +102,11 @@ export default function Site() {
           right: 20,
           bottom: 40,
           alignItems: "center",
-          justifyContent: "center"
+          justifyContent: "center",
         }}
-        onPress={() => { router.push("/create_task"); }}
+        onPress={() => {
+          router.push("/createTask");
+        }}
       >
         <FontAwesome6 name="add" size={20} color="white" />
       </TouchableOpacity>
@@ -106,17 +115,16 @@ export default function Site() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
-
-  // Section title styling
+  container: {
+    flex: 1,
+    backgroundColor: "#fff", // 🟨 This is the page background, NOT status bar
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
     marginTop: 15,
     marginHorizontal: 15,
   },
-
-  // Search bar container
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -125,8 +133,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 8,
   },
-  searchInput: { flex: 1, height: 40, color: "#000" },
-
-  // Image placeholder box
-
+  searchInput: {
+    flex: 1,
+    height: 40,
+    color: "#000",
+  },
+  fab: {
+    height: 50,
+    width: 50,
+    borderRadius: 25,
+    backgroundColor: "#0247D3",
+    position: "absolute",
+    right: 20,
+    bottom: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
