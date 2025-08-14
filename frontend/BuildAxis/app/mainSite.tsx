@@ -1,6 +1,6 @@
 import Back_Text_Butt from "@/Components/Common/backBtn";
 import { Safe_area } from "@/Components/Common/safeArea";
-import { CompanyBar } from "@/Components/reusable";
+import { CompanyBar } from "@/app/reusable";
 import AttendanceSummary from "@/Components/Sites/attandanceScreen";
 import { Inventory } from "@/Components/Sites/InventoryScreen";
 import LabourList from "@/Components/Sites/labourScreen";
@@ -91,47 +91,47 @@ export default function Main_Site() {
   return (
     <SafeAreaView style={styles.container}>
       <Safe_area />
-       <ScrollView>
-      <CompanyBar />
-      <Back_Text_Butt path="/tabs/Sites/Site" text="Site Name" />
+      <ScrollView>
+        <CompanyBar />
+        <Back_Text_Butt path="/tabs/Sites/Site" text="Site Name" />
 
-      {/* Header Image */}
-      <View style={{ height: 200, padding: 5, alignItems: "center" }}>
-        <Image
-          source={require("@/assets/images/Construction.png")}
-          style={{ width: "100%", height: "100%" }}
-        />
-      </View>
+        {/* Header Image */}
+        <View style={{ height: 200, padding: 5, alignItems: "center" }}>
+          <Image
+            source={require("@/assets/images/Construction.png")}
+            style={{ width: "100%", height: "100%" }}
+          />
+        </View>
 
-      {/* Menu */}
-      <View style={{ flexDirection: "row" }}>
-    
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
-        >
-          {menuItems.map((item) => (
-            <TouchableOpacity
-              key={item}
-              onPress={() => setActive(item)}
-              style={styles.menuItem}
-            >
-              <Text style={[styles.text, active === item && styles.activeText1]}>
-                {item}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-        <TouchableOpacity style={styles.arrowBtn}>
-          <Ionicons name="chevron-forward" size={18} color="#000" />
-        </TouchableOpacity>
-      </View>
+        {/* Menu */}
+        <View style={{ flexDirection: "row" }}>
 
-      {/* Page Content */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
+            {menuItems.map((item) => (
+              <TouchableOpacity
+                key={item}
+                onPress={() => setActive(item)}
+                style={styles.menuItem}
+              >
+                <Text style={[styles.text, active === item && styles.activeText1]}>
+                  {item}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+          <TouchableOpacity style={styles.arrowBtn}>
+            <Ionicons name="chevron-forward" size={18} color="#000" />
+          </TouchableOpacity>
+        </View>
 
-      
-      {renderPageContent()}
+        {/* Page Content */}
+
+
+        {renderPageContent()}
       </ScrollView>
     </SafeAreaView>
   );

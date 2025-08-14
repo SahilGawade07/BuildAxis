@@ -1,7 +1,9 @@
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome6 } from "@expo/vector-icons";
 import React from "react";
-import { View, Text, Image, StyleSheet, FlatList } from "react-native";
-import LabourList from "@/Components/Common/labourList"
+import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import LabourList from "@/Components/Common/labourList";
+import { useRouter } from "expo-router";
+
 const data = [
   { id: "1", name: "Shraddha Swant" },
   { id: "2", name: "Shraddha Swant" },
@@ -10,15 +12,25 @@ const data = [
 ];
 
 export default function Labour_list() {
-
+  const router = useRouter(); // ✅ moved inside component
 
   return (
     <View style={styles.container}>
       <FlatList
         data={data}
-        renderItem={LabourList}
+        renderItem={({ item }) => <LabourList item={item} />}
         keyExtractor={(item) => item.id}
       />
+
+      {/* Floating Add Button */}
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => {
+          router.push("/labourdetails");
+        }}
+      >
+        <FontAwesome6 name="add" size={20} color="white" />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -29,31 +41,16 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: "#fff",
   },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-  },
-  icon: {
-    width: 35,
-    height: 35,
-    marginRight: 10,
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  separator: {
-    height: 1,
-    backgroundColor: "#ddd",
-  },
-    imageBox: {
-    width: 50,
+  fab: {
     height: 50,
-    backgroundColor: "#EAEFFF",
-    borderRadius: 8,
-    justifyContent: "center",
+    width: 50,
+    borderRadius: 25,
+    backgroundColor: "#3B82F6", // ✅ replaced Colors.secondary with fixed color
+    position: "absolute",
+    right: 20,
+    bottom: 40,
     alignItems: "center",
-    marginRight: 10,
+    justifyContent: "center",
+    elevation: 5,
   },
 });

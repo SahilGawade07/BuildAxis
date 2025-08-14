@@ -10,7 +10,7 @@ import {
 import { Ionicons, Entypo } from "@expo/vector-icons";
 import Svg, { Circle } from "react-native-svg";
 import { Safe_area } from "@/Components/Common/safeArea";
-import { CompanyBar } from "@/Components/reusable";
+import { CompanyBar } from "@/app/reusable";
 import AttendancaceBox from "@/Components/Common/attandanceBox";
 import Colors from "@/Thems/color";
 import Labour_list from "@/Components/Sites/labourScreen";
@@ -115,7 +115,7 @@ export default function TaskDetailsScreen() {
                     <AttendancaceBox
                         backgroundColor={Colors.boxes02[0]}
                         circle_color={Colors.boxes02[1]}
-                        Ionicons_name="cash-outline" 
+                        Ionicons_name="cash-outline"
                         Ionicons_color={Colors.boxes02[2]}
                         Text1="Expenses"
                         text2="100"
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     taskName: { fontSize: 18, fontWeight: "600", marginLeft: 5 },
-    userName: { fontSize: 16, color: "#555",fontWeight: "600" },
+    userName: { fontSize: 16, color: "#555", fontWeight: "600" },
     progressRow: {
         flexDirection: "row",
         justifyContent: "space-evenly",
