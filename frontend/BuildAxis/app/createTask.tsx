@@ -17,11 +17,13 @@ import {
   Text,
   TouchableOpacity,
   View,
+  StatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Labour_list from "@/Components/Sites/labourScreen";
 import Report from "@/Components/Sites/report";
 import { Safe_area } from "@/Components/Common/safeArea";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
 const HEADER_MAX_HEIGHT = 370;
 const HEADER_MIN_HEIGHT = 60;
@@ -109,7 +111,9 @@ export default function DynamicHeaderScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Dynamic Header */}
-      <Safe_area />
+       <Safe_area/>
+       <StatusBar backgroundColor={Colors.primary} barStyle="light-content" />
+      
       <Animated.View style={[styles.header, { height: headerHeight }]}>
         <Animated.View
           style={{
@@ -117,6 +121,7 @@ export default function DynamicHeaderScreen() {
             transform: [{ translateY: headerContentTranslateY }],
           }}
         >
+         
           <CompanyBar />
           <Back_Text_Butt path="/tabs/Sites/Site" text="Site Name" />
 
