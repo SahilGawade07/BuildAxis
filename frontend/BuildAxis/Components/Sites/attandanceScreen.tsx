@@ -113,17 +113,7 @@ export default function AttendanceSummary() {
           intensity={20}
         />
         <View style={styles.overlay}>
-          {/* <View style={styles.popup}>
-            <Text style={styles.popupTitle}>Hello!</Text>
-            <Text>This is a popup screen in React Native.</Text>
 
-            <TouchableOpacity
-              style={[styles.button, { backgroundColor: "#FF5555" }]}
-              onPress={() => setpopup(false)}
-            >
-              <Text style={styles.buttonText}>Close</Text>
-            </TouchableOpacity>
-          </View> */}
           <AttendanceModal fun={activepopup}/>
         </View>
       </Modal>

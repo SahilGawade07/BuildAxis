@@ -18,36 +18,11 @@ type ReportItem = {
 };
 
 const reports: ReportItem[] = [
-    {
-        id: "1",
-        title: "Monthly Progress Report",
-        name: "Shraddha Sawant",
-        dateRange: "01 Jul - 31 Jul",
-    },
-    {
-        id: "2",
-        title: "Safety Inspection",
-        name: "Sahil Gawade",
-        dateRange: "05 Jul - 06 Jul",
-    },
-    {
-        id: "3",
-        title: "Material Usage Report",
-        name: "Siddharth Chemate",
-        dateRange: "10 Jul - 15 Jul",
-    },
-    {
-        id: "4",
-        title: "Expenses Report",
-        name: "Shraddha Sawant",
-        dateRange: "10 Jul - 15 Jul",
-    },
-    {
-        id: "5",
-        title: "Inventory Report",
-        name: "Shraddha Sawant",
-        dateRange: "10 Jul - 15 Jul",
-    },
+    { id: "1", title: "Monthly Progress Report", name: "Shraddha Sawant", dateRange: "01 Jul - 31 Jul" },
+    { id: "2", title: "Safety Inspection", name: "Sahil Gawade", dateRange: "05 Jul - 06 Jul" },
+    { id: "3", title: "Material Usage Report", name: "Siddharth Chemate", dateRange: "10 Jul - 15 Jul" },
+    { id: "4", title: "Expenses Report", name: "Shraddha Sawant", dateRange: "10 Jul - 15 Jul" },
+    { id: "5", title: "Inventory Report", name: "Shraddha Sawant", dateRange: "10 Jul - 15 Jul" },
 ];
 
 export default function ReportScreen() {
@@ -71,16 +46,6 @@ export default function ReportScreen() {
         </TouchableOpacity>
     );
 
-    
-    const renderFooter = () => (
-        <TouchableOpacity
-            style={styles.generateButton}
-            onPress={() => router.push("../CreateReport")}
-        >
-            <Text style={styles.generateButtonText}>Generate Report</Text>
-        </TouchableOpacity>
-    );
-
     return (
         <SafeAreaView style={styles.container}>
             <FlatList
@@ -88,9 +53,18 @@ export default function ReportScreen() {
                 keyExtractor={(item) => item.id}
                 renderItem={renderReportItem}
                 contentContainerStyle={styles.listContainer}
-                ListFooterComponent={renderFooter}
-                ListFooterComponentStyle={{ paddingVertical: 20 }} 
             />
+
+            {/* Floating Button */}
+            <TouchableOpacity
+                style={styles.floatingButton}
+                onPress={() => router.push("../CreateReport")}
+                activeOpacity={0.8}
+            >
+                <Text style={styles.floatingButtonText}>Generate Report</Text>
+            </TouchableOpacity>
+
+            
         </SafeAreaView>
     );
 }
@@ -102,6 +76,7 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         paddingHorizontal: 16,
+        paddingBottom: 100, // space so last item is not hidden behind button
     },
     reportItem: {
         backgroundColor: "#f6f7faff",
@@ -141,14 +116,22 @@ const styles = StyleSheet.create({
         color: "#666",
         marginLeft: 4,
     },
-    generateButton: {
+    floatingButton: {
+        position: "absolute",
+        bottom: 20,
+        left: 20,
+        right: 20,
         backgroundColor: "#0247D3",
         paddingVertical: 14,
         borderRadius: 8,
         alignItems: "center",
-        marginHorizontal: 10,
+        elevation: 5, // Android shadow
+        shadowColor: "#000", // iOS shadow
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 2 },
     },
-    generateButtonText: {
+    floatingButtonText: {
         color: "#fff",
         fontSize: 16,
         fontWeight: "600",
