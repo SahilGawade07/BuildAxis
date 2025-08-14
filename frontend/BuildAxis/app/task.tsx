@@ -115,10 +115,10 @@ export default function TaskDetailsScreen() {
                     <AttendancaceBox
                         backgroundColor={Colors.boxes02[0]}
                         circle_color={Colors.boxes02[1]}
-                        Ionicons_name="people-outline"
+                        Ionicons_name="cash-outline" 
                         Ionicons_color={Colors.boxes02[2]}
                         Text1="Expenses"
-                        text2="05"
+                        text2="100"
                     />
                     {/* Attachments */}
                     <AttendancaceBox
