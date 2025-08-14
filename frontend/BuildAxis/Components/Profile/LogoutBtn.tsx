@@ -1,9 +1,15 @@
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import React from "react";
+import { router } from "expo-router";
 const LogoutButton = () => {
   return (
     <View>
-      <TouchableOpacity style={styles.logout}>
+      <TouchableOpacity
+        style={styles.logout}
+        onPress={() => {
+          router.push("/tabs/Profile/theme");
+        }}
+      >
         <Text style={styles.logoutText}> Logout</Text>
       </TouchableOpacity>
     </View>

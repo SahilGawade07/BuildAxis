@@ -17,7 +17,7 @@ const menuItems = [
   {
     menuIcon: "📱",
     menuItemName: "Manage Organisation",
-    onPress: () => router.push("/tabs/Profile/theme"),
+    onPress: () => {router.push("/tabs/Profile/theme")},
   },
   {
     menuIcon: "👟",
