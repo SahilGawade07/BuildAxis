@@ -5,12 +5,7 @@ const Colors = {
   backgroundgrey: "#F5F5F5",
   text: "#000000",
   icons: "#999",
-  lightGray: "#F5F5F5",
-  white: "#FFFFFF",
-  blue: "#3B82F6",
-  success: "#34C759",
-  error: "#FF3B30",
-  warning: "#FFCC00",
+
   boxes01: ["#DBEDFD", "#B6DEFF", "#4682B4"],
   boxes02: ["#F0FDF4", "#DCFCE7", "#27AE60"],
   boxes03: ["#FEFCE8", "#FEF9C3", "#D4AC0D"],

@@ -22,6 +22,7 @@ export default function Site() {
   const router = useRouter();
 
   const projects = [
+    
     {
       id: "1",
       name: "JJ Hormony",
