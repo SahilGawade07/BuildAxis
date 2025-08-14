@@ -14,7 +14,7 @@ export default function App() {
           />
         ))}
       </View>
-      <BlurView experimentalBlurMethod
+      <BlurView 
  intensity={100} style={styles.blurContainer}>
         <Text style={styles.text}>{text}</Text>
       </BlurView>

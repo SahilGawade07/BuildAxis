@@ -11,12 +11,13 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Menu from "@/Components/Profile/MenuList";
 import LogoutButton from "@/Components/Profile/LogoutBtn";
+import { router } from "expo-router";
 
 const menuItems = [
   {
     menuIcon: "📱",
     menuItemName: "Manage Organisation",
-    onPress: () => console.log("Manage Organisation pressed"),
+    onPress: () => router.push("/tabs/Profile/theme"),
   },
   {
     menuIcon: "👟",

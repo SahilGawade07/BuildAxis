@@ -116,7 +116,7 @@ export default function AddOrganizationScreen() {
             {/* Skip Button */}
             <TouchableOpacity
               style={styles.skipButton}
-              onPress={() => router.push("/tabs/Profile/profile")}
+              onPress={() => router.push("/tabs/Home/home")}
             >
               <Text style={styles.skipButtonText}>Skip for now</Text>
             </TouchableOpacity>
