@@ -1,9 +1,10 @@
 const Colors = {
   primary: "#00174D",
-  secondary: "#FF9500",
+  secondary: "#0247D3",
   background: "#ffffff",
+  backgroundgrey: "#F5F5F5",
   text: "#000000",
-  gray: "#8E8E93",
+  icons: "#999",
   lightGray: "#F5F5F5",
   white: "#FFFFFF",
   blue: "#3B82F6",
@@ -15,6 +16,9 @@ const Colors = {
   boxes03: ["#FEFCE8", "#FEF9C3", "#D4AC0D"],
   boxes04: ["#FEF2F2", "#FEE2E2", "#C0392B"],
 };
+
+
+
 
 export const DarkColors = {
   primary: "#4DA3FF",
