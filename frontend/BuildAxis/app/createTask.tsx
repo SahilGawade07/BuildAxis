@@ -1,5 +1,5 @@
 import Back_Text_Butt from "@/Components/Common/backBtn";
-import { CompanyBar } from "@/Components/reusable";
+import { CompanyBar } from "@/Components/Common/companyBar";
 import AttendanceSummary from "@/Components/Sites/attandanceScreen";
 import { Inventory } from "@/Components/Sites/InventoryScreen";
 import { Task_Box } from "@/Components/Sites/taskBox";
