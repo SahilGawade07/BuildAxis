@@ -13,12 +13,11 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../../context/ThemeContext"; // updated import
+import { useTheme } from "../../../context/ThemeContext";
 
 export default function Site() {
   const router = useRouter();
-  const { theme } = useTheme(); // ✅ typed hook from ThemeContext
-
+  const { theme } = useTheme();
   const projects = [
     {
       id: "1",
