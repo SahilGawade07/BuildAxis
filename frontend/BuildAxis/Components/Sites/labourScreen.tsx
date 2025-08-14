@@ -50,6 +50,26 @@ const styles = StyleSheet.create({
     right: 20,
     bottom: 40,
     alignItems: "center",
+    paddingVertical: 10,
+  },
+  icon: {
+    width: 35,
+    height: 35,
+    marginRight: 10,
+  },
+  name: {
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  separator: {
+    height: 1,
+    backgroundColor: "#ddd",
+  },
+    imageBox: {
+    width: 50,
+    height: 50,
+    backgroundColor: "#EAEFFF",
+    borderRadius: 8,
     justifyContent: "center",
     elevation: 5,
   },

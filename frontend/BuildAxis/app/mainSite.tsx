@@ -3,12 +3,10 @@ import { Safe_area } from "@/Components/Common/safeArea";
 import { CompanyBar } from "@/app/reusable";
 import AttendanceSummary from "@/Components/Sites/attandanceScreen";
 import { Inventory } from "@/Components/Sites/InventoryScreen";
-import LabourList from "@/Components/Sites/labourScreen";
 import { Task_Box } from "@/Components/Sites/taskBox";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { ExpencessScreen } from "@/Components/Sites/expencessScreen"
-import ItemTable from "@/Components/Sites/itemScreen"
+import { ExpencessScreen } from "@/Components/Sites/expencessScreen";
+import ItemTable from "@/Components/Sites/itemScreen";
 import React, { useEffect, useState } from "react";
 import {
   FlatList,
@@ -20,10 +18,9 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Labour_list from "@/Components/Sites/labourScreen"
+import Labour_list from "@/Components/Sites/labourScreen";
 import Report from "@/Components/Sites/report";
 export default function Main_Site() {
-  const router = useRouter();
   const [active, setActive] = useState("Assign Task");
   const [page, setPage] = useState("Assign Task");
 
@@ -38,10 +35,34 @@ export default function Main_Site() {
   ];
 
   const projects = [
-    { id: "1", name: "JJ Hormony", progress: "20%", date: "12/02/2022", status: "Active" },
-    { id: "2", name: "Green Heights", progress: "45%", date: "15/04/2023", status: "Active" },
-    { id: "3", name: "Sky Towers", progress: "75%", date: "01/10/2024", status: "Active" },
-    { id: "4", name: "Blue Ocean", progress: "60%", date: "20/08/2025", status: "Active" },
+    {
+      id: "1",
+      name: "JJ Hormony",
+      progress: "20%",
+      date: "12/02/2022",
+      status: "Active",
+    },
+    {
+      id: "2",
+      name: "Green Heights",
+      progress: "45%",
+      date: "15/04/2023",
+      status: "Active",
+    },
+    {
+      id: "3",
+      name: "Sky Towers",
+      progress: "75%",
+      date: "01/10/2024",
+      status: "Active",
+    },
+    {
+      id: "4",
+      name: "Blue Ocean",
+      progress: "60%",
+      date: "20/08/2025",
+      status: "Active",
+    },
   ];
 
   useEffect(() => {
@@ -60,29 +81,17 @@ export default function Main_Site() {
           />
         );
       case "Report":
-        return (
-          <Report />
-        );
+        return <Report />;
       case "Attendance":
-        return (
-          <AttendanceSummary />
-        );
+        return <AttendanceSummary />;
       case "Labour":
-        return (
-          <Labour_list />
-        );
+        return <Labour_list />;
       case "Inventory":
-        return (
-          <Inventory />
-        );
+        return <Inventory />;
       case "Material":
-        return (
-          <ItemTable />
-        );
+        return <ItemTable />;
       case "Expencess":
-        return (
-          <ExpencessScreen />
-        );
+        return <ExpencessScreen />;
       default:
         return null;
     }
@@ -95,6 +104,13 @@ export default function Main_Site() {
         <CompanyBar />
         <Back_Text_Butt path="/tabs/Sites/Site" text="Site Name" />
 
+        {/* Header Image */}
+        <View style={{ height: 200, padding: 5, alignItems: "center" }}>
+          <Image
+            source={require("@/assets/images/Construction.png")}
+            style={{ width: "100%", height: "100%" }}
+          />
+        </View>
         {/* Header Image */}
         <View style={{ height: 200, padding: 5, alignItems: "center" }}>
           <Image
@@ -175,5 +191,4 @@ const styles = StyleSheet.create({
     color: "#444",
     fontWeight: "500",
   },
-
 });

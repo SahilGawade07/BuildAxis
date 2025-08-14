@@ -4,10 +4,8 @@ import { Site_box } from "@/Components/Sites/siteBox";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
-import Colors from "@/Thems/color";
 import {
   FlatList,
-  StatusBar,
   StyleSheet,
   Text,
   TextInput,
@@ -15,14 +13,13 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-const router = useRouter();
+import { useTheme } from "../../../context/ThemeContext"; // updated import
 
 export default function Site() {
   const router = useRouter();
+  const { theme } = useTheme(); // ✅ typed hook from ThemeContext
 
   const projects = [
-
     {
       id: "1",
       name: "JJ Hormony",
@@ -54,34 +51,33 @@ export default function Site() {
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* ✅ Set Status Bar color independently */}
-
-      {/* Custom Safe Area (if needed) */}
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background }]}
+    >
       <Safe_area />
-
-      {/* Company header bar */}
       <CompanyBar />
 
-      {/* Section title */}
-      <Text style={styles.sectionTitle}>Projects</Text>
+      <Text style={[styles.sectionTitle, { color: theme.text }]}>Projects</Text>
 
-      {/* Search bar */}
-      <View style={styles.searchContainer}>
+      <View
+        style={[
+          styles.searchContainer,
+          { backgroundColor: theme.backgroundgrey },
+        ]}
+      >
         <Ionicons
           name="search"
           size={18}
-          color={Colors.icons}
+          color={theme.icons}
           style={{ marginRight: 6 }}
         />
         <TextInput
           placeholder="Search"
-          style={styles.searchInput}
-          placeholderTextColor={Colors.icons}
+          style={[styles.searchInput, { color: theme.text }]}
+          placeholderTextColor={theme.icons}
         />
       </View>
 
-      {/* Project list */}
       <FlatList
         data={projects}
         renderItem={Site_box}
@@ -89,22 +85,9 @@ export default function Site() {
         contentContainerStyle={{ paddingBottom: 20 }}
       />
 
-      {/* Floating Action Button */}
       <TouchableOpacity
-        style={{
-          height: 50,
-          width: 50,
-          borderRadius: 25,
-          backgroundColor: Colors.secondary,
-          position: "absolute",
-          right: 20,
-          bottom: 40,
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-        onPress={() => {
-          router.push("/createTask");
-        }}
+        style={[styles.fab, { backgroundColor: theme.secondary }]}
+        onPress={() => router.push("/createTask")}
       >
         <FontAwesome6 name="add" size={20} color="white" />
       </TouchableOpacity>
@@ -126,7 +109,6 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors.backgroundgrey,
     margin: 15,
     paddingHorizontal: 10,
     borderRadius: 8,
@@ -134,13 +116,11 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     height: 40,
-    color: Colors.text,
   },
   fab: {
     height: 50,
     width: 50,
     borderRadius: 25,
-    backgroundColor: Colors.secondary,
     position: "absolute",
     right: 20,
     bottom: 40,
