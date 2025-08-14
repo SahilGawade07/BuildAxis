@@ -4,6 +4,7 @@ import { Site_box } from "@/Components/Sites/siteBox";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
+import Colors from "@/Thems/color";
 import {
   FlatList,
   StatusBar,
@@ -21,6 +22,7 @@ export default function Site() {
   const router = useRouter();
 
   const projects = [
+    
     {
       id: "1",
       name: "JJ Hormony",
@@ -54,10 +56,6 @@ export default function Site() {
   return (
     <SafeAreaView style={styles.container}>
       {/* ✅ Set Status Bar color independently */}
-      <StatusBar
-        backgroundColor="#0247D3" // 🔵 Blue status bar (Android)
-        barStyle="light-content" // Light text/icons (white)
-      />
 
       {/* Custom Safe Area (if needed) */}
       <Safe_area />
@@ -73,13 +71,13 @@ export default function Site() {
         <Ionicons
           name="search"
           size={18}
-          color="#999"
+          color={Colors.icons}
           style={{ marginRight: 6 }}
         />
         <TextInput
           placeholder="Search"
           style={styles.searchInput}
-          placeholderTextColor="#999"
+          placeholderTextColor={Colors.icons}
         />
       </View>
 
@@ -97,7 +95,7 @@ export default function Site() {
           height: 50,
           width: 50,
           borderRadius: 25,
-          backgroundColor: "#0247D3",
+          backgroundColor: Colors.secondary,
           position: "absolute",
           right: 20,
           bottom: 40,
@@ -117,7 +115,7 @@ export default function Site() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff", // 🟨 This is the page background, NOT status bar
+    backgroundColor:Colors.background ,
   },
   sectionTitle: {
     fontSize: 18,
@@ -128,7 +126,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F5F5F5",
+    backgroundColor: Colors.backgroundgrey,
     margin: 15,
     paddingHorizontal: 10,
     borderRadius: 8,
@@ -136,13 +134,13 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     height: 40,
-    color: "#000",
+    color: Colors.text,
   },
   fab: {
     height: 50,
     width: 50,
     borderRadius: 25,
-    backgroundColor: "#0247D3",
+    backgroundColor: Colors.secondary,
     position: "absolute",
     right: 20,
     bottom: 40,
