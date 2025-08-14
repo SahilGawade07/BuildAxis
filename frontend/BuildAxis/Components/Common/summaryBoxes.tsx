@@ -2,7 +2,7 @@ import React from "react";
 import {
   View,Text,Image,StyleSheet,TouchableOpacity,StatusBar,
 } from "react-native";
-import Colors from "@/Thems/color";
+import { Colors } from "@/Thems/color";
 import Fonts from "@/Thems/font";
 import { Ionicons } from "@expo/vector-icons";
 

@@ -1,16 +1,10 @@
 import React from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
-import Home from "@/app/tabs/Home";
-import profile from "@/app/tabs/Profile";
-import Site from "@/app/tabs/Sites";
-
-const Tab = createBottomTabNavigator();
+import { Tabs } from "expo-router";
 
 export default function TabNavigator() {
   return (
-    <Tab.Navigator
+    <Tabs
       screenOptions={({ route }) => ({
         tabBarStyle: {
           backgroundColor: "white",
@@ -20,7 +14,7 @@ export default function TabNavigator() {
           paddingBottom: 20,
           height: 80,
         },
-        tabBarIcon: ({ focused, color, size }) => {
+        tabBarIcon: ({ focused, color }) => {
           let iconName:any;
 
           switch (route.name) {
@@ -51,9 +45,9 @@ export default function TabNavigator() {
         },
       })}
     >
-      <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Sites" component={Site} />
-      <Tab.Screen name="Profile" component={profile} />
-    </Tab.Navigator>
+      <Tabs.Screen name="Home" />
+      <Tabs.Screen name="Sites" />
+      <Tabs.Screen name="Profile" />
+    </Tabs>
   );
 }

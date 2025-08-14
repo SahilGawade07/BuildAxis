@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity, Modal } from "react-native";
-import { Ionicons, AntDesign } from "@expo/vector-icons"; // Icons
-import Colors from "@/Thems/color"; // Make sure this exists
+import {Colors} from "@/Thems/color"; // Make sure this exists
 import AttendancaceBox from "@/Components/Common/attandanceBox"
 import Submit_bbutt from "../Common/SubmitBtn";
 import LabourList from "../Common/labourList";

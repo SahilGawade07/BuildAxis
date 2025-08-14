@@ -1,7 +1,6 @@
-import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { View, Text, Image, StyleSheet, FlatList } from "react-native";
-import LabourList from "@/Components/Common/labourList"
+import { View, StyleSheet, FlatList } from "react-native";
+import LabourList from "@/Components/Common/labourList";
 const data = [
   { id: "1", name: "Shraddha Swant" },
   { id: "2", name: "Shraddha Swant" },
@@ -10,8 +9,6 @@ const data = [
 ];
 
 export default function Labour_list() {
-
-
   return (
     <View style={styles.container}>
       <FlatList
@@ -47,7 +44,7 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#ddd",
   },
-    imageBox: {
+  imageBox: {
     width: 50,
     height: 50,
     backgroundColor: "#EAEFFF",

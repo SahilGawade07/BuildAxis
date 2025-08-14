@@ -1,6 +1,6 @@
 import React from "react";
 import {StatusBar,} from "react-native";
-import Colors from "@/Thems/color";
+import { Colors } from "@/Thems/color";
 
 
 
