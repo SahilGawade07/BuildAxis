@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { Safe_area } from "@/components/ui/safeArea";
@@ -18,6 +19,7 @@ import MaterialsScreen from "@/components/Sites/tasks/attachmentScreen";
 import ImageScreen from "@/components/Sites/tasks/ImageScreen";
 import CircularProgress from "@/components/Sites/tasks/common/circleprgressbar";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function TaskDetailsScreen() {
   const members = [
@@ -48,6 +50,8 @@ export default function TaskDetailsScreen() {
         return null;
     }
   };
+    const insets = useSafeAreaInsets();
+    const windowHeight = Dimensions.get("window").height - insets.top;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -135,8 +139,9 @@ export default function TaskDetailsScreen() {
           </TouchableOpacity>
         ))}
       </View>
-
-      <ScrollView>{renderPageContent()}</ScrollView>
+<View style={{height:windowHeight}}>
+      {renderPageContent()}
+      </View>
     </SafeAreaView>
   );
 }
