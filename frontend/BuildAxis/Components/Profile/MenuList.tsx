@@ -1,33 +1,46 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useTheme } from "@/context/ThemeContext"; // adjust import path if needed
 
-// Props for a single menu item
 interface MenuItemProps {
-  iconName: React.ComponentProps<typeof Ionicons>["name"]; // e.g., "settings-outline"
+  iconName: React.ComponentProps<typeof Ionicons>["name"];
   menuItemName: string;
   onPress?: () => void;
 }
 
-// Props for the Menu component
 interface MenuProps {
   items: MenuItemProps[];
 }
 
 const Menu = ({ items }: MenuProps) => {
+  const { theme } = useTheme();
+
   return (
-    <View style={styles.menuContainer}>
+    <View
+      style={[
+        styles.menuContainer,
+        { backgroundColor: theme.listItemFill, shadowColor: theme.text },
+      ]}
+    >
       {items.map((item, index) => (
         <TouchableOpacity
           key={index}
-          style={styles.menuItem}
+          style={[
+            styles.menuItem,
+            { borderBottomColor: theme.sepratorLine },
+            // Remove bottom border for the last item
+            index === items.length - 1 && styles.lastMenuItem,
+          ]}
           onPress={item.onPress}
         >
           <View style={styles.iconContainer}>
-            <Ionicons name={item.iconName} size={24} color="#6366f1" />
+            <Ionicons name={item.iconName} size={24} color={theme.secondary} />
           </View>
-          <Text style={styles.menuText}>{item.menuItemName}</Text>
-          <Text style={styles.chevron}>›</Text>
+          <Text style={[styles.menuText, { color: theme.text }]}>
+            {item.menuItemName}
+          </Text>
+          <Text style={[styles.chevron, { color: theme.icons }]}>›</Text>
         </TouchableOpacity>
       ))}
     </View>
@@ -36,14 +49,9 @@ const Menu = ({ items }: MenuProps) => {
 
 const styles = StyleSheet.create({
   menuContainer: {
-    backgroundColor: "white",
     borderRadius: 15,
     overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 2,
@@ -54,7 +62,9 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "#f1f5f9",
+  },
+  lastMenuItem: {
+    borderBottomWidth: 0,
   },
   iconContainer: {
     width: 24,
@@ -65,12 +75,10 @@ const styles = StyleSheet.create({
   menuText: {
     flex: 1,
     fontSize: 16,
-    color: "#1f2937",
     fontWeight: "400",
   },
   chevron: {
     fontSize: 18,
-    color: "#d1d5db",
     fontWeight: "300",
   },
 });
