@@ -8,6 +8,9 @@ import { useRouter } from "expo-router";
 import { ExpencessScreen } from "@/Components/Sites/expencessScreen";
 import ItemTable from "@/Components/Sites/itemScreen";
 import React, { useEffect, useRef, useState } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Dimensions } from 'react-native';
+
 import {
   Animated,
   FlatList,
@@ -18,20 +21,28 @@ import {
   TouchableOpacity,
   View,
   StatusBar,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
 import Labour_list from "@/Components/Sites/labourScreen";
 import Report from "@/Components/Sites/report";
 import { Safe_area } from "@/Components/Common/safeArea";
-import { Colors } from "react-native/Libraries/NewAppScreen";
+import { Colors } from "@/Thems/color";
 
-const HEADER_MAX_HEIGHT = 370;
-const HEADER_MIN_HEIGHT = 60;
+const HEADER_MAX_HEIGHT = 390;
+const HEADER_MIN_HEIGHT = 50;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 export default function DynamicHeaderScreen() {
   const scrollY = useRef(new Animated.Value(0)).current;
+  const [scrollYy, setScrollYy] = useState(0);
 
+
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    setScrollYy(event.nativeEvent.contentOffset.y);
+  };
   // Shrinking height
   const headerHeight = scrollY.interpolate({
     inputRange: [0, 50], // shrink in first 100px
@@ -107,20 +118,24 @@ export default function DynamicHeaderScreen() {
         return null;
     }
   };
-
+  const insets = useSafeAreaInsets();
+  const windowHeight = Dimensions.get('window').height-insets.top;
   return (
     <SafeAreaView style={styles.container}>
       {/* Dynamic Header */}
-       <Safe_area/>
+       
        <StatusBar backgroundColor={Colors.primary} barStyle="light-content" />
+
       
-      <Animated.View style={[styles.header, { height: headerHeight }]}>
+      <Animated.View style={[styles.header, { height: headerHeight,paddingTop: insets.top }]}>
         <Animated.View
           style={{
             opacity: headerContentOpacity,
             transform: [{ translateY: headerContentTranslateY }],
           }}
         >
+
+
          
           <CompanyBar />
           <Back_Text_Butt path="/tabs/Sites/Site" text="Site Name" />
@@ -162,6 +177,11 @@ export default function DynamicHeaderScreen() {
         </Animated.View>
       </Animated.View>
 
+      
+          <Animated.View style={ { backgroundColor:"#fff",zIndex: 2, position: "absolute", opacity: Animated.subtract(1, headerContentOpacity),}}>
+            <Back_Text_Butt path="/tabs/Sites/Site" text={page} />
+
+          </Animated.View>
       {/* Scrollable Content */}
       <Animated.ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -170,8 +190,10 @@ export default function DynamicHeaderScreen() {
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: false }
         )}
+        
+        
       >
-        <View style={{ height: 800 }}>
+        <View style={{ height:windowHeight }}>
           {renderPageContent()}
 
         </View>
@@ -260,3 +282,5 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
+
+

@@ -16,6 +16,7 @@ export default function Home() {
     <SafeAreaView style={styles.container}>
       <Safe_area />
       <CompanyBar />
+      
       {/* Date Row */}
       <View style={styles.dateRow}>
         <Text style={styles.todayText}>Today</Text>
