@@ -7,7 +7,7 @@ import {
   FlatList,
   StyleSheet,
 } from "react-native";
-import Topbar from "@/Components/Sites/popupScreens/common/topBar";
+import Topbar from "@/components/Sites/popupScreens/common/topBar";
 import { useTheme } from "../../../context/ThemeContext"; // adjust path
 
 export default function AttendanceModal({ fun }: any) {

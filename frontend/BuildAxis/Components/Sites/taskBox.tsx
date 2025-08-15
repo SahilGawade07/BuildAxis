@@ -1,14 +1,11 @@
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
-  ScrollView,
   StyleSheet,
-  Image,
   TouchableOpacity,
-  FlatList
 } from "react-native";
 
 export  const Task_Box = ({ item }: any) => (
@@ -23,7 +20,7 @@ export  const Task_Box = ({ item }: any) => (
           </View>
           <View>
           <Text style={styles.sitename}>{item.name}</Text>
-          <Text style={[styles.text,{fontSize:12}]}>Soham Darade</Text>
+          <Text style={[styles.text,{fontSize:12}]}>Sahil Gawade</Text>
           </View>
         </View>
 

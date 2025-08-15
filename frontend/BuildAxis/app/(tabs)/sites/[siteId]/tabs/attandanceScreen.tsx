@@ -1,11 +1,19 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity, Modal } from "react-native";
-import {Colors} from "@/Thems/color"; // Make sure this exists
-import AttendancaceBox from "@/Components/Common/attandanceBox"
-import Submit_bbutt from "../Common/SubmitBtn";
-import LabourList from "../Common/labourList";
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  FlatList,
+  TouchableOpacity,
+  Modal,
+} from "react-native";
+import { Colors } from "@/Thems/color"; // Make sure this exists
+import AttendancaceBox from "@/components/ui/attandanceBox";
+import Submit_bbutt from "../../../../../components/ui/SubmitBtn";
+import LabourList from "../../../../../components/ui/labourList";
 import { BlurView } from "expo-blur";
-import AttendanceModal from "@/Components/Sites/popupScreens/attandancePopup"
+import AttendanceModal from "@/components/Sites/popupScreens/attandancePopup";
 const data = [
   { id: "1", name: "Shraddha Swant" },
   { id: "2", name: "Shraddha Swant" },
@@ -29,10 +37,9 @@ export default function AttendanceSummary() {
   const [popup, setpopup] = useState(false);
 
   const activepopup = () => {
-    const update=!popup;
+    const update = !popup;
     setpopup(update);
-
-  }
+  };
   return (
     <SafeAreaView style={styles.container}>
       {/* Date */}
@@ -43,7 +50,6 @@ export default function AttendanceSummary() {
 
       {/* Cards Row */}
       <View style={styles.cardContainer}>
-
         {/* Present */}
         <AttendancaceBox
           backgroundColor={Colors.boxes02[0]}
@@ -71,8 +77,6 @@ export default function AttendanceSummary() {
           Text1="Half Day"
           text2="155"
         />
-
-
       </View>
 
       <View style={{ flexDirection: "row" }}>
@@ -89,14 +93,11 @@ export default function AttendanceSummary() {
         ))}
       </View>
 
-
       <FlatList
         data={data}
         renderItem={LabourList}
         keyExtractor={(item) => item.id}
       />
-
-
 
       <Submit_bbutt text="Mark Attandance" funcations={activepopup} />
       <Modal
@@ -105,18 +106,18 @@ export default function AttendanceSummary() {
         visible={popup}
         onRequestClose={() => setpopup(false)}
       >
-
         <BlurView
-          style={[StyleSheet.absoluteFill, {backgroundColor: "rgba(65, 65, 65, 0.84)"}]}
-          tint="light"   // "light", "dark", "xlight"
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: "rgba(65, 65, 65, 0.84)" },
+          ]}
+          tint="light" // "light", "dark", "xlight"
           intensity={20}
         />
         <View style={styles.overlay}>
-
-          <AttendanceModal fun={activepopup}/>
+          <AttendanceModal fun={activepopup} />
         </View>
       </Modal>
-
     </SafeAreaView>
   );
 }
@@ -183,27 +184,27 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   popup: {
     width: 300,
     padding: 20,
     backgroundColor: "#fff",
     borderRadius: 12,
-    alignItems: "center"
+    alignItems: "center",
   },
   popupTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 10
+    marginBottom: 10,
   },
   button: {
     backgroundColor: "#007BFF",
     padding: 12,
-    borderRadius: 8
+    borderRadius: 8,
   },
   buttonText: {
     color: "#fff",
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
 });

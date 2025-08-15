@@ -6371,7 +6371,7 @@ react-native-svg@^15.11.2:
     css-tree "^1.1.3"
     warn-once "0.1.1"
 
-react-native-web@*, react-native-web@~0.20.0:
+react-native-web@*, react-native-web@^0.20.0:
   version "0.20.0"
   resolved "https://registry.npmjs.org/react-native-web/-/react-native-web-0.20.0.tgz"
   integrity sha512-OOSgrw+aON6R3hRosCau/xVxdLzbjEcsLysYedka0ZON4ZZe6n9xgeN9ZkoejhARM36oTlUgHIQqxGutEJ9Wxg==

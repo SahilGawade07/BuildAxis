@@ -10,8 +10,8 @@ import {
   StatusBar,
 } from "react-native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import { TextInputs } from "../common/input_textbox";
-import { Continue } from "../common/continue_button";
+import { TextInputs } from "../../components/ui/inputField";
+import { ContinueBtn } from "../../components/ui/ContinueBtn";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -107,7 +107,7 @@ export default function AddOrganizationScreen() {
             />
 
             {/* Add Organization Button */}
-            <Continue
+            <ContinueBtn
               text="Create Organization"
               touchable={isFormValid}
               onPresss={handleAddOrganization}

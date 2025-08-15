@@ -1,6 +1,6 @@
 import React from "react";
 import { View, FlatList } from "react-native";
-import { Expencess } from "@/Components/Common/expencesseBox";
+import { Expencess } from "@/components/ui/expencesseBox";
 const projects = [
   {
     id: "1",

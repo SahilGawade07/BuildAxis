@@ -1,5 +1,5 @@
-import { CompanyBar } from "@/Components/Common/companyBar";
-import { SiteBox } from "@/Components/Sites/siteBox";
+import { CompanyBar } from "@/components/ui/companyBar";
+import { SiteBox } from "@/components/Sites/siteBox";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -89,7 +89,7 @@ export default function Site() {
 
       <TouchableOpacity
         style={[styles.fab, { backgroundColor: theme.secondary }]}
-        onPress={() => router.push("/createTask")}
+        onPress={() => router.push("/sites/addSite")}
       >
         <FontAwesome6 name="add" size={20} color="white" />
       </TouchableOpacity>

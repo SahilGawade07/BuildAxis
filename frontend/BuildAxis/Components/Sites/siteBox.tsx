@@ -5,21 +5,21 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
 
 export const SiteBox = ({ item }: any) => {
-  const { theme } = useTheme(); 
+  const { theme } = useTheme();
 
   return (
     <TouchableOpacity
       style={[
         styles.sitecard,
-        { backgroundColor: theme.listItemFill, borderColor: theme.listItemBorder },
+        {
+          backgroundColor: theme.listItemFill,
+          borderColor: theme.listItemBorder,
+        },
       ]}
-      onPress={() => {
-        router.push("/mainSite");
-      }}
+      onPress={() => router.push(`/sites/${item.id}` as any)} 
     >
       {/* Card Header */}
       <View style={styles.cardHeader}>
-        {/* Left side: Project image placeholder + name */}
         <View style={styles.cardHeaderLeft}>
           <View
             style={[styles.imageBox, { backgroundColor: theme.boxes01[0] }]}
@@ -31,17 +31,14 @@ export const SiteBox = ({ item }: any) => {
           </Text>
         </View>
 
-        {/* Right side: Active badge */}
         <View
           style={[styles.activeBadge, { backgroundColor: theme.secondary }]}
         >
-          <Text style={[styles.activeText]}>{item.status}</Text>
+          <Text style={styles.activeText}>{item.status}</Text>
         </View>
       </View>
 
-      {/* Card Footer */}
       <View style={[styles.cardFooter, { borderColor: theme.icons }]}>
-        {/* Project progress */}
         <View style={styles.progressRow}>
           <Ionicons name="radio-button-off" size={18} color={theme.primary} />
           <Text style={[styles.progressText, { color: theme.text }]}>
@@ -49,7 +46,6 @@ export const SiteBox = ({ item }: any) => {
           </Text>
         </View>
 
-        {/* Project date */}
         <View style={styles.dateRow}>
           <Ionicons name="calendar-outline" size={18} color={theme.text} />
           <Text style={[styles.dateText, { color: theme.text }]}>
@@ -57,7 +53,6 @@ export const SiteBox = ({ item }: any) => {
           </Text>
         </View>
 
-        {/* Menu button */}
         <TouchableOpacity>
           <MaterialIcons name="more-vert" size={22} color={theme.text} />
         </TouchableOpacity>

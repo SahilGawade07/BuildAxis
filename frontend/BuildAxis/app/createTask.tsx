@@ -1,12 +1,12 @@
-import Back_Text_Butt from "@/Components/Common/backBtn";
-import { CompanyBar } from "@/Components/Common/companyBar";
-import AttendanceSummary from "@/Components/Sites/attandanceScreen";
-import { Inventory } from "@/Components/Sites/InventoryScreen";
-import { Task_Box } from "@/Components/Sites/taskBox";
+import Back_Text_Butt from "@/components/ui/backBtn";
+import { CompanyBar } from "@/components/ui/companyBar";
+import AttendanceSummary from "@/app/(tabs)/sites/[siteId]/tabs/attandanceScreen";
+import { Inventory } from "@/app/(tabs)/sites/[siteId]/tabs/InventoryScreen";
+import { Task_Box } from "@/components/Sites/taskBox";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { ExpencessScreen } from "@/Components/Sites/expencessScreen";
-import ItemTable from "@/Components/Sites/itemScreen";
+import { ExpencessScreen } from "@/app/(tabs)/sites/[siteId]/tabs/expencessScreen";
+import ItemTable from "@/app/(tabs)/sites/[siteId]/tabs/itemScreen";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -20,9 +20,9 @@ import {
   StatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Labour_list from "@/Components/Sites/labourScreen";
-import Report from "@/Components/Sites/report";
-import { Safe_area } from "@/Components/Common/safeArea";
+import Labour_list from "@/app/(tabs)/sites/[siteId]/tabs/labourScreen";
+import Report from "@/app/(tabs)/sites/[siteId]/tabs/report";
+import { Safe_area } from "@/components/ui/safeArea";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
 const HEADER_MAX_HEIGHT = 370;
@@ -67,10 +67,34 @@ export default function DynamicHeaderScreen() {
   ];
 
   const projects = [
-    { id: "1", name: "JJ Hormony", progress: "20%", date: "12/02/2022", status: "Active" },
-    { id: "2", name: "Green Heights", progress: "45%", date: "15/04/2023", status: "Active" },
-    { id: "3", name: "Sky Towers", progress: "75%", date: "01/10/2024", status: "Active" },
-    { id: "4", name: "Blue Ocean", progress: "60%", date: "20/08/2025", status: "Active" },
+    {
+      id: "1",
+      name: "JJ Hormony",
+      progress: "20%",
+      date: "12/02/2022",
+      status: "Active",
+    },
+    {
+      id: "2",
+      name: "Green Heights",
+      progress: "45%",
+      date: "15/04/2023",
+      status: "Active",
+    },
+    {
+      id: "3",
+      name: "Sky Towers",
+      progress: "75%",
+      date: "01/10/2024",
+      status: "Active",
+    },
+    {
+      id: "4",
+      name: "Blue Ocean",
+      progress: "60%",
+      date: "20/08/2025",
+      status: "Active",
+    },
   ];
 
   useEffect(() => {
@@ -81,8 +105,7 @@ export default function DynamicHeaderScreen() {
     switch (page) {
       case "Assign Task":
         return (
-
-          <ScrollView >
+          <ScrollView>
             <FlatList
               data={projects}
               renderItem={Task_Box}
@@ -111,9 +134,9 @@ export default function DynamicHeaderScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Dynamic Header */}
-       <Safe_area/>
-       <StatusBar backgroundColor={Colors.primary} barStyle="light-content" />
-      
+      <Safe_area />
+      <StatusBar backgroundColor={Colors.primary} barStyle="light-content" />
+
       <Animated.View style={[styles.header, { height: headerHeight }]}>
         <Animated.View
           style={{
@@ -121,7 +144,6 @@ export default function DynamicHeaderScreen() {
             transform: [{ translateY: headerContentTranslateY }],
           }}
         >
-         
           <CompanyBar />
           <Back_Text_Butt path="/tabs/Sites/Site" text="Site Name" />
 
@@ -145,10 +167,7 @@ export default function DynamicHeaderScreen() {
                   style={styles.menuItem}
                 >
                   <Text
-                    style={[
-                      styles.text,
-                      active === item && styles.activeText1,
-                    ]}
+                    style={[styles.text, active === item && styles.activeText1]}
                   >
                     {item}
                   </Text>
@@ -171,19 +190,15 @@ export default function DynamicHeaderScreen() {
           { useNativeDriver: false }
         )}
       >
-        <View style={{ height: 800 }}>
-          {renderPageContent()}
-
-        </View>
-
+        <View style={{ height: 800 }}>{renderPageContent()}</View>
       </Animated.ScrollView>
-              <TouchableOpacity
-          style={styles.floatingButton}
-          onPress={() => router.push("../CreateReport")}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.floatingButtonText}>Generate Report</Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={() => router.push("../CreateReport")}
+        activeOpacity={0.8}
+      >
+        <Text style={styles.floatingButtonText}>Generate Report</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
