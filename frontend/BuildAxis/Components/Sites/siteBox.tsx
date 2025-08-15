@@ -5,13 +5,13 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
 
 export const SiteBox = ({ item }: any) => {
-  const { theme } = useTheme(); // ✅ Access theme colors
+  const { theme } = useTheme(); 
 
   return (
     <TouchableOpacity
       style={[
         styles.sitecard,
-        { backgroundColor: theme.background, borderColor: theme.icons },
+        { backgroundColor: theme.listItemFill, borderColor: theme.listItemBorder },
       ]}
       onPress={() => {
         router.push("/mainSite");
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     padding: 10,
     borderRadius: 8,
-    borderWidth: 1.6,
+    borderWidth: 1,
     shadowColor: "#000",
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
