@@ -1,9 +1,9 @@
 import Back_Text_Butt from "@/components/ui/backBtn";
 import { Safe_area } from "@/components/ui/safeArea";
-import { CompanyBar } from "@/app/reusable";
+import { CompanyBar } from "@/components/ui/orgNameBar";
 import AttendanceSummary from "@/app/(tabs)/sites/[siteId]/tabs/attandanceScreen";
 import { Inventory } from "@/app/(tabs)/sites/[siteId]/tabs/InventoryScreen";
-import { Task_Box } from "@/components/Sites/taskBox";
+import { TaskBox } from "@/components/Sites/taskBox";
 import { Ionicons } from "@expo/vector-icons";
 import { ExpencessScreen } from "@/app/(tabs)/sites/[siteId]/tabs/expencessScreen";
 import ItemTable from "@/app/(tabs)/sites/[siteId]/tabs/itemScreen";
@@ -75,7 +75,7 @@ export default function Main_Site() {
         return (
           <FlatList
             data={projects}
-            renderItem={Task_Box}
+            renderItem={TaskBox}
             keyExtractor={(item) => item.id}
             contentContainerStyle={{ paddingTop: 10 }}
           />

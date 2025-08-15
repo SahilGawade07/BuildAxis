@@ -9,34 +9,48 @@ import {
   ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Linking } from "react-native";
 import Menu from "@/components/Profile/MenuList";
 import LogoutButton from "@/components/Profile/LogoutBtn";
+import { router } from "expo-router";
 
-const menuItems = [
+// Define the type for a single menu item
+interface MenuItem {
+  iconName: React.ComponentProps<typeof Ionicons>["name"];
+  menuItemName: string;
+  onPress: () => void;
+}
+
+// Menu items with real icon names from Ionicons
+const menuItems: MenuItem[] = [
   {
-    menuIcon: "📱",
+    iconName: "business-outline",
     menuItemName: "Manage Organisation",
     onPress: () => console.log("Manage Organisation pressed"),
   },
   {
-    menuIcon: "👟",
+    iconName: "language-outline",
     menuItemName: "Select Language",
     onPress: () => console.log("Select Language pressed"),
   },
   {
-    menuIcon: "💪",
+    iconName: "notifications-outline",
     menuItemName: "Manage Notification",
-    onPress: () => console.log("Manage Notification pressed"),
+    onPress: async () => {
+      try {
+        await Linking.openSettings();
+      } catch (error) {
+        console.error("Failed to open settings:", error);
+      }
+    },
   },
   {
-    menuIcon: "🔔",
-    menuItemName: "Notification Settings",
-    onPress: () => console.log("Notification Settings pressed"),
-  },
-  {
-    menuIcon: "👥",
-    menuItemName: "Community Settings",
-    onPress: () => console.log("Community Settings pressed"),
+    iconName: "color-palette-outline",
+    menuItemName: "Theme Settings",
+    onPress: () => {
+      router.push("/(tabs)/profile/themeSettings");
+    },
   },
 ];
 
@@ -72,9 +86,6 @@ const ProfilePage = () => {
 
         {/* Content Container */}
         <View style={styles.contentContainer}>
-          {/* Premium Subscription Card */}
-
-          {/* Content Section */}
           <Text style={styles.contentLabel}>CONTENT</Text>
 
           {/* Menu Items */}
@@ -162,12 +173,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     letterSpacing: 1,
     marginBottom: 15,
-  },
-
-  chevron: {
-    fontSize: 18,
-    color: "#d1d5db",
-    fontWeight: "300",
   },
 });
 

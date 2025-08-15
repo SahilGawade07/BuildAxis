@@ -47,25 +47,23 @@ export default function ReportScreen() {
     );
 
     return (
-        <SafeAreaView style={styles.container}>
-            <FlatList
-                data={reports}
-                keyExtractor={(item) => item.id}
-                renderItem={renderReportItem}
-                contentContainerStyle={styles.listContainer}
-            />
+      <SafeAreaView style={styles.container}>
+        <FlatList
+          data={reports}
+          keyExtractor={(item) => item.id}
+          renderItem={renderReportItem}
+          contentContainerStyle={styles.listContainer}
+        />
 
-            {/* Floating Button */}
-            <TouchableOpacity
-                style={styles.floatingButton}
-                onPress={() => router.push("../CreateReport")}
-                activeOpacity={0.8}
-            >
-                <Text style={styles.floatingButtonText}>Generate Report</Text>
-            </TouchableOpacity>
-
-            
-        </SafeAreaView>
+        {/* Floating Button */}
+        <TouchableOpacity
+          style={styles.floatingButton}
+          onPress={() => router.push("/(tabs)/sites/[siteId]/CreateReport")}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.floatingButtonText}>Generate Report</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
     );
 }
 

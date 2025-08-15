@@ -1,12 +1,15 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
+// Props for a single menu item
 interface MenuItemProps {
-  menuIcon: string;
+  iconName: React.ComponentProps<typeof Ionicons>["name"]; // e.g., "settings-outline"
   menuItemName: string;
   onPress?: () => void;
 }
 
+// Props for the Menu component
 interface MenuProps {
   items: MenuItemProps[];
 }
@@ -20,8 +23,8 @@ const Menu = ({ items }: MenuProps) => {
           style={styles.menuItem}
           onPress={item.onPress}
         >
-          <View style={styles.menuIconContainer}>
-            <Text style={styles.menuIcon}>{item.menuIcon}</Text>
+          <View style={styles.iconContainer}>
+            <Ionicons name={item.iconName} size={24} color="#6366f1" />
           </View>
           <Text style={styles.menuText}>{item.menuItemName}</Text>
           <Text style={styles.chevron}>›</Text>
@@ -53,12 +56,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#f1f5f9",
   },
-  menuIconContainer: {
+  iconContainer: {
     width: 24,
     marginRight: 15,
-  },
-  menuIcon: {
-    fontSize: 18,
+    justifyContent: "center",
+    alignItems: "center",
   },
   menuText: {
     flex: 1,

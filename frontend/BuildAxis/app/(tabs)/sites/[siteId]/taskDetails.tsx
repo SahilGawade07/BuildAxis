@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { Safe_area } from "@/components/ui/safeArea";
-import { CompanyBar } from "@/app/reusable";
+import { CompanyBar } from "@/components/ui/orgNameBar";
 import AttendancaceBox from "@/components/ui/attandanceBox";
 import { Colors } from "@/Thems/color"; // ✅ Updated import
 import Labour_list from "@/app/(tabs)/sites/[siteId]/tabs/labourScreen";

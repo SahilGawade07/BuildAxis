@@ -3,7 +3,6 @@ import { View, Text, Image, StyleSheet } from "react-native";
 import { Colors } from "@/Thems/color";
 import { Ionicons } from "@expo/vector-icons";
 
-//This is top company Bar
 export function CompanyBar() {
   return (
     <>

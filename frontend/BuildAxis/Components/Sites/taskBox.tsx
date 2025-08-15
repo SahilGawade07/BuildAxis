@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-export  const Task_Box = ({ item }: any) => (
+export  const TaskBox = ({ item }: any) => (
   
     <TouchableOpacity style={styles.sitecard} onPress={()=>{router.push("/task")}}>
       {/* Card Header */}
