@@ -1,14 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View
-} from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
-import { CompanyBar } from "@/Components/Common/companyBar";
-import { Safe_area } from "@/Components/Common/safeArea";
-import { Overview } from "@/Components/Common/summaryBoxes";
+import { CompanyBar } from "@/components/ui/companyBar";
+import { Safe_area } from "@/components/ui/safeArea";
+import { Overview } from "@/components/ui/summaryBoxes";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {

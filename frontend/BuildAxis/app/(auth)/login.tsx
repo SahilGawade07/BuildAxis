@@ -11,51 +11,43 @@ import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Import reusable components
-import { TextHeaderTop } from "../common/login_header";
-import { TextInputs } from "../common/input_textbox";
-import { PasswordTextInputs } from "../common/input_pass_textbox";
-import { Continue } from "../common/continue_button";
-import { SwitchScreens } from "../common/switch_to_signup";
+import { TopTextHeader } from "@/components/ui/topHeaderText";
+import { TextInputs } from "../../components/ui/inputField";
+import { PasswordField } from "../../components/ui/passwordField";
+import { ContinueBtn } from "../../components/ui/ContinueBtn";
+import { SwitchScreens } from "../../components/ui/switch_to_signup";
 
 const AppLogo = () => (
   <View style={styles.logoContainer}>
     <Image
-      source={require("../../../assets/images/logo.jpg")}
+      source={require("../../assets/images/logo.jpg")}
       style={styles.logo}
       resizeMode="contain"
     />
   </View>
 );
 
-export default function SignUpScreen() {
+export default function LoginScreen() {
   const router = useRouter();
-
-  // Form states
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [continueDisabled, setContinueDisabled] = useState(true);
   const [err, setError] = useState("");
 
-  // Validate form and enable/disable button
   useEffect(() => {
     setError("");
     setContinueDisabled(true);
 
-    if (!name || !email || !password || !confirmPassword) return;
+    if (!email || !password) return;
     if (!email.includes("@") || !email.includes(".")) return;
     if (password.length < 6) return;
-    if (password !== confirmPassword) return;
 
     setContinueDisabled(false);
-  }, [name, email, password, confirmPassword]);
+  }, [email, password]);
 
-  // Handle sign-up submission
-  const handleSignup = () => {
+  const handleLogin = () => {
     setError("");
-
-    if (!name || !email || !password || !confirmPassword) {
+    if (!email || !password) {
       setError("All fields are required");
       return;
     }
@@ -67,44 +59,23 @@ export default function SignUpScreen() {
       setError("Password must be at least 6 characters");
       return;
     }
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
 
-    handleSubmit();
-  };
-
-  // Navigate after validation
-  const handleSubmit = () => {
-    router.push("/Auth/create_org");
+    // Navigate to next screen
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />{" "}
       <View style={styles.centeredContent}>
         {/* Logo */}
         <AppLogo />
 
         {/* Headers */}
-        <TextHeaderTop text="Create Account" style={styles.headerTop} />
-        <Text style={styles.subHeader}>
-          Let&apos;s get you started! Please fill in the details below.
-        </Text>
+        <TopTextHeader text="Welcome Back" style={styles.headerTop} />
+        <Text style={styles.subHeader}>Log in to your BuildAxis account</Text>
 
         {/* Form */}
         <View style={styles.form}>
-          <TextInputs
-            value={name}
-            onChangeText={setName}
-            placeholder="Enter your full name"
-            keyboardType="default"
-            textname="Name"
-            icon="person-outline"
-          />
-
           <TextInputs
             value={email}
             onChangeText={setEmail}
@@ -114,7 +85,7 @@ export default function SignUpScreen() {
             icon="mail-outline"
           />
 
-          <PasswordTextInputs
+          <PasswordField
             value={password}
             onChangeText={setPassword}
             placeholder="Enter your password"
@@ -122,30 +93,27 @@ export default function SignUpScreen() {
             icon="lock-closed-outline"
           />
 
-          <PasswordTextInputs
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            placeholder="Confirm your password"
-            textname="Confirm Password"
-            icon="lock-closed-outline"
-          />
+          {/* Forgot Password */}
+          <TouchableOpacity>
+            <Text style={styles.forgotText}>Forgot password?</Text>
+          </TouchableOpacity>
 
           {/* Error Message */}
           {err ? <Text style={styles.error}>{err}</Text> : null}
 
-          {/* Sign Up Button */}
-          <Continue
-            text="Sign Up"
+          {/* Continue Button */}
+          <ContinueBtn
+            text="Continue"
             touchable={!continueDisabled}
-            onPresss={handleSignup}
+            onPresss={handleLogin}
           />
         </View>
 
-        {/* Switch to Login */}
+        {/* Sign Up Link */}
         <SwitchScreens
-          text1="Already have an account?"
-          text2="Log in"
-          path="/Auth/create_org/create_org"
+          text1="Don’t have an account?"
+          text2="Sign up"
+          path="/Auth/sign_up/sign_up"
         />
       </View>
     </SafeAreaView>
@@ -192,10 +160,38 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 320, // Keeps form narrow and centered on larger screens
   },
+  forgotText: {
+    fontSize: 14,
+    color: "#1976D2", // Google Blue
+    textAlign: "right",
+    marginTop: 8,
+    fontWeight: "500",
+  },
   error: {
     color: "#D32F2F", // Material Red
     fontSize: 14,
     marginTop: 8,
     textAlign: "center",
+  },
+  orContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 24,
+    paddingHorizontal: 16,
+  },
+  line: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#BDBDBD",
+  },
+  orText: {
+    marginHorizontal: 12,
+    fontSize: 14,
+    color: "#757575",
+    fontWeight: "500",
+  },
+  socialButtons: {
+    gap: 12,
+    marginBottom: 20,
   },
 });

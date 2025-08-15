@@ -14,6 +14,7 @@ export const Colors = {
   secondary: "#0247D3",
   background: "#ffffff",
   listItemFill: "#ffffff",
+  listItemBorder: "#b2b2b2",
   backgroundgrey: "#F5F5F5",
   text: "#000000",
   icons: "#999",
@@ -24,10 +25,11 @@ export const Colors = {
 };
 
 export const ColorsDark = {
-  primary: "#0247D3",
-  secondary: "#00174D",
+  primary: "#00174D",
+  secondary: "#0247D3",
   background: "#111827",
   listItemFill: "#1F2937",
+  listItemBorder: "#1F2937",
   backgroundgrey: "#020202ff",
   text: "#FFFFFF",
   icons: "#CCCCCC",

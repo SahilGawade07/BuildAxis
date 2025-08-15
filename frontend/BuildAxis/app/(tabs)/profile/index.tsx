@@ -9,8 +9,8 @@ import {
   ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Menu from "@/Components/Profile/MenuList";
-import LogoutButton from "@/Components/Profile/LogoutBtn";
+import Menu from "@/components/Profile/MenuList";
+import LogoutButton from "@/components/Profile/LogoutBtn";
 
 const menuItems = [
   {

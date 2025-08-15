@@ -9,17 +9,16 @@ import {
   Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import Addmaterial from "@/Components/Sites/tasks/common/addmaterial";
+import Addmaterial from "@/components/Sites/tasks/common/addmaterial";
 import { BlurView } from "expo-blur";
 import Addtools from "../popupScreens/addToolsPopup";
-import Uploadblueprints from "@/Components/Sites/popupScreens/uploadBlueprints"
+import Uploadblueprints from "@/components/Sites/popupScreens/uploadBlueprints";
 export default function MaterialsScreen() {
   const data = [
     { id: "1", name: "Blue print" },
     { id: "2", name: "Blue print" },
     { id: "3", name: "Blue print" },
     { id: "4", name: "Blue print" },
-
   ];
 
   const [popup, setpopup] = useState(false);
@@ -27,8 +26,7 @@ export default function MaterialsScreen() {
   const activepopup = () => {
     const update = !popup;
     setpopup(update);
-
-  }
+  };
 
   const renderItem = ({ item }: any) => (
     <View style={styles.item}>
@@ -42,8 +40,11 @@ export default function MaterialsScreen() {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <Addmaterial text="Attachment" text2="Add attachments" funcations={activepopup} />
-
+      <Addmaterial
+        text="Attachment"
+        text2="Add attachments"
+        funcations={activepopup}
+      />
 
       {/* Grid */}
       <FlatList
@@ -55,25 +56,24 @@ export default function MaterialsScreen() {
         contentContainerStyle={{ paddingTop: 10 }}
       />
 
-
       <Modal
         animationType="fade"
         transparent={true}
         visible={popup}
         onRequestClose={() => setpopup(false)}
       >
-
         <BlurView
-          style={[StyleSheet.absoluteFill, { backgroundColor: "rgba(65, 65, 65, 0.84)" }]}
-          tint="light"   // "light", "dark", "xlight"
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: "rgba(65, 65, 65, 0.84)" },
+          ]}
+          tint="light" // "light", "dark", "xlight"
           intensity={20}
         />
         <View style={styles.overlay}>
-
           <Uploadblueprints fun={activepopup} />
         </View>
       </Modal>
-
     </View>
   );
 }
@@ -113,7 +113,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
-    
-
   },
 });

@@ -1,11 +1,11 @@
-import { Safe_area } from "@/Components/Common/safeArea";
-import { CompanyBar } from "@/Components/Common/companyBar";
-import { SiteBox } from "@/Components/Sites/siteBox";
+import { CompanyBar } from "@/components/ui/companyBar";
+import { SiteBox } from "@/components/Sites/siteBox";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
   FlatList,
+  StatusBar,
   StyleSheet,
   Text,
   TextInput,
@@ -53,7 +53,7 @@ export default function Site() {
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.background }]}
     >
-      <Safe_area />
+      <StatusBar backgroundColor={theme.primary} barStyle="light-content" />
       <CompanyBar />
 
       <Text style={[styles.sectionTitle, { color: theme.text }]}>Projects</Text>
@@ -61,7 +61,10 @@ export default function Site() {
       <View
         style={[
           styles.searchContainer,
-          { backgroundColor: theme.backgroundgrey },
+          {
+            backgroundColor: theme.listItemFill,
+            borderColor: theme.listItemBorder,
+          },
         ]}
       >
         <Ionicons
@@ -79,14 +82,14 @@ export default function Site() {
 
       <FlatList
         data={projects}
-        renderItem={({ item }) => <SiteBox item={item} />} 
+        renderItem={({ item }) => <SiteBox item={item} />}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingBottom: 20 }}
       />
 
       <TouchableOpacity
         style={[styles.fab, { backgroundColor: theme.secondary }]}
-        onPress={() => router.push("/createTask")}
+        onPress={() => router.push("/sites/addSite")}
       >
         <FontAwesome6 name="add" size={20} color="white" />
       </TouchableOpacity>
@@ -110,6 +113,8 @@ const styles = StyleSheet.create({
     margin: 15,
     paddingHorizontal: 10,
     borderRadius: 8,
+    marginBottom: 27,
+    borderWidth: 1,
   },
   searchInput: {
     flex: 1,

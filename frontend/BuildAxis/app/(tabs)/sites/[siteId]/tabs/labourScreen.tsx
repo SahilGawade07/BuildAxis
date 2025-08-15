@@ -1,7 +1,7 @@
 import { FontAwesome6 } from "@expo/vector-icons";
 import React from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
-import LabourList from "@/Components/Common/labourList";
+import LabourList from "@/components/ui/labourList";
 import { useRouter } from "expo-router";
 
 const data = [
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#ddd",
   },
-    imageBox: {
+  imageBox: {
     width: 50,
     height: 50,
     backgroundColor: "#EAEFFF",

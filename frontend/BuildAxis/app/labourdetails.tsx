@@ -10,11 +10,11 @@ import {
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
-import Ionicons from '@expo/vector-icons/Ionicons';
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 // Reusable Components
-import { TextInputs } from "./Auth/common/input_textbox";
-import { Continue } from "./Auth/common/continue_button";
+import { TextInputs } from "../components/ui/inputField";
+import { ContinueBtn } from "../components/ui/ContinueBtn";
 
 export default function LabourDetailsScreen() {
   const router = useRouter();
@@ -103,7 +103,7 @@ export default function LabourDetailsScreen() {
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
         {/* Submit */}
-        <Continue
+        <ContinueBtn
           text="Add To Company"
           touchable={true}
           onPresss={handleAddToCompany}

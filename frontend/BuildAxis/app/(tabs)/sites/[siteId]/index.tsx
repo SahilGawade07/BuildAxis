@@ -112,12 +112,6 @@ export default function Main_Site() {
           />
         </View>
         {/* Header Image */}
-        <View style={{ height: 200, padding: 5, alignItems: "center" }}>
-          <Image
-            source={require("@/assets/images/Construction.png")}
-            style={{ width: "100%", height: "100%" }}
-          />
-        </View>
 
         {/* Menu */}
         <View style={{ flexDirection: "row" }}>

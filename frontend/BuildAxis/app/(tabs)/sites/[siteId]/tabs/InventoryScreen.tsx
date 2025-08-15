@@ -1,9 +1,6 @@
 import React from "react";
-import {
-  StyleSheet,
-  View
-} from "react-native";
-import { Overview } from "../Common/summaryBoxes";
+import { StyleSheet, View } from "react-native";
+import { Overview } from "../../../../../components/ui/summaryBoxes";
 
 export const Inventory = ({ item }: any) => {
   return (
@@ -56,6 +53,3 @@ const styles = StyleSheet.create({
     padding: 15,
   },
 });
-
-
-
