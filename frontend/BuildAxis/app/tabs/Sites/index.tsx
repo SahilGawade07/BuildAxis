@@ -1,6 +1,6 @@
 import { Safe_area } from "@/Components/Common/safeArea";
 import { CompanyBar } from "@/Components/Common/companyBar";
-import { Site_box } from "@/Components/Sites/siteBox";
+import { SiteBox } from "@/Components/Sites/siteBox";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -79,7 +79,7 @@ export default function Site() {
 
       <FlatList
         data={projects}
-        renderItem={Site_box}
+        renderItem={({ item }) => <SiteBox item={item} />} 
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingBottom: 20 }}
       />

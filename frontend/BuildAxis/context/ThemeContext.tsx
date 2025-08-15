@@ -1,4 +1,3 @@
-// context/ThemeContext.tsx
 import React, {
   createContext,
   useContext,
@@ -10,11 +9,11 @@ import React, {
 import { useColorScheme } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Your color palettes
 export const Colors = {
   primary: "#00174D",
   secondary: "#0247D3",
   background: "#ffffff",
+  listItemFill: "#ffffff",
   backgroundgrey: "#F5F5F5",
   text: "#000000",
   icons: "#999",
@@ -28,7 +27,8 @@ export const ColorsDark = {
   primary: "#0247D3",
   secondary: "#00174D",
   background: "#111827",
-  backgroundgrey: "#1E1E1E",
+  listItemFill: "#1F2937",
+  backgroundgrey: "#020202ff",
   text: "#FFFFFF",
   icons: "#CCCCCC",
   boxes01: ["#1A2B44", "#23456A", "#5A9BFF"],
@@ -37,7 +37,6 @@ export const ColorsDark = {
   boxes04: ["#3A1A1A", "#5C2B2B", "#FF5C5C"],
 };
 
-// Types
 export type ThemeMode = "light" | "dark" | "system";
 export type ThemeColors = typeof Colors;
 
