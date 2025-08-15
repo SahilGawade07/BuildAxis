@@ -6,7 +6,7 @@ export default function SitesLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="[siteId]" options={{ title: "Site Info" }} />
-      <Stack.Screen name="add" options={{ title: "Add Site" }} />
+      <Stack.Screen name="addSite" options={{ title: "Add Site" }} />
     </Stack>
   );
 }

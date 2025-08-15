@@ -5,8 +5,9 @@ export default function SiteDetailsLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" /> {/* /sites/[siteId] */}
-      <Stack.Screen name="edit" /> {/* /sites/[siteId]/edit */}
-      <Stack.Screen name="reports" /> {/* /sites/[siteId]/reports */}
+      <Stack.Screen name="taskDetails" /> {/* /sites/[siteId]/taskDetails */}
+      <Stack.Screen name="CreateReport" /> {/* /sites/[siteId]/CreateReport */}
+      <Stack.Screen name="tabs" /> {/* /sites/[siteId]/tabs */}
     </Stack>
   );
 }
