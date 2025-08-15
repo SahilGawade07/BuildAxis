@@ -16,8 +16,10 @@ export const Colors = {
   listItemFill: "#ffffff",
   listItemBorder: "#b2b2b2",
   backgroundgrey: "#F5F5F5",
+  sepratorLine: "#b2b2b2",
   text: "#000000",
   icons: "#999",
+  profileHeader:"#008fcdff",
   boxes01: ["#DBEDFD", "#B6DEFF", "#4682B4"],
   boxes02: ["#F0FDF4", "#DCFCE7", "#27AE60"],
   boxes03: ["#FEFCE8", "#FEF9C3", "#D4AC0D"],
@@ -31,8 +33,10 @@ export const ColorsDark = {
   listItemFill: "#1F2937",
   listItemBorder: "#1F2937",
   backgroundgrey: "#020202ff",
+  sepratorLine: "#3a3a3a",
   text: "#FFFFFF",
   icons: "#CCCCCC",
+  profileHeader: "#003b54ff",
   boxes01: ["#1A2B44", "#23456A", "#5A9BFF"],
   boxes02: ["#0F2D23", "#1B4D36", "#27AE60"],
   boxes03: ["#332B0A", "#4D4214", "#FFD700"],
@@ -40,7 +44,7 @@ export const ColorsDark = {
 };
 
 export type ThemeMode = "light" | "dark" | "system";
-export type ThemeColors = typeof Colors;
+export type ThemeColors = typeof Colors & { isDark: boolean };
 
 export interface ThemeContextValue {
   theme: ThemeColors;
@@ -48,17 +52,14 @@ export interface ThemeContextValue {
   changeTheme: (mode: ThemeMode) => void;
 }
 
-// ✅ Exported context
 export const ThemeContext = createContext<ThemeContextValue | undefined>(
   undefined
 );
 
-// ✅ Provider
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const systemScheme = useColorScheme(); // light/dark
+  const systemScheme = useColorScheme();
   const [themeMode, setThemeMode] = useState<ThemeMode>("system");
 
-  // load saved theme
   useEffect(() => {
     AsyncStorage.getItem("themeMode").then((saved) => {
       if (saved === "light" || saved === "dark" || saved === "system") {
@@ -79,7 +80,13 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
           ? "dark"
           : "light"
         : themeMode;
-    return resolvedMode === "dark" ? ColorsDark : Colors;
+
+    const baseTheme = resolvedMode === "dark" ? ColorsDark : Colors;
+
+    return {
+      ...baseTheme,
+      isDark: resolvedMode === "dark", // ✅ Add this flag
+    };
   }, [themeMode, systemScheme]);
 
   return (
@@ -89,7 +96,6 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// ✅ Hook for easier consumption
 export const useTheme = (): ThemeContextValue => {
   const context = useContext(ThemeContext);
   if (!context) throw new Error("useTheme must be used within a ThemeProvider");

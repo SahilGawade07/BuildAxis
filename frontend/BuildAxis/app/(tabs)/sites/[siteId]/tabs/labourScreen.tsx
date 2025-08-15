@@ -12,7 +12,7 @@ const data = [
 ];
 
 export default function Labour_list() {
-  const router = useRouter(); // ✅ moved inside component
+  const router = useRouter(); 
 
   return (
     <View style={styles.container}>
@@ -26,7 +26,7 @@ export default function Labour_list() {
       <TouchableOpacity
         style={styles.fab}
         onPress={() => {
-          router.push("/labourdetails");
+          router.push("/(tabs)/sites/[siteId]/labourDetails");
         }}
       >
         <FontAwesome6 name="add" size={20} color="white" />
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     borderRadius: 25,
-    backgroundColor: "#3B82F6", // ✅ replaced Colors.secondary with fixed color
+    backgroundColor: "#3B82F6", 
     position: "absolute",
     right: 20,
     bottom: 40,

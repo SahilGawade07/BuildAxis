@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
 
   // Card footer styling
   cardFooter: {
-    borderTopWidth: 1.5,
+    borderTopWidth: 1,
     marginTop: 10,
     paddingTop: 10,
     flexDirection: "row",
@@ -99,13 +99,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
 
-  // Progress & date rows
   progressRow: { flexDirection: "row", alignItems: "center" },
   progressText: { marginLeft: 4, fontSize: 12 },
   dateRow: { flexDirection: "row", alignItems: "center" },
   dateText: { marginLeft: 4, fontSize: 12 },
 
-  // Project card styling
   sitecard: {
     marginHorizontal: 15,
     marginBottom: 20,

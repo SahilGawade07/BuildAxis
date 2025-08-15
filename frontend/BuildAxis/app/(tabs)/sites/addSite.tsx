@@ -9,7 +9,7 @@ import Back_Text_Butt from "@/components/ui/backBtn";
 import { Safe_area } from "@/components/ui/safeArea";
 import Submit_bbutt from "@/components/ui/SubmitBtn";
 import Upload_img from "@/components/ui/uploadImages";
-import { CompanyBar } from "@/app/reusable";
+import { CompanyBar } from "@/components/ui/orgNameBar";
 import TextInputs from "@/components/ui/inputField";
 
 export default function CreateTaskScreen() {
