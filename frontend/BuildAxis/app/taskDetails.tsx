@@ -21,7 +21,7 @@ import MaterialsScreen from "@/components/Sites/tasks/attachmentScreen";
 import ImageScreen from "@/components/Sites/tasks/ImageScreen";
 import CircularProgress from "@/components/Sites/tasks/common/circleprgressbar";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-
+import Sidesanim from "@/components/Sites/tasks/index"
 const HEADER_MAX_HEIGHT = 450;
 const HEADER_MIN_HEIGHT = 60;
 
@@ -41,19 +41,21 @@ export default function TaskDetailsScreen() {
   }, [active]);
 
   const renderPageContent = () => {
-    switch (page) {
-      case "Images":
-        return <ImageScreen />;
-      case "Labours":
-        return <Labour_list />;
-      case "Materials":
-        return <ItemTable />;
-      case "Attachment":
-        return <MaterialsScreen />;
-      default:
-        return null;
-    }
-  };
+  switch (page) {
+    case "Images":
+      
+return <Sidesanim pageno={0} />;
+    case "Labours":
+      return <Sidesanim pageno={1} />;
+
+    case "Materials":
+      return <Sidesanim pageno={2} />;
+    case "Attachment":
+      return <Sidesanim pageno={3} />;
+    default:
+      return null;
+  }
+};
 
   const insets = useSafeAreaInsets();
   const windowHeight = Dimensions.get("window").height - insets.top;
@@ -168,7 +170,7 @@ export default function TaskDetailsScreen() {
 
           {/* Tabs */}
           <View style={styles.tabRow}>
-            {["Images", "Labours", "Materials", "Attachment"].map((item) => (
+            {["Images", "Labours", "Materials", "Attachment"].map((item,key) => (
               <TouchableOpacity
                 key={item}
                 onPress={() => setActive(item)}
@@ -211,7 +213,12 @@ export default function TaskDetailsScreen() {
       >
 
 
-        <View style={{ height: windowHeight }}>{renderPageContent()}</View>
+        <View style={{ height: windowHeight }}>
+         
+          {renderPageContent()}
+          
+          
+          </View>
       </Animated.ScrollView>
     </SafeAreaView>
   );
