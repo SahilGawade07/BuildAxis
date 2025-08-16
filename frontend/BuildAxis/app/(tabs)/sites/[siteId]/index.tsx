@@ -20,10 +20,12 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Labour_list from "@/app/(tabs)/sites/[siteId]/tabs/labourScreen";
 import Report from "@/app/(tabs)/sites/[siteId]/tabs/report";
+import { useTheme } from "../../../../context/ThemeContext"; // ✅ import theme hook
 
 export default function Main_Site() {
   const [active, setActive] = useState("Assign Task");
   const [page, setPage] = useState("Assign Task");
+  const { theme } = useTheme(); // ✅ get theme colors
 
   const menuItems = [
     "Assign Task",
@@ -99,7 +101,9 @@ export default function Main_Site() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background }]}
+    >
       <Safe_area />
       <ScrollView>
         <CompanyBar />
@@ -112,26 +116,41 @@ export default function Main_Site() {
             style={{ width: "100%", height: "100%" }}
           />
         </View>
-        {/* Header Image */}
 
-        <View style={styles.tabBarContainer}>
+        {/* Tabs */}
+        <View
+          style={[
+            styles.tabBarContainer,
+            { backgroundColor: theme.listItemFill },
+          ]}
+        >
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.scrollContent}
           >
-            {menuItems.map((item, index) => {
+            {menuItems.map((item) => {
               const isActive = active === item;
-
               return (
                 <TouchableOpacity
                   key={item}
                   onPress={() => setActive(item)}
-                  style={[styles.tabItem, isActive && styles.activeTabItem]}
+                  style={[
+                    styles.tabItem,
+                    {
+                      borderBottomColor: isActive
+                        ? theme.secondary
+                        : "transparent",
+                    },
+                  ]}
                   activeOpacity={0.7}
                 >
                   <Text
-                    style={[styles.tabText, isActive && styles.activeTabText]}
+                    style={[
+                      styles.tabText,
+                      { color: isActive ? theme.secondary : theme.icons },
+                      isActive && { fontWeight: "600" },
+                    ]}
                   >
                     {item}
                   </Text>
@@ -139,8 +158,9 @@ export default function Main_Site() {
               );
             })}
           </ScrollView>
+
           <TouchableOpacity style={styles.arrowBtn}>
-            <Ionicons name="chevron-forward" size={18} color="#666" />
+            <Ionicons name="chevron-forward" size={18} color={theme.icons} />
           </TouchableOpacity>
         </View>
 
@@ -152,14 +172,10 @@ export default function Main_Site() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
+  container: { flex: 1 },
   tabBarContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f8f9fa",
     paddingVertical: 8,
     paddingHorizontal: 4,
     marginHorizontal: 12,
@@ -176,36 +192,16 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
     alignItems: "center",
     borderBottomWidth: 2,
-    borderBottomColor: "transparent",
-  },
-  activeTabItem: {
-    borderBottomColor: "#3b82f6",
   },
   tabText: {
     fontSize: 14,
-    color: "#6b7280",
     fontWeight: "500",
     textAlign: "center",
-  },
-  activeTabText: {
-    color: "#3b82f6",
-    fontWeight: "600",
   },
   arrowBtn: {
     paddingHorizontal: 8,
     paddingVertical: 10,
     justifyContent: "center",
     alignItems: "center",
-  },
-  pageBox: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  pageText: {
-    fontSize: 18,
-    color: "#444",
-    fontWeight: "500",
   },
 });
