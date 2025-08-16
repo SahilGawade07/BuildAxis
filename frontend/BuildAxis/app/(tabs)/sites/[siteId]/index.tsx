@@ -114,7 +114,6 @@ export default function Main_Site() {
         </View>
         {/* Header Image */}
 
-        {/* Updated Menu with Styled Tab Bar */}
         <View style={styles.tabBarContainer}>
           <ScrollView
             horizontal
