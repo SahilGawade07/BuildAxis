@@ -35,7 +35,7 @@ const ProfilePage = () => {
     {
       iconName: "language-outline",
       menuItemName: "Select Language",
-      onPress: () => console.log("Select Language pressed"),
+      onPress: () => router.push("/(tabs)/profile/themeSetting"),
     },
     {
       iconName: "notifications-outline",

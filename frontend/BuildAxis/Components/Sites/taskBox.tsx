@@ -11,6 +11,7 @@ import {
 export  const TaskBox = ({ item }: any) => (
   
     <TouchableOpacity style={styles.sitecard} onPress={()=>{router.push("/(tabs)/sites/[sitedId]/taskDetails")}}>
+
       {/* Card Header */}
       <View style={styles.cardHeader}>
         {/* Left side: Project image placeholder + name */}
