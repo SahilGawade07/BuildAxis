@@ -20,6 +20,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Labour_list from "@/app/(tabs)/sites/[siteId]/tabs/labourScreen";
 import Report from "@/app/(tabs)/sites/[siteId]/tabs/report";
+
 export default function Main_Site() {
   const [active, setActive] = useState("Assign Task");
   const [page, setPage] = useState("Assign Task");
@@ -113,34 +114,38 @@ export default function Main_Site() {
         </View>
         {/* Header Image */}
 
-        {/* Menu */}
-        <View style={{ flexDirection: "row" }}>
+        {/* Updated Menu with Styled Tab Bar */}
+        <View style={styles.tabBarContainer}>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.scrollContent}
           >
-            {menuItems.map((item) => (
-              <TouchableOpacity
-                key={item}
-                onPress={() => setActive(item)}
-                style={styles.menuItem}
-              >
-                <Text
-                  style={[styles.text, active === item && styles.activeText1]}
+            {menuItems.map((item, index) => {
+              const isActive = active === item;
+
+              return (
+                <TouchableOpacity
+                  key={item}
+                  onPress={() => setActive(item)}
+                  style={[styles.tabItem, isActive && styles.activeTabItem]}
+                  activeOpacity={0.7}
                 >
-                  {item}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Text
+                    style={[styles.tabText, isActive && styles.activeTabText]}
+                  >
+                    {item}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </ScrollView>
           <TouchableOpacity style={styles.arrowBtn}>
-            <Ionicons name="chevron-forward" size={18} color="#000" />
+            <Ionicons name="chevron-forward" size={18} color="#666" />
           </TouchableOpacity>
         </View>
 
         {/* Page Content */}
-
         {renderPageContent()}
       </ScrollView>
     </SafeAreaView>
@@ -152,28 +157,47 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
+  tabBarContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f8f9fa",
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    marginHorizontal: 12,
+    borderRadius: 8,
+    marginVertical: 8,
+  },
   scrollContent: {
     alignItems: "center",
+    paddingHorizontal: 8,
   },
-  menuItem: {
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+  tabItem: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginHorizontal: 4,
+    alignItems: "center",
+    borderBottomWidth: 2,
+    borderBottomColor: "transparent",
   },
-  text: {
-    fontSize: 18,
-    color: "gray",
+  activeTabItem: {
+    borderBottomColor: "#3b82f6",
   },
-  activeText1: {
-    color: "#1976D2",
-    textDecorationLine: "underline",
-    textDecorationColor: "#1976D2",
+  tabText: {
+    fontSize: 14,
+    color: "#6b7280",
     fontWeight: "500",
+    textAlign: "center",
+  },
+  activeTabText: {
+    color: "#3b82f6",
+    fontWeight: "600",
   },
   arrowBtn: {
-    paddingHorizontal: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 10,
     justifyContent: "center",
+    alignItems: "center",
   },
-
   pageBox: {
     flex: 1,
     justifyContent: "center",
