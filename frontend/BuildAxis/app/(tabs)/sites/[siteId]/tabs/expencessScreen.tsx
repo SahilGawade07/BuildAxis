@@ -1,6 +1,8 @@
 import React from "react";
-import { View, FlatList } from "react-native";
+import { View, FlatList, StyleSheet } from "react-native";
 import { Expencess } from "@/components/ui/expencesseBox";
+import { useTheme } from "../../../../../context/ThemeContext"; // ✅ import theme
+
 const projects = [
   {
     id: "1",
@@ -28,13 +30,15 @@ const projects = [
     name: "Blue Ocean",
     progress: "Paid By",
     date: "20/08/2025",
-    status: "AcPaidtive",
+    status: "Active",
   },
 ];
 
 export const ExpencessScreen = () => {
+  const { theme } = useTheme(); // ✅ get theme
+
   return (
-    <View>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <FlatList
         data={projects}
         renderItem={Expencess}
@@ -44,3 +48,9 @@ export const ExpencessScreen = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

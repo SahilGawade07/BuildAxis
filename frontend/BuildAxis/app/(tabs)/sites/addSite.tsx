@@ -11,8 +11,11 @@ import Submit_bbutt from "@/components/ui/SubmitBtn";
 import Upload_img from "@/components/ui/uploadImages";
 import { CompanyBar } from "@/components/ui/orgNameBar";
 import TextInputs from "@/components/ui/inputField";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function CreateTaskScreen() {
+  const { theme } = useTheme();
+
   // State for dropdown
   const [selectedSupervisor, setSelectedSupervisor] = useState("");
 
@@ -21,7 +24,7 @@ export default function CreateTaskScreen() {
   const [description, setDescription] = useState("");
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Custom Safe Area Styling */}
       <Safe_area />
 
@@ -51,11 +54,18 @@ export default function CreateTaskScreen() {
         />
 
         {/* Assign Supervisor Dropdown */}
-        <Text style={styles.label}>Assign Supervisor</Text>
-        <View style={styles.pickerContainer}>
+        <Text style={[styles.label, { color: theme.text }]}>Assign Supervisor</Text>
+        <View
+          style={[
+            styles.pickerContainer,
+            { borderColor: theme.listItemBorder, backgroundColor: theme.listItemFill },
+          ]}
+        >
           <Picker
             selectedValue={selectedSupervisor}
             onValueChange={(itemValue) => setSelectedSupervisor(itemValue)}
+            dropdownIconColor={theme.text}
+            style={{ color: theme.text }}
           >
             <Picker.Item label="Select" value="" />
             <Picker.Item label="Supervisor 1" value="sup1" />
@@ -85,7 +95,6 @@ export default function CreateTaskScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
   },
 
   form: {
@@ -94,7 +103,6 @@ const styles = StyleSheet.create({
 
   label: {
     fontSize: 16,
-    color: "#333",
     marginBottom: 3,
     marginTop: 16,
     fontWeight: "600",
@@ -102,7 +110,6 @@ const styles = StyleSheet.create({
 
   pickerContainer: {
     borderWidth: 1,
-    borderColor: "#ddd",
     borderRadius: 8,
     marginBottom: 15,
   },

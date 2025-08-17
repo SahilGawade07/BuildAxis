@@ -8,77 +8,65 @@ import {
   TouchableOpacity,
   Modal,
 } from "react-native";
-import { Colors } from "@/Thems/color"; // Make sure this exists
 import AttendancaceBox from "@/components/ui/attandanceBox";
 import Submit_bbutt from "../../../../../components/ui/SubmitBtn";
 import LabourList from "../../../../../components/ui/labourList";
 import { BlurView } from "expo-blur";
 import AttendanceModal from "@/components/Sites/popupScreens/attandancePopup";
-const data = [
-  { id: "1", name: "Shraddha Swant" },
-  { id: "2", name: "Shraddha Swant" },
-  { id: "3", name: "Shraddha Swant" },
-  { id: "4", name: "Shraddha Swant" },
-  { id: "1", name: "Shraddha Swant" },
-  { id: "2", name: "Shraddha Swant" },
-  { id: "3", name: "Shraddha Swant" },
-  { id: "4", name: "Shraddha Swant" },
-  { id: "1", name: "Shraddha Swant" },
-  { id: "2", name: "Shraddha Swant" },
-  { id: "3", name: "Shraddha Swant" },
-  { id: "4", name: "Shraddha Swant" },
-];
+import { useTheme } from "../../../../../context/ThemeContext"; // ✅ Use theme
 
-// const [active, setActive] = useState("Present");
+const data = [
+  { id: "1", name: "Shraddha Sawant" },
+  { id: "2", name: "Shraddha Sawant" },
+  { id: "3", name: "Shraddha Sawant" },
+  { id: "4", name: "Shraddha Sawant" },
+];
 
 export default function AttendanceSummary() {
   const [active, setActive] = useState("Present");
-
   const [popup, setpopup] = useState(false);
 
-  const activepopup = () => {
-    const update = !popup;
-    setpopup(update);
-  };
+  const { theme } = useTheme(); // ✅ Get theme colors
+
+  const activepopup = () => setpopup(!popup);
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Date */}
-      <Text style={styles.date}>Wed 31 Jul</Text>
+      <Text style={[styles.date, { color: theme.text }]}>Wed 31 Jul</Text>
 
       {/* Title */}
-      <Text style={styles.title}>Attendance Summary</Text>
+      <Text style={[styles.title, { color: theme.text }]}>Attendance Summary</Text>
 
       {/* Cards Row */}
       <View style={styles.cardContainer}>
-        {/* Present */}
         <AttendancaceBox
-          backgroundColor={Colors.boxes02[0]}
-          circle_color={Colors.boxes02[1]}
+          backgroundColor={theme.boxes02[0]}
+          circle_color={theme.boxes02[1]}
           Ionicons_name="people-outline"
-          Ionicons_color={Colors.boxes02[2]}
+          Ionicons_color={theme.boxes02[2]}
           Text1="Present"
           text2="155"
         />
-        {/* Absent */}
         <AttendancaceBox
-          backgroundColor={Colors.boxes04[0]}
-          circle_color={Colors.boxes04[1]}
+          backgroundColor={theme.boxes04[0]}
+          circle_color={theme.boxes04[1]}
           Ionicons_name="people-outline"
-          Ionicons_color={Colors.boxes04[2]}
+          Ionicons_color={theme.boxes04[2]}
           Text1="Absent"
           text2="05"
         />
-        {/* Half Day */}
         <AttendancaceBox
-          backgroundColor={Colors.boxes03[0]}
-          circle_color={Colors.boxes03[1]}
+          backgroundColor={theme.boxes03[0]}
+          circle_color={theme.boxes03[1]}
           Ionicons_name="time-outline"
-          Ionicons_color={Colors.boxes03[2]}
+          Ionicons_color={theme.boxes03[2]}
           Text1="Half Day"
           text2="155"
         />
       </View>
 
+      {/* Toggle Tabs */}
       <View style={{ flexDirection: "row" }}>
         {["Present", "Absent"].map((item) => (
           <TouchableOpacity
@@ -86,20 +74,26 @@ export default function AttendanceSummary() {
             onPress={() => setActive(item)}
             style={styles.menuItem}
           >
-            <Text style={[styles.text, active === item && styles.activeText1]}>
+            <Text
+              style={[
+                styles.text,
+                { color: theme.text },
+                active === item && { color: theme.secondary, textDecorationLine: "underline" },
+              ]}
+            >
               {item}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      <FlatList
-        data={data}
-        renderItem={LabourList}
-        keyExtractor={(item) => item.id}
-      />
+      {/* Labour List */}
+      <FlatList data={data} renderItem={LabourList} keyExtractor={(item) => item.id} />
 
+      {/* Submit Button */}
       <Submit_bbutt text="Mark Attandance" funcations={activepopup} />
+
+      {/* Popup */}
       <Modal
         animationType="fade"
         transparent={true}
@@ -107,11 +101,8 @@ export default function AttendanceSummary() {
         onRequestClose={() => setpopup(false)}
       >
         <BlurView
-          style={[
-            StyleSheet.absoluteFill,
-            { backgroundColor: "rgba(65, 65, 65, 0.84)" },
-          ]}
-          tint="light" // "light", "dark", "xlight"
+          style={[StyleSheet.absoluteFill, { backgroundColor: "rgba(65, 65, 65, 0.84)" }]}
+          tint={theme.isDark ? "dark" : "light"} // ✅ Adapt blur tint
           intensity={20}
         />
         <View style={styles.overlay}>
@@ -125,12 +116,10 @@ export default function AttendanceSummary() {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    backgroundColor: "#fff",
     flex: 1,
   },
   date: {
     fontSize: 14,
-    color: "#555",
     marginBottom: 4,
   },
   title: {
@@ -142,69 +131,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  card: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: 16,
-    marginHorizontal: 4,
-    borderRadius: 12,
-  },
-  iconCircle: {
-    height: 50,
-    width: 50,
-    borderRadius: 25,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  cardTitle: {
-    fontSize: 14,
-    marginTop: 6,
-    fontWeight: "500",
-  },
-  cardNumber: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginTop: 4,
-  },
   menuItem: {
     paddingHorizontal: 10,
     paddingVertical: 8,
   },
   text: {
     fontSize: 18,
-    color: "gray",
-  },
-  activeText1: {
-    color: "#000000ff",
-    textDecorationLine: "underline",
-    textDecorationColor: "#1976D2",
-    fontWeight: "500",
   },
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
-  },
-  popup: {
-    width: 300,
-    padding: 20,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  popupTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  button: {
-    backgroundColor: "#007BFF",
-    padding: 12,
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
   },
 });
