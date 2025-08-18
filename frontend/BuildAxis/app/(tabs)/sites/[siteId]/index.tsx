@@ -20,12 +20,12 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Labour_list from "@/app/(tabs)/sites/[siteId]/tabs/labourScreen";
 import Report from "@/app/(tabs)/sites/[siteId]/tabs/report";
-import { useTheme } from "../../../../context/ThemeContext"; // ✅ import theme hook
+import { useTheme } from "../../../../context/ThemeContext"; 
 
 export default function Main_Site() {
   const [active, setActive] = useState("Assign Task");
   const [page, setPage] = useState("Assign Task");
-  const { theme } = useTheme(); // ✅ get theme colors
+  const { theme } = useTheme(); // ✅ use theme
 
   const menuItems = [
     "Assign Task",
@@ -38,34 +38,10 @@ export default function Main_Site() {
   ];
 
   const projects = [
-    {
-      id: "1",
-      name: "JJ Hormony",
-      progress: "20%",
-      date: "12/02/2022",
-      status: "Active",
-    },
-    {
-      id: "2",
-      name: "Green Heights",
-      progress: "45%",
-      date: "15/04/2023",
-      status: "Active",
-    },
-    {
-      id: "3",
-      name: "Sky Towers",
-      progress: "75%",
-      date: "01/10/2024",
-      status: "Active",
-    },
-    {
-      id: "4",
-      name: "Blue Ocean",
-      progress: "60%",
-      date: "20/08/2025",
-      status: "Active",
-    },
+    { id: "1", name: "JJ Hormony", progress: "20%", date: "12/02/2022", status: "Active" },
+    { id: "2", name: "Green Heights", progress: "45%", date: "15/04/2023", status: "Active" },
+    { id: "3", name: "Sky Towers", progress: "75%", date: "01/10/2024", status: "Active" },
+    { id: "4", name: "Blue Ocean", progress: "60%", date: "20/08/2025", status: "Active" },
   ];
 
   useEffect(() => {
@@ -101,9 +77,7 @@ export default function Main_Site() {
   };
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.background }]}
-    >
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <Safe_area />
       <ScrollView>
         <CompanyBar />
@@ -117,11 +91,11 @@ export default function Main_Site() {
           />
         </View>
 
-        {/* Tabs */}
+        {/* Tab Bar */}
         <View
           style={[
             styles.tabBarContainer,
-            { backgroundColor: theme.listItemFill },
+            { backgroundColor: theme.listItemFill, borderColor: theme.listItemBorder },
           ]}
         >
           <ScrollView
@@ -137,19 +111,15 @@ export default function Main_Site() {
                   onPress={() => setActive(item)}
                   style={[
                     styles.tabItem,
-                    {
-                      borderBottomColor: isActive
-                        ? theme.secondary
-                        : "transparent",
-                    },
+                    isActive && { borderBottomColor: theme.secondary },
                   ]}
                   activeOpacity={0.7}
                 >
                   <Text
                     style={[
                       styles.tabText,
-                      { color: isActive ? theme.secondary : theme.icons },
-                      isActive && { fontWeight: "600" },
+                      { color: theme.text },
+                      isActive && { color: theme.secondary },
                     ]}
                   >
                     {item}
@@ -159,6 +129,7 @@ export default function Main_Site() {
             })}
           </ScrollView>
 
+          {/* Arrow */}
           <TouchableOpacity style={styles.arrowBtn}>
             <Ionicons name="chevron-forward" size={18} color={theme.icons} />
           </TouchableOpacity>
@@ -172,7 +143,9 @@ export default function Main_Site() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: {
+    flex: 1,
+  },
   tabBarContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -181,6 +154,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
     borderRadius: 8,
     marginVertical: 8,
+    borderWidth: 1,
   },
   scrollContent: {
     alignItems: "center",
@@ -192,6 +166,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
     alignItems: "center",
     borderBottomWidth: 2,
+    borderBottomColor: "transparent",
   },
   tabText: {
     fontSize: 14,

@@ -11,15 +11,17 @@ import { Entypo } from "@expo/vector-icons";
 import { Safe_area } from "@/components/ui/safeArea";
 import { CompanyBar } from "@/components/ui/orgNameBar";
 import AttendancaceBox from "@/components/ui/attandanceBox";
-import { Colors } from "@/Thems/color"; // ✅ Updated import
 import Labour_list from "@/app/(tabs)/sites/[siteId]/tabs/labourScreen";
 import ItemTable from "@/app/(tabs)/sites/[siteId]/tabs/itemScreen";
 import MaterialsScreen from "@/components/Sites/tasks/attachmentScreen";
 import ImageScreen from "@/components/Sites/tasks/ImageScreen";
 import CircularProgress from "@/components/Sites/tasks/common/circleprgressbar";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function TaskDetailsScreen() {
+  const { theme } = useTheme();
+
   const members = [
     { id: 1, img: "https://randomuser.me/api/portraits/men/32.jpg" },
     { id: 2, img: "https://randomuser.me/api/portraits/women/65.jpg" },
@@ -50,13 +52,13 @@ export default function TaskDetailsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.backgroundgrey }]}>
       <Safe_area />
       <CompanyBar />
 
       <View
         style={{
-          backgroundColor: Colors.background,
+          backgroundColor: theme.background,
           borderBottomLeftRadius: 20,
           borderBottomRightRadius: 20,
           paddingBottom: 30,
@@ -65,12 +67,12 @@ export default function TaskDetailsScreen() {
         {/* Task Row */}
         <View style={styles.taskRow}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Entypo name="chevron-left" size={30} color={Colors.text} />
-            <Text style={[styles.taskName, { color: Colors.text }]}>
+            <Entypo name="chevron-left" size={30} color={theme.text} />
+            <Text style={[styles.taskName, { color: theme.text }]}>
               Task Name
             </Text>
           </View>
-          <Text style={[styles.userName, { color: Colors.text }]}>
+          <Text style={[styles.userName, { color: theme.text }]}>
             Mr.Chemate
           </Text>
         </View>
@@ -83,11 +85,19 @@ export default function TaskDetailsScreen() {
               <Image
                 key={m.id}
                 source={{ uri: m.img }}
-                style={styles.memberImg}
+                style={[
+                  styles.memberImg,
+                  { borderColor: theme.background }, // border adapts to theme
+                ]}
               />
             ))}
-            <TouchableOpacity style={styles.addMember}>
-              <Entypo name="plus" size={20} color={Colors.secondary} />
+            <TouchableOpacity
+              style={[
+                styles.addMember,
+                { borderColor: theme.secondary, backgroundColor: theme.background },
+              ]}
+            >
+              <Entypo name="plus" size={20} color={theme.secondary} />
             </TouchableOpacity>
           </View>
         </View>
@@ -95,26 +105,26 @@ export default function TaskDetailsScreen() {
         {/* Cards */}
         <View style={styles.cardContainer}>
           <AttendancaceBox
-            backgroundColor={Colors.boxes03[0]}
-            circle_color={Colors.boxes03[1]}
+            backgroundColor={theme.boxes03[0]}
+            circle_color={theme.boxes03[1]}
             Ionicons_name="people-outline"
-            Ionicons_color={Colors.boxes03[2]}
+            Ionicons_color={theme.boxes03[2]}
             Text1="Labours"
             text2="155"
           />
           <AttendancaceBox
-            backgroundColor={Colors.boxes02[0]}
-            circle_color={Colors.boxes02[1]}
+            backgroundColor={theme.boxes02[0]}
+            circle_color={theme.boxes02[1]}
             Ionicons_name="cash-outline"
-            Ionicons_color={Colors.boxes02[2]}
+            Ionicons_color={theme.boxes02[2]}
             Text1="Expenses"
             text2="100"
           />
           <AttendancaceBox
-            backgroundColor={Colors.boxes01[0]}
-            circle_color={Colors.boxes01[1]}
+            backgroundColor={theme.boxes01[0]}
+            circle_color={theme.boxes01[1]}
             Ionicons_name="attach"
-            Ionicons_color={Colors.boxes01[2]}
+            Ionicons_color={theme.boxes01[2]}
             Text1="Attachments"
             text2="155"
           />
@@ -122,14 +132,30 @@ export default function TaskDetailsScreen() {
       </View>
 
       {/* Tabs */}
-      <View style={styles.tabRow}>
+      <View
+        style={[
+          styles.tabRow,
+          { backgroundColor: theme.background, borderColor: theme.listItemBorder },
+        ]}
+      >
         {["Images", "Labours", "Materials", "Attachment"].map((item) => (
           <TouchableOpacity
             key={item}
             onPress={() => setActive(item)}
             style={styles.menuItem}
           >
-            <Text style={[styles.text, active === item && styles.activeText1]}>
+            <Text
+              style={[
+                styles.text,
+                { color: theme.text },
+                active === item && {
+                  backgroundColor: theme.primary,
+                  color: theme.background,
+                  textDecorationLine: "underline",
+                  textDecorationColor: theme.background,
+                },
+              ]}
+            >
               {item}
             </Text>
           </TouchableOpacity>
@@ -142,7 +168,7 @@ export default function TaskDetailsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.backgroundgrey },
+  container: { flex: 1 },
   taskRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -165,17 +191,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginRight: -10,
     borderWidth: 2,
-    borderColor: Colors.background,
   },
   addMember: {
     width: 30,
     height: 30,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: Colors.secondary,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: Colors.background,
     marginLeft: 15,
   },
   cardContainer: {
@@ -187,12 +210,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     marginVertical: 15,
-    borderBottomWidth: 1,
-    borderColor: "#eee",
-    backgroundColor: Colors.background,
     padding: 10,
     marginHorizontal: 15,
     borderRadius: 15,
+    borderWidth: 1,
   },
   menuItem: {
     paddingHorizontal: 5,
@@ -200,15 +221,5 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 15,
-    color: Colors.text,
-  },
-  activeText1: {
-    color: Colors.background,
-    textDecorationLine: "underline",
-    textDecorationColor: Colors.background,
-    fontWeight: "500",
-    backgroundColor: Colors.primary,
-    padding: 5,
-    borderRadius: 10,
   },
 });

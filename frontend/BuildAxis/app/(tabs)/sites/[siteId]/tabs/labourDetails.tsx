@@ -15,9 +15,12 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 // Reusable Components
 import { TextInputs } from "../../../../../components/ui/inputField";
 import { ContinueBtn } from "../../../../../components/ui/ContinueBtn";
+import { useTheme } from "../../../../../context/ThemeContext";
 
 export default function LabourDetailsScreen() {
   const router = useRouter();
+  const { theme } = useTheme();
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
@@ -48,17 +51,22 @@ export default function LabourDetailsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#002B5B" />
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar
+        barStyle={theme.isDark ? "light-content" : "dark-content"}
+        backgroundColor={theme.profileHeader}
+      />
 
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: theme.profileHeader }]}>
         <TouchableOpacity onPress={() => router.back()}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Ionicons name="chevron-back" size={30} color="white" />
+            <Ionicons name="chevron-back" size={30} color={theme.text} />
           </View>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Labour Details</Text>
+        <Text style={[styles.headerTitle, { color: theme.text }]}>
+          Labour Details
+        </Text>
       </View>
 
       {/* Form */}
@@ -90,12 +98,18 @@ export default function LabourDetailsScreen() {
         />
 
         {/* Upload Photo */}
-        <Text style={styles.label}>Upload Photo</Text>
-        <TouchableOpacity style={styles.uploadBox} onPress={handlePickImage}>
+        <Text style={[styles.label, { color: theme.text }]}>Upload Photo</Text>
+        <TouchableOpacity
+          style={[
+            styles.uploadBox,
+            { borderColor: theme.listItemBorder, backgroundColor: theme.listItemFill },
+          ]}
+          onPress={handlePickImage}
+        >
           {photo ? (
             <Image source={{ uri: photo }} style={styles.uploadedImage} />
           ) : (
-            <Text style={styles.plus}>+</Text>
+            <Text style={[styles.plus, { color: theme.secondary }]}>+</Text>
           )}
         </TouchableOpacity>
 
@@ -107,7 +121,7 @@ export default function LabourDetailsScreen() {
           text="Add To Company"
           touchable={true}
           onPresss={handleAddToCompany}
-          style={{ backgroundColor: "#3c64a4ff" }}
+          style={{ backgroundColor: theme.secondary }}
         />
       </View>
     </SafeAreaView>
@@ -115,29 +129,26 @@ export default function LabourDetailsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
+  container: { flex: 1 },
   header: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 18,
-    backgroundColor: "#002B5B",
     paddingHorizontal: 12,
   },
-  backArrow: { color: "#fff", fontSize: 20, marginRight: 8 },
-  headerTitle: { color: "#fff", fontSize: 18, fontWeight: "600" },
+  headerTitle: { fontSize: 18, fontWeight: "600" },
   form: { marginTop: 16, paddingHorizontal: 16 },
-  label: { fontSize: 14, color: "#555", marginBottom: 8, marginTop: 16 },
+  label: { fontSize: 14, marginBottom: 8, marginTop: 16 },
   uploadBox: {
     width: 80,
     height: 80,
     borderWidth: 1,
-    borderColor: "#ccc",
     borderStyle: "dashed",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 6,
   },
-  plus: { fontSize: 28, color: "#1976D2" },
+  plus: { fontSize: 28 },
   uploadedImage: { width: "100%", height: "100%", borderRadius: 6 },
   error: { color: "red", marginTop: 8 },
 });
