@@ -30,7 +30,7 @@ const ProfilePage = () => {
     {
       iconName: "business-outline",
       menuItemName: "Manage Organisation",
-      onPress: () => console.log("Manage Organisation pressed"),
+      onPress: () => router.push("/(tabs)/profile/manageOrganisation"),
     },
     {
       iconName: "language-outline",
