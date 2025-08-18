@@ -12,6 +12,7 @@ import {
   deleteVendor,
 } from "../controllers/common/vendor";
 import { createTask } from "../controllers/common/task";
+import { addExpense, getSiteExpenses } from "../controllers/common/expenses";
 import { addService } from "../controllers/common/vendorServices";
 import { authenticateJWT } from "../middlewares/authenticateJWT";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
@@ -31,6 +32,10 @@ router.put("/vendors/:vendorId", updateVendor);
 router.delete("/vendors/:vendorId", deleteVendor);
 
 router.post("/add-service", addService);
+
+router.post("/add-expenses", addExpense);
+router.get("/view-expenses/:siteId", getSiteExpenses);
+
 
 // router.post("/create-task", createTask);
 

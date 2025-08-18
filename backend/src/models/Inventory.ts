@@ -3,7 +3,7 @@ import { Schema, model, Document, Types } from "mongoose";
 export interface IInventory extends Document {
   name: string;
   specification: string;
-  site: Types.ObjectId;
+  siteId: Types.ObjectId;
   unit: string;
   category: string;
   quantity: number;
@@ -13,7 +13,7 @@ export interface IInventory extends Document {
 }
 
 const inventorySchema = new Schema<IInventory>(
-  {
+  { 
     name: {
       type: String,
       required: true,
@@ -23,7 +23,7 @@ const inventorySchema = new Schema<IInventory>(
       type: String,
       trim: true,
     },
-    site: {
+    siteId: {
       type: Schema.Types.ObjectId,
       ref: "Site",
       required: true,
