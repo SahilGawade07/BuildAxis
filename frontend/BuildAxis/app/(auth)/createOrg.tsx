@@ -45,7 +45,7 @@ export default function AddOrganizationScreen() {
     }
 
     Alert.alert("Success", "Organization added successfully!");
-    router.push("/tabs/Home");
+    router.push("/(tabs)/home");
   };
 
   const isFormValid = orgName && email && phone && address;
@@ -116,7 +116,7 @@ export default function AddOrganizationScreen() {
             {/* Skip Button */}
             <TouchableOpacity
               style={styles.skipButton}
-              onPress={() => router.push("/tabs/Home")}
+              onPress={() => router.push("/(tabs)/home")}
             >
               <Text style={styles.skipButtonText}>Skip for now</Text>
             </TouchableOpacity>
