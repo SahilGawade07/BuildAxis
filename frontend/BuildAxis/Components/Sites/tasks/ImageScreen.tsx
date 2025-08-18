@@ -7,6 +7,7 @@ import {
   Image,
   Dimensions,
 } from "react-native";
+import { useTheme } from "../../../context/ThemeContext"; // ✅ import theme context
 
 type TaskImage = { url: string };
 type Task = { images: TaskImage[]; description: string; date: string; time: string };
@@ -48,6 +49,7 @@ const getTasks = async (): Promise<Task[]> => {
 
 export default function ImageBanner() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const { theme } = useTheme(); // ✅ access theme
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -62,9 +64,18 @@ export default function ImageBanner() {
   }, []);
 
   return (
-    <ScrollView style={styles.page} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={[styles.page, { backgroundColor: theme.background }]} // ✅ dynamic background
+      showsVerticalScrollIndicator={false}
+    >
       {tasks.map((task, idx) => (
-        <View key={idx} style={styles.taskCard}>
+        <View
+          key={idx}
+          style={[
+            styles.taskCard,
+            { backgroundColor: theme.listItemFill, borderColor: theme.listItemBorder },
+          ]}
+        >
           {/* Header */}
           <View style={styles.header}>
             <View style={styles.userInfo}>
@@ -72,9 +83,13 @@ export default function ImageBanner() {
                 source={require("@/assets/images/logo.jpg")}
                 style={styles.profileImage}
               />
-              <Text style={styles.username}>Shraddha Swant</Text>
+              <Text style={[styles.username, { color: theme.text }]}>
+                Shraddha Swant
+              </Text>
             </View>
-            <Text style={styles.dateText}>{task.date}</Text>
+            <Text style={[styles.dateText, { color: theme.icons }]}>
+              {task.date}
+            </Text>
           </View>
 
           {/* Horizontal Image Scroll */}
@@ -84,7 +99,13 @@ export default function ImageBanner() {
             contentContainerStyle={styles.imageRow}
           >
             {task.images.map((item, index) => (
-              <View key={index} style={styles.bannerCard}>
+              <View
+                key={index}
+                style={[
+                  styles.bannerCard,
+                  { backgroundColor: theme.backgroundgrey },
+                ]}
+              >
                 <Image source={{ uri: item.url }} style={styles.bannerImage} />
               </View>
             ))}
@@ -92,7 +113,9 @@ export default function ImageBanner() {
 
           {/* Description */}
           <View style={styles.infoContainer}>
-            <Text style={styles.description}>{task.description}</Text>
+            <Text style={[styles.description, { color: theme.text }]}>
+              {task.description}
+            </Text>
           </View>
         </View>
       ))}
@@ -105,14 +128,13 @@ const { width } = Dimensions.get("window");
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    backgroundColor: "#f5f6fa",
     padding: 12,
   },
   taskCard: {
-    backgroundColor: "#fff",
     marginBottom: 20,
     borderRadius: 16,
     overflow: "hidden",
+    borderWidth: 1,
     shadowColor: "#000",
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 4 },
@@ -139,11 +161,9 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 15,
     fontWeight: "bold",
-    color: "#333",
   },
   dateText: {
     fontSize: 12,
-    color: "#999",
   },
   imageRow: {
     paddingHorizontal: 10,
@@ -153,7 +173,6 @@ const styles = StyleSheet.create({
     width: width * 0.8,
     borderRadius: 16,
     overflow: "hidden",
-    backgroundColor: "#f9f9f9",
     marginRight: 14,
     elevation: 2,
   },
@@ -168,7 +187,6 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
-    color: "#555",
     lineHeight: 20,
   },
 });

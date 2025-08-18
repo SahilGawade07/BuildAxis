@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Topbar from "@/components/Sites/popupScreens/common/topBar";
 import { TextInputs } from "@/components/ui/inputField";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function Addtools({ fun }: any) {
   const [itemName, setItemName] = useState("");
@@ -9,8 +10,10 @@ export default function Addtools({ fun }: any) {
   const [category, setCategory] = useState("");
   const [remark, setRemark] = useState("");
 
+  const { theme } = useTheme();
+
   return (
-    <View style={styles.modal}>
+    <View style={[styles.modal, { backgroundColor: theme.listItemFill }]}>
       {/* Header */}
       <Topbar text="Add Tools" funs={fun} />
 
@@ -46,8 +49,12 @@ export default function Addtools({ fun }: any) {
       />
 
       {/* Button */}
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Add Tools</Text>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: theme.secondary }]}
+      >
+        <Text style={[styles.buttonText, { color: theme.text }]}>
+          Add Tools
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -55,7 +62,6 @@ export default function Addtools({ fun }: any) {
 
 const styles = StyleSheet.create({
   modal: {
-    backgroundColor: "#fff",
     borderRadius: 10,
     padding: 10,
     width: "95%",
@@ -67,14 +73,12 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   button: {
-    backgroundColor: "#0066ff",
     paddingVertical: 10,
     borderRadius: 6,
     marginTop: 10,
   },
   buttonText: {
     textAlign: "center",
-    color: "#fff",
     fontWeight: "bold",
   },
 });
