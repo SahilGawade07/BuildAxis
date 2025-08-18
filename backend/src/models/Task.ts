@@ -20,6 +20,7 @@ export interface ITask extends Document {
   description?: string;
   attachment?: string; // e.g., PDF, document
   images: string[]; // Array of image URLs
+  progress: number; // Completion percentage: 0 to 100
 }
 
 // Schema: taskSchema
@@ -109,6 +110,20 @@ const taskSchema = new Schema<ITask>(
         type: String,
       },
     ],
+    progress: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 100,
+      validate: {
+        validator: function (value: number) {
+          return (
+            Number.isInteger(value) || value === parseFloat(value.toFixed(1))
+          );
+        },
+        message: "Progress must be a number with at most one decimal place.",
+      },
+    },
   },
   {
     timestamps: true,

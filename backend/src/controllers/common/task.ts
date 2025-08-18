@@ -4,6 +4,7 @@ import { Site } from "../../models/Site";
 import { User } from "../../models/User";
 import { Labour } from "../../models/Labour";
 import { Types } from "mongoose";
+import { Inventory } from "../../models/Inventory";
 
 export const checkSiteAccess = async (
   req: Request,
@@ -310,31 +311,38 @@ export const getAllTasks = async (req: Request, res: Response) => {
   }
 };
 
-// Update Task
+
+// ✅ Update Task Controller
 export const updateTask = async (req: Request, res: Response) => {
   try {
-    const task = (req as any).task;
+    const { taskId } = req.params;
     const user = (req as any).dbUser;
+
+    const task = await Task.findById(taskId);
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found",
+      });
+    }
+
     const {
       title,
       supervisors,
       images,
-      assignedTo,
       status,
       priority,
       due,
-      inventoryUsed,
+      inventoryUsed, // expected: [{ inventoryId, quantity }]
       description,
       attachment,
+      progress,
     } = req.body;
 
-    // Check permissions - only creator, assigned user, or supervisors can update
+    // ✅ Permission Check
     const canUpdate =
       task.createdBy.equals(user._id) ||
-      (task.assignedTo && task.assignedTo.equals(user._id)) ||
-      task.supervisors.some((supervisor: Types.ObjectId) =>
-        supervisor.equals(user._id)
-      ) ||
+      task.supervisors.some((sup: Types.ObjectId) => sup.equals(user._id)) ||
       user.role === "promoter";
 
     if (!canUpdate) {
@@ -344,18 +352,7 @@ export const updateTask = async (req: Request, res: Response) => {
       });
     }
 
-    // Validate assigned user if being updated
-    if (assignedTo && assignedTo !== task.assignedTo) {
-      const assignedUser = await User.findById(assignedTo);
-      if (!assignedUser || String(assignedUser.orgId) !== String(user.orgId)) {
-        return res.status(400).json({
-          success: false,
-          message: "Assigned user not found or not in your organization",
-        });
-      }
-    }
-
-    // Validate supervisors if being updated
+    // ✅ Validate supervisors if updated
     if (supervisors) {
       const supervisorUsers = await User.find({
         _id: { $in: supervisors },
@@ -372,28 +369,59 @@ export const updateTask = async (req: Request, res: Response) => {
       }
     }
 
-    // Update task
+    // ✅ Handle inventory usage (decrement stock)
+    if (Array.isArray(inventoryUsed)) {
+      for (const item of inventoryUsed) {
+        const { inventoryId, quantity } = item;
+
+        if (!Types.ObjectId.isValid(inventoryId)) {
+          return res.status(400).json({
+            success: false,
+            message: `Invalid inventoryId: ${inventoryId}`,
+          });
+        }
+
+        const inventory = await Inventory.findById(inventoryId);
+        if (!inventory) {
+          return res.status(404).json({
+            success: false,
+            message: `Inventory item not found: ${inventoryId}`,
+          });
+        }
+
+        if (inventory.quantity < quantity) {
+          return res.status(400).json({
+            success: false,
+            message: `Not enough stock for ${inventory.name}. Available: ${inventory.quantity}, Requested: ${quantity}`,
+          });
+        }
+
+        inventory.quantity -= quantity;
+        await inventory.save();
+      }
+    }
+
+    // ✅ Update Task
     const updatedTask = await Task.findByIdAndUpdate(
       task._id,
       {
         ...(title && { title }),
         ...(supervisors && { supervisors }),
         ...(images && { images }),
-        ...(assignedTo !== undefined && { assignedTo }),
         ...(status && { status }),
         ...(priority && { priority }),
         ...(due && { due }),
-        ...(inventoryUsed !== undefined && { inventoryUsed }),
         ...(description !== undefined && { description }),
         ...(attachment !== undefined && { attachment }),
+        ...(progress !== undefined && { progress }),
+        ...(inventoryUsed && { inventoryUsed }),
       },
       { new: true }
     )
       .populate("site", "name location")
       .populate("createdBy", "fName lName email")
-      .populate("assignedTo", "fName lName email")
       .populate("supervisors", "fName lName email")
-      .populate("inventoryUsed", "name quantity");
+      .populate("inventoryUsed.inventoryId", "name quantity unit");
 
     return res.status(200).json({
       success: true,
@@ -401,149 +429,7 @@ export const updateTask = async (req: Request, res: Response) => {
       data: updatedTask,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
-  }
-};
-
-// Delete Task
-export const deleteTask = async (req: Request, res: Response) => {
-  try {
-    const task = (req as any).task;
-    const user = (req as any).dbUser;
-
-    // Only creator or promoter can delete task
-    if (!task.createdBy.equals(user._id) && user.role !== "promoter") {
-      return res.status(403).json({
-        success: false,
-        message: "Only task creator or promoter can delete this task",
-      });
-    }
-
-    await Task.findByIdAndDelete(task._id);
-
-    return res.status(200).json({
-      success: true,
-      message: "Task deleted successfully",
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
-  }
-};
-
-// Get Tasks by Status
-export const getTasksByStatus = async (req: Request, res: Response) => {
-  try {
-    const user = (req as any).dbUser;
-    const { status } = req.params;
-
-    if (
-      ![
-        "open",
-        "in_progress",
-        "completed",
-        "verified",
-        "closed",
-        "cancelled",
-      ].includes(status)
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid status value",
-      });
-    }
-
-    // Get sites that belong to user's organization
-    const userSites = await Site.find({ organisationId: user.orgId }).select(
-      "_id"
-    );
-    const siteIds = userSites.map((site) => site._id);
-
-    const tasks = await Task.find({
-      site: { $in: siteIds },
-      status: status,
-    })
-      .populate("site", "name location")
-      .populate("createdBy", "fName lName email")
-      .populate("assignedTo", "fName lName email")
-      .populate("supervisors", "fName lName email")
-      .sort({ createdAt: -1 });
-
-    return res.status(200).json({
-      success: true,
-      message: `Tasks with status '${status}' retrieved successfully`,
-      data: tasks,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
-  }
-};
-
-// Assign Task to User
-export const assignTask = async (req: Request, res: Response) => {
-  try {
-    const task = (req as any).task;
-    const user = (req as any).dbUser;
-    const { assignedTo } = req.body;
-
-    if (!assignedTo) {
-      return res.status(400).json({
-        success: false,
-        message: "Assigned user ID is required",
-      });
-    }
-
-    // Only creator, supervisor, or promoter can assign task
-    const canAssign =
-      task.createdBy.equals(user._id) ||
-      task.supervisors.some((supervisor: Types.ObjectId) =>
-        supervisor.equals(user._id)
-      ) ||
-      user.role === "promoter";
-
-    if (!canAssign) {
-      return res.status(403).json({
-        success: false,
-        message: "You don't have permission to assign this task",
-      });
-    }
-
-    // Validate assigned user
-    const assignedUser = await User.findById(assignedTo);
-    if (!assignedUser || String(assignedUser.orgId) !== String(user.orgId)) {
-      return res.status(400).json({
-        success: false,
-        message: "Assigned user not found or not in your organization",
-      });
-    }
-
-    const updatedTask = await Task.findByIdAndUpdate(
-      task._id,
-      { assignedTo, status: "in_progress" },
-      { new: true }
-    )
-      .populate("site", "name location")
-      .populate("createdBy", "fName lName email")
-      .populate("assignedTo", "fName lName email")
-      .populate("supervisors", "fName lName email");
-
-    return res.status(200).json({
-      success: true,
-      message: "Task assigned successfully",
-      data: updatedTask,
-    });
-  } catch (error) {
+    console.error("Error updating task:", error);
     return res.status(500).json({
       success: false,
       message: "Server error",

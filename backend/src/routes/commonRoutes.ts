@@ -16,6 +16,7 @@ import { addExpense, getSiteExpenses } from "../controllers/common/expenses";
 import { addService } from "../controllers/common/vendorServices";
 import { authenticateJWT } from "../middlewares/authenticateJWT";
 import { addInventory } from "../controllers/common/inventory";
+import { updateTask } from "../controllers/common/task";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
 
 const router = Router();
@@ -38,6 +39,8 @@ router.post("/add-expenses", addExpense);
 router.get("/view-expenses/:siteId", getSiteExpenses);
 
 router.post("/add-inventory", addInventory);
+
+router.patch("/update-task/:taskId", updateTask);
 
 // router.post("/create-task", createTask);
 
