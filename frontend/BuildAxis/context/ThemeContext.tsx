@@ -37,10 +37,10 @@ export const ColorsDark = {
   text: "#FFFFFF",
   icons: "#CCCCCC",
   profileHeader: "#003b54ff",
-  boxes01: ["#1A2B44", "#23456A", "#5A9BFF"],
-  boxes02: ["#0F2D23", "#1B4D36", "#27AE60"],
-  boxes03: ["#332B0A", "#4D4214", "#FFD700"],
-  boxes04: ["#3A1A1A", "#5C2B2B", "#FF5C5C"],
+  boxes01: ["#2e62b5ff", "#4f8ef7", "#ffffff"],
+  boxes02: ["#24a259ff", "#3db670", "#ffffff"],
+  boxes03: ["#f39c12", "#f4a62a", "#ffffff"],
+  boxes04: ["#c0392b", "#c64d40", "#ffffff"],
 };
 
 export type ThemeMode = "light" | "dark" | "system";
