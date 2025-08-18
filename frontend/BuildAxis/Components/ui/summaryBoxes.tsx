@@ -1,58 +1,51 @@
 import React from "react";
-import {
-  View,Text,Image,StyleSheet,TouchableOpacity,StatusBar,
-} from "react-native";
-import { Colors } from "@/Thems/color";
-import Fonts from "@/Thems/font";
+import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "@/context/ThemeContext";
 
-
-
-
-//This is 4 grid box
-export  function Overview ({ backgroundColor,circle_color,Ionicons_name,Ionicons_color,Text1,text2,text3}:any) {
-    return(
-         <>
-<View style={[styles.card, { backgroundColor: backgroundColor }]}>
-          <View style={[styles.circle,, { backgroundColor: circle_color }]}>
-            <Ionicons name={Ionicons_name} size={60} color= {Ionicons_color}/>
-
-          </View>
-          <Text style={styles.cardTitle}>{Text1}</Text>
-          <Text>{text2}</Text>
-          <Text>{text3}</Text>
-        </View>
-         </>
-    )
+interface OverviewProps {
+  variant: "boxes01" | "boxes02" | "boxes03" | "boxes04"; // ✅ choose which color set to use
+  Ionicons_name: React.ComponentProps<typeof Ionicons>["name"];
+  Text1: string;
+  text2?: string;
+  text3?: string;
 }
 
+export function Overview({
+  variant,
+  Ionicons_name,
+  Text1,
+  text2,
+  text3,
+}: OverviewProps) {
+  const { theme } = useTheme();
+
+  // pick colors from the variant (boxes01, boxes02…)
+  const [cardBg, circleBg, iconColor] = theme[variant];
+
+  return (
+    <View style={[styles.card, { backgroundColor: cardBg }]}>
+      {/* Circle with Icon */}
+      <View style={[styles.circle, { backgroundColor: circleBg }]}>
+        <Ionicons name={Ionicons_name} size={60} color={iconColor} />
+      </View>
+
+      {/* Texts */}
+      <Text style={[styles.cardTitle, { color: theme.text }]}>{Text1}</Text>
+      {text2 ? (
+        <Text style={[styles.cardText, { color: theme.text }]}>{text2}</Text>
+      ) : null}
+      {text3 ? (
+        <Text style={[styles.cardText, { color: theme.text }]}>{text3}</Text>
+      ) : null}
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
-
-  header: {
-    backgroundColor: Colors.primary,
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 12,
-
-    justifyContent: "space-between",
-  },
-  logo: {
-    width: 40,
-    height: 40,
-    borderRadius:5,
-    
-  },
-  headerText: {
-    color: "#fff",
-    fontSize: 25,
-    fontWeight: "500",
-    flex: 1,
-    marginLeft: 12,
-  },
-   card: {
+  card: {
     width: "47%",
-    height:200,
+    height: 200,
     padding: 15,
     marginBottom: 25,
     borderRadius: 12,
@@ -60,20 +53,23 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    alignItems:"center"
+    alignItems: "center",
   },
   cardTitle: {
     fontWeight: "bold",
     fontSize: 20,
     marginVertical: 8,
+    textAlign: "center",
   },
-  circle:{
-    width:80,
-    height:80,
-    borderRadius:50,
-    backgroundColor:"#B6DEFF",
-    justifyContent:"center",
-    alignItems:"center"
-  }
- 
+  cardText: {
+    fontSize: 14,
+    textAlign: "center",
+  },
+  circle: {
+    width: 80,
+    height: 80,
+    borderRadius: 50,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
