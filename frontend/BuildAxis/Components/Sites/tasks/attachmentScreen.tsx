@@ -5,14 +5,16 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  Image,
   Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import Addmaterial from "@/components/Sites/tasks/common/addmaterial";
 import { BlurView } from "expo-blur";
+
+import Addmaterial from "@/components/Sites/tasks/common/addmaterial";
 import Addtools from "../popupScreens/addToolsPopup";
 import Uploadblueprints from "@/components/Sites/popupScreens/uploadBlueprints";
+import { useTheme } from "@/context/ThemeContext";
+
 export default function MaterialsScreen() {
   const data = [
     { id: "1", name: "Blue print" },
@@ -22,23 +24,26 @@ export default function MaterialsScreen() {
   ];
 
   const [popup, setpopup] = useState(false);
+  const { theme } = useTheme();
 
-  const activepopup = () => {
-    const update = !popup;
-    setpopup(update);
-  };
+  const activepopup = () => setpopup(!popup);
 
   const renderItem = ({ item }: any) => (
-    <View style={styles.item}>
-      <View style={styles.imageBox}>
-        <Ionicons name="image" size={40} color="#4A90E2" />
+    <View style={[styles.item]}>
+      <View
+        style={[
+          styles.imageBox,
+          { backgroundColor: theme.listItemFill, borderColor: theme.listItemBorder },
+        ]}
+      >
+        <Ionicons name="image" size={40} color={theme.secondary} />
       </View>
-      <Text style={styles.itemText}>{item.name}</Text>
+      <Text style={[styles.itemText, { color: theme.text }]}>{item.name}</Text>
     </View>
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
       <Addmaterial
         text="Attachment"
@@ -56,6 +61,7 @@ export default function MaterialsScreen() {
         contentContainerStyle={{ paddingTop: 10 }}
       />
 
+      {/* Popup Modal */}
       <Modal
         animationType="fade"
         transparent={true}
@@ -65,10 +71,10 @@ export default function MaterialsScreen() {
         <BlurView
           style={[
             StyleSheet.absoluteFill,
-            { backgroundColor: "rgba(65, 65, 65, 0.84)" },
+            { backgroundColor: theme.isDark ? "rgba(0,0,0,0.7)" : "rgba(65,65,65,0.3)" },
           ]}
-          tint="light" // "light", "dark", "xlight"
-          intensity={20}
+          tint={theme.isDark ? "dark" : "light"}
+          intensity={30}
         />
         <View style={styles.overlay}>
           <Uploadblueprints fun={activepopup} />
@@ -79,39 +85,20 @@ export default function MaterialsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 15, backgroundColor: "#fff" },
-  headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  headerText: { fontSize: 16, fontWeight: "600", color: "#333" },
-  addBtn: { flexDirection: "row", alignItems: "center" },
-  addText: { fontSize: 13, color: "#007AFF", marginLeft: 4 },
+  container: { flex: 1, padding: 15 },
   item: { alignItems: "center", marginBottom: 20 },
   imageBox: {
     width: 110,
     height: 110,
     borderRadius: 8,
-    backgroundColor: "#EAF1FF",
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
-  },
-  addIcon: {
-    position: "absolute",
-    top: 5,
-    right: 5,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 2,
     borderWidth: 1,
-    borderColor: "#EAF1FF",
   },
-  itemText: { fontSize: 12, marginTop: 5, color: "#555" },
+  itemText: { fontSize: 12, marginTop: 5 },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
   },
 });
