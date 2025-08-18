@@ -1,3 +1,7 @@
+
+
+
+
 import { Picker } from "@react-native-picker/picker";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
@@ -28,12 +32,13 @@ export default function CreateTaskScreen() {
       {/* Custom Safe Area Styling */}
       <Safe_area />
 
- 
+      {/* Top Bar with Logo & Name */}
+      <CompanyBar />
 
       {/* Back Button + Title */}
-      <Back_Text_Butt path="" text="Create New Site" />
+      <Back_Text_Butt path="" text="Create Task" />
 
-      <View style={styles.form} >
+      <ScrollView style={styles.form} showsVerticalScrollIndicator={false}>
         {/* Task Name Input */}
         <TextInputs
           value={taskName}
@@ -47,13 +52,13 @@ export default function CreateTaskScreen() {
         <TextInputs
           value={description}
           onChangeText={setDescription}
-          placeholder="Address"
+          placeholder="Description"
           keyboardType="default"
-          textname="Address"
+          textname="Description"
         />
 
         {/* Assign Supervisor Dropdown */}
-        <Text style={[styles.label, { color: theme.text }]}>Add Patners</Text>
+        <Text style={[styles.label, { color: theme.text }]}>Assign Supervisor</Text>
         <View
           style={[
             styles.pickerContainer,
@@ -73,21 +78,20 @@ export default function CreateTaskScreen() {
         </View>
 
         {/* Upload Blueprint Section */}
-        <Upload_img text="Site Banner" />
+        <Upload_img />
 
-       
+        {/* Add Labour */}
+        <Add_items path="add-labour" text="Add Labour" />
 
         {/* Assign Supervisor Again (if multiple supervisors) */}
         <Add_items path="assign-supervisor" text="Assign Supervisor" />
 
-       
-        {/* Submit Button */}
-        
-           <Submit_bbutt text="Create Site" />
+        {/* Add Materials */}
+        <Add_items path="add-materials" text="Add Materials" />
 
-        
-       
-      </View>
+        {/* Submit Button */}
+        <Submit_bbutt text="Assign Task" />
+      </ScrollView>
     </SafeAreaView>
   );
 }

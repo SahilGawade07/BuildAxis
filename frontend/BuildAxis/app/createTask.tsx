@@ -17,6 +17,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Dimensions, StatusBar, Animated, FlatList, ScrollView, Image, StyleSheet, Text, TouchableOpacity, View, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Safe_area } from "@/components/ui/safeArea";
 
 const HEADER_MAX_HEIGHT = 390;
 const HEADER_MIN_HEIGHT = 50;
@@ -99,6 +100,8 @@ export default function DynamicHeaderScreen() {
       <Animated.View style={[styles.header, { height: headerHeight, paddingTop: insets.top }]}>
         <Animated.View style={{ opacity: headerContentOpacity, transform: [{ translateY: headerContentTranslateY }] }}>
           <CompanyBar />
+                <Safe_area />
+          
           <Back_Text_Butt path="/tabs/Sites/Site" text="Site Name" />
 
           <View style={{ height: 200, padding: 5, alignItems: "center" }}>
@@ -120,8 +123,8 @@ export default function DynamicHeaderScreen() {
         </Animated.View>
       </Animated.View>
 
-      {/* Sticky header when collapsed */}
-      <Animated.View style={{ backgroundColor: "#fff", zIndex: 2, position: "absolute", opacity: Animated.subtract(1, headerContentOpacity) }}>
+      {/* Sticky header when collapsed */} 
+      <Animated.View style={{ backgroundColor: "#fff", zIndex: 2, position: "absolute", opacity: Animated.subtract(1, headerContentOpacity), paddingTop:insets.top,width:"100%"}}>
         <Back_Text_Butt path="/tabs/Sites/Site" text={page} />
       </Animated.View>
 
@@ -130,7 +133,9 @@ export default function DynamicHeaderScreen() {
         contentContainerStyle={styles.scrollContent}
         scrollEventThrottle={16}
         onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: false })}
+        // style={{paddingTop:insets.top}}
       >
+         {/* <Safe_area /> */}
         <View style={{ height: windowHeight }}>{renderPageContent()}</View>
       </Animated.ScrollView>
 
