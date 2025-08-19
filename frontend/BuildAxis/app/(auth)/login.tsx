@@ -6,6 +6,9 @@ import {
   StyleSheet,
   Image,
   StatusBar,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -37,14 +40,10 @@ export default function LoginScreen() {
   const [err, setError] = useState("");
 
   useEffect(() => {
-    setError("");
-    setContinueDisabled(true);
-
-    if (!email || !password) return;
-    if (!email.includes("@") || !email.includes(".")) return;
-    if (password.length < 6) return;
-
-    setContinueDisabled(false);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isEmailValid = emailRegex.test(email);
+    const isPasswordValid = password.length >= 6;
+    setContinueDisabled(!(isEmailValid && isPasswordValid));
   }, [email, password]);
 
   const handleLogin = async () => {
@@ -53,7 +52,8 @@ export default function LoginScreen() {
       setError("All fields are required");
       return;
     }
-    if (!email.includes("@") || !email.includes(".")) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
       setError("Invalid email address");
       return;
     }
@@ -78,61 +78,74 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />{" "}
-      <View style={styles.centeredContent}>
-        {/* Logo */}
-        <AppLogo />
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingContainer}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.centeredContent}>
+            {/* Logo */}
+            <AppLogo />
 
-        {/* Headers */}
-        <TopTextHeader text="Welcome Back" style={styles.headerTop} />
-        <Text style={styles.subHeader}>Log in to your BuildAxis account</Text>
+            {/* Headers */}
+            <TopTextHeader text="Welcome Back" style={styles.headerTop} />
+            <Text style={styles.subHeader}>
+              Log in to your BuildAxis account
+            </Text>
 
-        {/* Form */}
-        <View style={styles.form}>
-          <TextInputs
-            value={email}
-            onChangeText={setEmail}
-            placeholder="Enter your email"
-            keyboardType="email-address"
-            textname="Email"
-            icon="mail-outline"
-          />
+            {/* Form */}
+            <View style={styles.form}>
+              <TextInputs
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Enter your email"
+                keyboardType="email-address"
+                textname="Email"
+                icon="mail-outline"
+              />
 
-          <PasswordField
-            value={password}
-            onChangeText={setPassword}
-            placeholder="Enter your password"
-            textname="Password"
-            icon="lock-closed-outline"
-          />
+              <PasswordField
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Enter your password"
+                textname="Password"
+                icon="lock-closed-outline"
+              />
 
-          {/* Forgot Password */}
-          <TouchableOpacity
-            onPress={() => {
-              router.push("/(auth)/forgotPassword");
-            }}
-          >
-            <Text style={styles.forgotText}>Forgot password?</Text>
-          </TouchableOpacity>
+              {/* Forgot Password */}
+              <TouchableOpacity
+                onPress={() => {
+                  router.push("/(auth)/forgotPassword");
+                }}
+              >
+                <Text style={styles.forgotText}>Forgot password?</Text>
+              </TouchableOpacity>
 
-          {/* Error Message */}
-          {err ? <Text style={styles.error}>{err}</Text> : null}
+              {/* Error Message */}
+              {err ? <Text style={styles.error}>{err}</Text> : null}
 
-          {/* Continue Button */}
-          <ContinueBtn
-            text="Continue"
-            touchable={!continueDisabled}
-            onPresss={handleLogin}
-          />
-        </View>
+              {/* Continue Button */}
+              <ContinueBtn
+                text="Login"
+                touchable={!continueDisabled}
+                onPresss={handleLogin}
+              />
+            </View>
 
-        {/* Sign Up Link */}
-        <SwitchScreens
-          text1="Don’t have an account?"
-          text2="Sign up"
-          path="/Auth/sign_up/sign_up"
-        />
-      </View>
+            {/* Sign Up Link */}
+            <SwitchScreens
+              text1="Don’t have an account?"
+              text2="Sign up"
+              path="/(auth)/sign_up"
+            />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -143,10 +156,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9f9fb",
     paddingHorizontal: 24,
   },
-  centeredContent: {
+  keyboardAvoidingContainer: {
     flex: 1,
-    justifyContent: "center", // Centers content vertically
-    alignItems: "center", // Centers content horizontally
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    paddingBottom: 20,
+  },
+  centeredContent: {
+    alignItems: "center",
   },
   logoContainer: {
     alignItems: "center",
@@ -175,40 +194,19 @@ const styles = StyleSheet.create({
   },
   form: {
     width: "100%",
-    maxWidth: 320, // Keeps form narrow and centered on larger screens
+    maxWidth: 320,
   },
   forgotText: {
     fontSize: 14,
-    color: "#1976D2", // Google Blue
+    color: "#1976D2",
     textAlign: "right",
     marginTop: 8,
     fontWeight: "500",
   },
   error: {
-    color: "#D32F2F", // Material Red
+    color: "#D32F2F",
     fontSize: 14,
     marginTop: 8,
     textAlign: "center",
-  },
-  orContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 24,
-    paddingHorizontal: 16,
-  },
-  line: {
-    flex: 1,
-    height: 1,
-    backgroundColor: "#BDBDBD",
-  },
-  orText: {
-    marginHorizontal: 12,
-    fontSize: 14,
-    color: "#757575",
-    fontWeight: "500",
-  },
-  socialButtons: {
-    gap: 12,
-    marginBottom: 20,
   },
 });
