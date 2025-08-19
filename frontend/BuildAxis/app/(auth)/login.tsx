@@ -18,7 +18,6 @@ import { TopTextHeader } from "@/components/ui/topHeaderText";
 import { TextInputs } from "../../components/ui/inputField";
 import { PasswordField } from "../../components/ui/passwordField";
 import { ContinueBtn } from "../../components/ui/ContinueBtn";
-import { SwitchScreens } from "../../components/ui/switch_to_signup";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { signInRequest } from "@/lib/api";
 
@@ -137,12 +136,15 @@ export default function LoginScreen() {
               />
             </View>
 
-            {/* Sign Up Link */}
-            <SwitchScreens
-              text1="Don’t have an account?"
-              text2="Sign up"
-              path="/(auth)/sign_up"
-            />
+            {/* Sign Up*/}
+            <View style={{ flexDirection: "row", justifyContent: "center" }}>
+              <Text style={styles.smallText}>Don’t have an account?</Text>
+              <TouchableOpacity
+                onPress={() => router.push("/(auth)/signup")}
+              >
+                <Text style={styles.registerText}>{"Sign  up"}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -208,5 +210,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 8,
     textAlign: "center",
+  },
+  smallText: {
+    color: "#666",
+    fontSize: 14,
+  },
+  registerText: {
+    color: "#007AFF",
+    fontSize: 14,
+    fontWeight: "bold",
   },
 });
