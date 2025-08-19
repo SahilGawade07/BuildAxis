@@ -1,199 +1,195 @@
-// // import * as React from "react";
-// // import { View, Text, StyleSheet } from "react-native";
-// // import { TabView, SceneMap, TabBar } from "react-native-tab-view";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Dimensions,
+  FlatList,
+} from "react-native";
+import { useTheme } from "@/context/ThemeContext"; 
 
-// // const HomeRoute = () => (
-// //   <View style={styles.screen}>
-// //     <Text style={styles.text}>🏠 Home</Text>
-// //   </View>
-// // );
+// 🔹 Types
+type TaskImage = { url: string };
+type Task = { images: TaskImage[]; description: string; date: string; time: string };
 
-// // const ProfileRoute = () => (
-// //   <View style={styles.screen}>
-// //     <Text style={styles.text}>👤 Profile</Text>
-// //   </View>
-// // );
+// 🔹 Dummy fetch
+const getTasks = async (): Promise<Task[]> => {
+  return [
+    {
+      images: [
+        { url: "https://images.unsplash.com/photo-1503387762-592deb58ef4e" },
+        { url: "https://images.unsplash.com/photo-1590490360182-c33d57733427" },
+        { url: "https://images.unsplash.com/photo-1556910103-1c02745aae4d" },
+      ],
+      description:
+        "If you want the text itself to be blurred, you’d need a completely different approach using Skia or by rendering it as an image first.",
+      date: "2025-08-13",
+      time: "12:26 PM",
+    },
+    {
+      images: [
+        { url: "https://images.unsplash.com/photo-1517816428104-797678c7cf14" },
+        { url: "https://images.unsplash.com/photo-1532910404447-129d4b0dcd3b" },
+      ],
+      description:
+        "This is another task description with some extra info about it.",
+      date: "2025-08-14",
+      time: "10:45 AM",
+    },
+    {
+      images: [
+        { url: "https://images.unsplash.com/photo-1473187983305-f615310e7daa" },
+      ],
+      description:
+        "Final task example. Images are fewer here, but still shown in a scrollable row.",
+      date: "2025-08-15",
+      time: "4:10 PM",
+    },
+  ];
+};
 
-// // const SettingsRoute = () => (
-// //   <View style={styles.screen}>
-// //     <Text style={styles.text}>⚙️ Settings</Text>
-// //   </View>
-// // );
+export default function ImageBanner() {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const { theme } = useTheme();
 
-// // export default function App() {
-// //   const [index, setIndex] = React.useState(2);
-// //   const [routes] = React.useState([
-// //     { key: "home", title: "Home" },
-// //     { key: "profile", title: "Profile" },
-// //     { key: "settings", title: "Settings" },
-// //   ]);
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const data = await getTasks();
+        setTasks(data);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    };
+    fetchTasks();
+  }, []);
 
-// //   const renderScene = SceneMap({
-// //     home: HomeRoute,
-// //     profile: ProfileRoute,
-// //     settings: SettingsRoute,
-// //   });
+  // 🔹 Horizontal image list
+  const renderImages = ({ item }: { item: TaskImage }) => (
+    <View style={[styles.bannerCard, { backgroundColor: theme.backgroundgrey }]}>
+      <Image source={{ uri: item.url }} style={styles.bannerImage} />
+    </View>
+  );
 
-// //   // 👉 Custom TabBar with styling
-// //   const renderTabBar = (props: any) => (
-// //     <TabBar
-// //       {...props}
-// //       style={styles.tabBar}                // background style
-// //       indicatorStyle={styles.indicator}    // line below active tab
-// //       labelStyle={styles.label}            // text style
-// //       activeColor="black"
-// //       inactiveColor="lightgray"
-// //     />
-// //   );
+  // 🔹 Each task card
+  const renderTask = ({ item }: { item: Task }) => (
+    <View
+      style={[
+        styles.taskCard,
+        { backgroundColor: theme.listItemFill, borderColor: theme.listItemBorder },
+      ]}
+    >
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.userInfo}>
+          <Image
+            source={require("@/assets/images/logo.jpg")}
+            style={styles.profileImage}
+          />
+          <Text style={[styles.username, { color: theme.text }]}>
+            Shraddha Swant
+          </Text>
+        </View>
+        <Text style={[styles.dateText, { color: theme.icons }]}>
+          {item.date} • {item.time}
+        </Text>
+      </View>
 
-// //   return (
-// //     <TabView
-// //       navigationState={{ index, routes }}
-// //       renderScene={renderScene}
-// //       onIndexChange={setIndex}
-// //       renderTabBar={renderTabBar} // <-- add custom tab bar
-// //       swipeEnabled={true}
-// //     />
-// //   );
-// // }
+      {/* Horizontal images */}
+      <FlatList
+        data={item.images}
+        keyExtractor={(_, i) => i.toString()}
+        renderItem={renderImages}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.imageRow}
+      />
 
-// // const styles = StyleSheet.create({
-// //   screen: {
-// //     flex: 1,
-// //     justifyContent: "center",
-// //     alignItems: "center",
-// //   },
-// //   text: {
-// //     fontSize: 22,
-    
-// //   },
-// //   // 👉 Top Tab Styles
-// //   tabBar: {
-// //     backgroundColor: "#ffffffff", // Blue background
-// //   },
-// //   indicator: {
-// //     backgroundColor: "black",  // Yellow line under active tab
-// //     height: 3,
-// //   },
-// //   label: {
-// //     fontSize: 14,
-// //     fontWeight: "bold",
-// //      backgroundColor: "black",
-// //   },
-// // });
-
-
-// import * as React from "react";
-// import { View, Text, StyleSheet, Dimensions } from "react-native";
-// import PagerView from "react-native-pager-view";
-// import Labour_list from "@/app/(tabs)/sites/[siteId]/tabs/labourScreen";
-// import ItemTable from "@/app/(tabs)/sites/[siteId]/tabs/itemScreen";
-// import ImageScreen from "@/components/Sites/tasks/ImageScreen";
-// import MaterialsScreen from "@/components/Sites/tasks/attachmentScreen";
-
-// const { width, height } = Dimensions.get("window");
-
-// export default function Sidesanim() {
-//   const [page, setPage] = React.useState(0);
-
-//   return (
-//     <PagerView
-//       style={styles.pagerView}
-//       initialPage={0}
-//       onPageSelected={(e) => setPage(e.nativeEvent.position)}
-//     >
-//       <View key="1" style={styles.page}>
-//         <ImageScreen />
-//       </View>
-
-//       <View key="2" style={styles.page}>
-//         <Labour_list />
-//       </View>
-
-//       <View key="3" style={styles.page}>
-//         <ItemTable />
-//       </View>
-
-//       <View key="4" style={styles.page}>
-//         <MaterialsScreen />
-//       </View>
-//     </PagerView>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   pagerView: {
-//     flex: 1,
-//   },
-//   page: {
-    
-//   },
-// });
-
-
-
-import * as React from "react";
-import { useWindowDimensions, ScrollView, View } from "react-native";
-import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-
-// 🔹 Import your screens
-import Labour_list from "@/app/(tabs)/sites/[siteId]/tabs/labourScreen";
-import ItemTable from "@/app/(tabs)/sites/[siteId]/tabs/itemScreen";
-import ImageScreen from "@/components/Sites/tasks/ImageScreen";
-import MaterialsScreen from "@/components/Sites/tasks/attachmentScreen";
-
-export default function TopTabs() {
-  const layout = useWindowDimensions();
-
-  const [index, setIndex] = React.useState(0);
-  const [routes] = React.useState([
-    { key: "images", title: "Images" },
-    { key: "labours", title: "Labours" },
-    { key: "materials", title: "Materials" },
-    { key: "attachments", title: "Attachments" },
-  ]);
-
-  // ✅ wrap each screen inside a ScrollView
-  const renderScene = SceneMap({
-    images: () => (
-      <ScrollView style={{ flex: 1 }}>
-        <ImageScreen />
-      </ScrollView>
-    ),
-    labours: () => (
-      <ScrollView style={{ flex: 1 }}>
-        <Labour_list />
-      </ScrollView>
-    ),
-    materials: () => (
-      <ScrollView style={{ flex: 1 }}>
-        <ItemTable />
-      </ScrollView>
-    ),
-    attachments: () => (
-      <ScrollView style={{ flex: 1 }}>
-        <MaterialsScreen />
-      </ScrollView>
-    ),
-  });
+      {/* Description */}
+      <View style={styles.infoContainer}>
+        <Text style={[styles.description, { color: theme.text }]}>
+          {item.description}
+        </Text>
+      </View>
+    </View>
+  );
 
   return (
-    <TabView
-      navigationState={{ index, routes }}
-      renderScene={renderScene}
-      onIndexChange={setIndex}
-      initialLayout={{ width: layout.width }}
-      renderTabBar={(props) => (
-        <TabBar
-          {...props}
-          indicatorStyle={{ backgroundColor: "#007AFF", height: 3 }}
-          style={{ backgroundColor: "white" }}
-          labelStyle={{ color: "black", fontWeight: "bold" }}
-          inactiveColor="#555"
-          activeColor="#007AFF"
-        />
-      )}
+    <FlatList
+      data={tasks}
+      keyExtractor={(_, idx) => idx.toString()}
+      renderItem={renderTask}
+      contentContainerStyle={[styles.page, { backgroundColor: theme.background }]}
     />
   );
 }
 
+const { width } = Dimensions.get("window");
+
+const styles = StyleSheet.create({
+  page: {
+    padding: 12,
+    paddingBottom: 40,
+  },
+  taskCard: {
+    marginBottom: 20,
+    borderRadius: 16,
+    overflow: "hidden",
+    borderWidth: 1,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 14,
+    paddingTop: 14,
+    alignItems: "center",
+  },
+  userInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+  },
+  username: {
+    fontSize: 15,
+    fontWeight: "bold",
+  },
+  dateText: {
+    fontSize: 12,
+  },
+  imageRow: {
+    paddingHorizontal: 10,
+    paddingTop: 12,
+  },
+  bannerCard: {
+    width: width * 0.85,
+    borderRadius: 16,
+    overflow: "hidden",
+    marginRight: 14,
+    elevation: 2,
+  },
+  bannerImage: {
+    width: "100%",
+    height: 200,
+  },
+  infoContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 16,
+  },
+  description: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+});

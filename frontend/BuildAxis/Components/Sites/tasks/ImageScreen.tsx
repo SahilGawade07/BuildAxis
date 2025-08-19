@@ -7,7 +7,7 @@ import {
   Dimensions,
   FlatList,
 } from "react-native";
-import { useTheme } from "../../../context/ThemeContext"; // ✅ import theme context
+import { useTheme } from "../../../context/ThemeContext"; 
 
 // 🔹 Types
 type TaskImage = { url: string };
@@ -65,14 +65,14 @@ export default function ImageBanner() {
     fetchTasks();
   }, []);
 
-  // 🔹 Render horizontal image slider for each task
+  // 🔹 Horizontal image list
   const renderImages = ({ item }: { item: TaskImage }) => (
     <View style={[styles.bannerCard, { backgroundColor: theme.backgroundgrey }]}>
       <Image source={{ uri: item.url }} style={styles.bannerImage} />
     </View>
   );
 
-  // 🔹 Render each task card
+  // 🔹 Each task card
   const renderTask = ({ item }: { item: Task }) => (
     <View
       style={[
@@ -96,7 +96,7 @@ export default function ImageBanner() {
         </Text>
       </View>
 
-      {/* Horizontal Image Carousel */}
+      {/* Horizontal images */}
       <FlatList
         data={item.images}
         keyExtractor={(_, i) => i.toString()}
@@ -121,6 +121,7 @@ export default function ImageBanner() {
       data={tasks}
       keyExtractor={(_, idx) => idx.toString()}
       renderItem={renderTask}
+      showsVerticalScrollIndicator={true}
       contentContainerStyle={[styles.page, { backgroundColor: theme.background }]}
     />
   );

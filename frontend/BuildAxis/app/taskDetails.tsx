@@ -62,6 +62,7 @@ export default function TaskDetailsScreen() {
       <CompanyBar />
       <View>
         {/* 🔹 Animated Header */}
+        
         <Animated.View
           style={[
             styles.header,
@@ -147,22 +148,7 @@ export default function TaskDetailsScreen() {
             { useNativeDriver: false }
           )}
         >
-          <View style={{ height: windowHeight }}>
-            {/* Directly render Sidesanim */}
-
-            <TopTabs />
-            <Addbuttons
-              iconname={
-                <MaterialCommunityIcons
-                  name="file-image-plus-outline"
-                  size={24}
-                  color="#fff"
-                />
-              }
-            />
-
-
-          </View>
+         
 
         </Animated.ScrollView>
 
@@ -179,6 +165,7 @@ export default function TaskDetailsScreen() {
 />  */}
 
       </View>
+      <TopTabs />
     </SafeAreaView>
   );
 }

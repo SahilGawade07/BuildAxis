@@ -22,13 +22,13 @@ export default function TopTabs() {
   // ✅ wrap each screen inside a ScrollView
   const renderScene = SceneMap({
     images: () => (
-      <ScrollView style={{ flex: 1 }}>
+      <>
         <ImageScreen />
-      </ScrollView>
+      </>
     ),
     labours: () => (
       <ScrollView style={{ flex: 1 }}>
-        <Labour_list />
+        {/* <Labour_list /> */}
       </ScrollView>
     ),
     materials: () => (
