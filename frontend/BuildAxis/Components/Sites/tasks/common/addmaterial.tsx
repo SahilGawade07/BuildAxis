@@ -1,21 +1,24 @@
-import { AntDesign, FontAwesome6, Ionicons } from "@expo/vector-icons";
+import { FontAwesome6 } from "@expo/vector-icons";
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
+import { useTheme } from "../../../../context/ThemeContext"; 
 
-type AddMaterialProps = {
-  text: string;
-  onPress?: () => void;
-};
+export default function AddMaterial({ text, text2, funcations }: any) {
+  const { theme } = useTheme(); // ✅ get active theme
 
-export default function AddMaterial({ text, text2,funcations}: any) {
   return (
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>{text}</Text>
-        <TouchableOpacity style={styles.addButton} onPress={funcations}>
-          <FontAwesome6 name="plus" size={16} color="#0247D3" />
-          <Text style={styles.addButtonText}>{text2}</Text>
-        </TouchableOpacity>
-      </View>
+    <View style={styles.header}>
+      <Text style={[styles.headerTitle, { color: theme.text }]}>{text}</Text>
+      <TouchableOpacity
+        style={[styles.addButton, { backgroundColor: theme.boxes01[0] }]}
+        onPress={funcations}
+      >
+        <FontAwesome6 name="plus" size={16} color={theme.primary} />
+        <Text style={[styles.addButtonText, { color: theme.primary }]}>
+          {text2}
+        </Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -27,14 +30,11 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderColor: "#eee",
     borderRadius: 12,
-    backgroundColor: "#E3F2FD",
   },
   rowText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#0247D3",
   },
   header: {
     flexDirection: "row",
@@ -45,18 +45,15 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#333",
   },
   addButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#E3F2FD",
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
   },
   addButtonText: {
-    color: "#0247D3",
     fontWeight: "600",
     marginLeft: 8,
     fontSize: 14,

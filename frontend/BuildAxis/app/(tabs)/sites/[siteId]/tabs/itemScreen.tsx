@@ -53,7 +53,7 @@ export default function ItemTable() {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
       <Addmaterial
-        text="material"
+        text="Material"
         text2="Add materials"
         funcations={activepopup}
       />

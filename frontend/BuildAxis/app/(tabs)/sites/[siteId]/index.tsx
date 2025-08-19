@@ -20,7 +20,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Labour_list from "@/app/(tabs)/sites/[siteId]/tabs/labourScreen";
 import Report from "@/app/(tabs)/sites/[siteId]/tabs/report";
-import { useTheme } from "../../../../context/ThemeContext"; 
+import { useTheme } from "../../../../context/ThemeContext";
 
 export default function Main_Site() {
   const [active, setActive] = useState("Assign Task");
@@ -38,10 +38,34 @@ export default function Main_Site() {
   ];
 
   const projects = [
-    { id: "1", name: "JJ Hormony", progress: "20%", date: "12/02/2022", status: "Active" },
-    { id: "2", name: "Green Heights", progress: "45%", date: "15/04/2023", status: "Active" },
-    { id: "3", name: "Sky Towers", progress: "75%", date: "01/10/2024", status: "Active" },
-    { id: "4", name: "Blue Ocean", progress: "60%", date: "20/08/2025", status: "Active" },
+    {
+      id: "1",
+      name: "JJ Hormony",
+      progress: "20%",
+      date: "12/02/2022",
+      status: "Active",
+    },
+    {
+      id: "2",
+      name: "Green Heights",
+      progress: "45%",
+      date: "15/04/2023",
+      status: "Active",
+    },
+    {
+      id: "3",
+      name: "Sky Towers",
+      progress: "75%",
+      date: "01/10/2024",
+      status: "Active",
+    },
+    {
+      id: "4",
+      name: "Blue Ocean",
+      progress: "60%",
+      date: "20/08/2025",
+      status: "Active",
+    },
   ];
 
   useEffect(() => {
@@ -54,7 +78,7 @@ export default function Main_Site() {
         return (
           <FlatList
             data={projects}
-            renderItem={TaskBox}
+            renderItem={({ item }) => <TaskBox item={item} />}
             keyExtractor={(item) => item.id}
             contentContainerStyle={{ paddingTop: 10 }}
           />
@@ -77,7 +101,9 @@ export default function Main_Site() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background }]}
+    >
       <Safe_area />
       <ScrollView>
         <CompanyBar />
@@ -95,7 +121,10 @@ export default function Main_Site() {
         <View
           style={[
             styles.tabBarContainer,
-            { backgroundColor: theme.listItemFill, borderColor: theme.listItemBorder },
+            {
+              backgroundColor: theme.listItemFill,
+              borderColor: theme.listItemBorder,
+            },
           ]}
         >
           <ScrollView

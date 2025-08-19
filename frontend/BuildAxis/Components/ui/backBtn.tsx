@@ -2,6 +2,7 @@ import { Entypo } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { useTheme } from "../../context/ThemeContext"; // adjust path
 
 export default function Back_Text_Butt({path,text}:any) {
     return (
@@ -16,21 +17,17 @@ export default function Back_Text_Butt({path,text}:any) {
 
         </View>
     )
-
 }
 
-
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#fff" },
-    header: {
-        flexDirection: "row",
-        alignItems: "center",
-        paddingTop: 10,
-        paddingHorizontal: 15,
-        alignContent: "center",
-
-
-    },
-    headerText: { color: "#000000ff", fontSize: 25, fontWeight: "bold", }
-
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingTop: 10,
+    paddingHorizontal: 15,
+  },
+  headerText: {
+    fontSize: 25,
+    fontWeight: "bold",
+  },
 });

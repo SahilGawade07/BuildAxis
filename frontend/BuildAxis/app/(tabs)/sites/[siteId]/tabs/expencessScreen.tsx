@@ -41,7 +41,7 @@ export const ExpencessScreen = () => {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <FlatList
         data={projects}
-        renderItem={Expencess}
+        renderItem={({ item }) => <Expencess item={item} />}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingTop: 10 }}
       />

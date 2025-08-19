@@ -48,7 +48,7 @@ const expenseSchema = new Schema<IExpense>(
     },
     category: {
       type: String,
-      enum: ["daily", "material", "inventory", "rental", "other"],
+      enum: ["daily", "tool", "inventory", "rental", "other"],
       required: true,
     },
     receiptUrl: {
