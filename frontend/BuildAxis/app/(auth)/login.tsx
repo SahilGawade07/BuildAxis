@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 // Import reusable components
 import { TopTextHeader } from "@/components/ui/topHeaderText";
-import { TextInputs } from "../../components/ui/inputField";
+import TextInputs from "../../components/ui/inputField";
 import { PasswordField } from "../../components/ui/passwordField";
 import { ContinueBtn } from "../../components/ui/ContinueBtn";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -65,6 +65,9 @@ export default function LoginScreen() {
       const result = await signInRequest(email, password);
       if (result.accessToken) {
         await AsyncStorage.setItem("userToken", result.accessToken);
+      }
+      if (result.refreshToken) {
+        await AsyncStorage.setItem("refreshToken", result.refreshToken);
       }
       if (result.data) {
         await AsyncStorage.setItem("userInfo", JSON.stringify(result.data));
@@ -139,9 +142,7 @@ export default function LoginScreen() {
             {/* Sign Up*/}
             <View style={{ flexDirection: "row", justifyContent: "center" }}>
               <Text style={styles.smallText}>Don’t have an account?</Text>
-              <TouchableOpacity
-                onPress={() => router.push("/(auth)/signup")}
-              >
+              <TouchableOpacity onPress={() => router.push("/(auth)/signup")}>
                 <Text style={styles.registerText}>{"Sign  up"}</Text>
               </TouchableOpacity>
             </View>

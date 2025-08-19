@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -8,14 +8,20 @@ import {
   Image,
   ScrollView,
   Linking,
+  ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
+
 import Menu from "@/components/Profile/MenuList";
 import LogoutButton from "@/components/Profile/LogoutBtn";
 import { router } from "expo-router";
 import { useTheme } from "../../../context/ThemeContext";
+import { Feather } from "@expo/vector-icons";
 
 interface MenuItem {
   iconName: React.ComponentProps<typeof Ionicons>["name"];
@@ -23,8 +29,63 @@ interface MenuItem {
   onPress: () => void;
 }
 
+interface UserData {
+  fName: string;
+  lName: string;
+  email: string;
+  phone: string;
+  profilePic?: string;
+}
+
 const ProfilePage = () => {
   const { theme } = useTheme();
+
+  const [user, setUser] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Fetch user data from AsyncStorage - This will run every time the screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchUser = async () => {
+        try {
+          setLoading(true);
+          const storedData = await AsyncStorage.getItem("userInfo");
+          if (storedData) {
+            setUser(JSON.parse(storedData));
+          }
+        } catch (error) {
+          console.error("Failed to load user data", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchUser();
+    }, [])
+  );
+
+  // Manual refresh function
+  const refreshUserData = async () => {
+    try {
+      setLoading(true);
+      const storedData = await AsyncStorage.getItem("userInfo");
+      if (storedData) {
+        setUser(JSON.parse(storedData));
+      }
+    } catch (error) {
+      console.error("Failed to refresh user data", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Pull to refresh callback
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await refreshUserData();
+    setRefreshing(false);
+  }, []);
 
   const menuItems: MenuItem[] = [
     {
@@ -57,9 +118,27 @@ const ProfilePage = () => {
     },
   ];
 
+  if (loading) {
+    return (
+      <SafeAreaView
+        style={[
+          styles.container,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
+        <ActivityIndicator size="large" color="#9333ea" />
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <StatusBar
           barStyle="light-content"
           backgroundColor="transparent"
@@ -68,18 +147,20 @@ const ProfilePage = () => {
 
         {/* Gradient Header */}
         <LinearGradient
-          colors={["#9333ea", "#4f46e5"]} // purple-600 to indigo-600
+          colors={["#9333ea", "#4f46e5"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.gradientHeader}
         >
           {/* Header */}
           <View style={styles.header}>
-            <TouchableOpacity style={styles.backButton}>
-              <Text style={styles.headerButtonText}>‹</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.menuButton}>
-              <Text style={styles.headerButtonText}>⋮</Text>
+            <TouchableOpacity
+              style={styles.menuButton}
+              onPress={() => {
+                router.push("/(tabs)/profile/editProfile");
+              }}
+            >
+              <Feather name="edit" color="#fff" size={22} />
             </TouchableOpacity>
           </View>
 
@@ -88,13 +169,19 @@ const ProfilePage = () => {
             <View style={styles.avatarContainer}>
               <Image
                 source={{
-                  uri: "https://media2.dev.to/dynamic/image/width=800%2Cheight=%2Cfit=scale-down%2Cgravity=auto%2Cformat=auto/https%3A%2F%2Fwww.gravatar.com%2Favatar%2F2c7d99fe281ecd3bcd65ab915bac6dd5%3Fs%3D250w",
+                  uri:
+                    user?.profilePic ||
+                    "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png",
                 }}
                 style={styles.avatar}
               />
             </View>
-            <Text style={styles.name}>Kunal Sunil Mohite</Text>
-            <Text style={styles.email}>kunal@gmail.com</Text>
+            <Text style={styles.name}>
+              {user ? `${user.fName} ${user.lName}` : "Guest User"}
+            </Text>
+            <Text style={styles.email}>
+              {user?.email || "No email available"}
+            </Text>
           </View>
         </LinearGradient>
 
@@ -132,25 +219,20 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-end", // 🔹 Pushes edit icon to the right
     alignItems: "center",
     paddingHorizontal: 20,
     paddingBottom: 20,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.1)", // Semi-transparent white
   },
   menuButton: {
     width: 40,
     height: 40,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.15)", // subtle circle background
+    borderRadius: 20,
   },
+
   headerButtonText: {
     color: "white",
     fontSize: 24,
@@ -176,7 +258,7 @@ const styles = StyleSheet.create({
   },
   email: {
     fontSize: 14,
-    color: "rgba(255, 255, 255, 0.8)", // Semi-transparent white
+    color: "rgba(255, 255, 255, 0.8)",
   },
   contentContainer: {
     flex: 1,
@@ -184,7 +266,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
-    marginTop: -20, // Overlap with gradient header
+    marginTop: -20,
   },
   contentLabel: {
     fontSize: 12,

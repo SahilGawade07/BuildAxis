@@ -9,17 +9,17 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Platform,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 import { TopTextHeader } from "@/components/ui/topHeaderText";
-import { TextInputs } from "../../components/ui/inputField";
+import TextInputs from "../../components/ui/inputField";
 import { PasswordField } from "../../components/ui/passwordField";
 import { ContinueBtn } from "../../components/ui/ContinueBtn";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { signUpRequest } from "@/lib/api";
+import { signupRequest } from "@/lib/api";
 
 const AppLogo = () => (
   <View style={styles.logoContainer}>
@@ -43,6 +43,7 @@ export default function SignUpScreen() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [continueDisabled, setContinueDisabled] = useState(true);
   const [err, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -51,7 +52,7 @@ export default function SignUpScreen() {
     const isConfirmValid =
       confirmPassword === password && confirmPassword.length > 0;
     const isNameValid = fName.trim().length > 1 && lName.trim().length > 1;
-    const isPhoneValid = phone.trim().length >= 8;
+    const isPhoneValid = phone.trim().length >= 10;
 
     setContinueDisabled(
       !(
@@ -66,37 +67,67 @@ export default function SignUpScreen() {
 
   const handleSignUp = async () => {
     setError("");
+
+    // Validation
     if (!fName || !lName || !email || !phone || !password || !confirmPassword) {
       setError("All fields are required");
       return;
     }
+
+    if (fName.trim().length < 2 || lName.trim().length < 2) {
+      setError("First and last names must be at least 2 characters");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+
+    if (phone.trim().length < 10) {
+      setError("Phone number must be at least 10 digits");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
 
     try {
-      const result = await signUpRequest({
-        fName,
-        lName,
-        email,
-        phone,
+      setLoading(true);
+      const result = await signupRequest({
+        fName: fName.trim(),
+        lName: lName.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
         password,
-        role: "promoter", // fixed
-        // profilePic:
-        //   "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png",
+        role: "promoter",
       });
 
       if (result.accessToken) {
         await AsyncStorage.setItem("userToken", result.accessToken);
       }
+      if (result.refreshToken) {
+        await AsyncStorage.setItem("refreshToken", result.refreshToken);
+      }
       if (result.data) {
         await AsyncStorage.setItem("userInfo", JSON.stringify(result.data));
       }
 
+      Alert.alert("Success", "Account created successfully!");
       router.replace("/(tabs)/home");
     } catch (error: any) {
+      console.error("Signup error:", error);
       setError(error?.message || "Sign up failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -174,8 +205,8 @@ export default function SignUpScreen() {
               {err ? <Text style={styles.error}>{err}</Text> : null}
 
               <ContinueBtn
-                text="Sign Up"
-                touchable={!continueDisabled}
+                text={loading ? "Creating Account..." : "Sign Up"}
+                touchable={!continueDisabled && !loading}
                 onPresss={handleSignUp}
               />
             </View>
