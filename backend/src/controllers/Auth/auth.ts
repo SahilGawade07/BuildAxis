@@ -8,16 +8,14 @@ const generateAccessToken = (userId: string, email: string, role: string) => {
   return jwt.sign(
     { id: userId, email, role },
     process.env.JWT_SECRET as string,
-    { expiresIn: "15m" } 
+    { expiresIn: "15m" }
   );
 };
 
 const generateRefreshToken = (userId: string) => {
-  return jwt.sign(
-    { id: userId },
-    process.env.JWT_REFRESH_SECRET as string,
-    { expiresIn: "7d" } 
-  );
+  return jwt.sign({ id: userId }, process.env.JWT_REFRESH_SECRET as string, {
+    expiresIn: "7d",
+  });
 };
 
 export const signUp = async (req: Request, res: Response) => {
@@ -89,6 +87,8 @@ export const signUp = async (req: Request, res: Response) => {
       success: true,
       message: "User registered successfully",
       data: userResponse,
+      accessToken,
+      refreshToken,
     });
   } catch (error) {
     return res.status(500).json({
@@ -168,6 +168,8 @@ export const signIn = async (req: Request, res: Response) => {
       success: true,
       message: "Login successful",
       data: userResponse,
+      accessToken,
+      refreshToken,
     });
   } catch (error) {
     return res.status(500).json({

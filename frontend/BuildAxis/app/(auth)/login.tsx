@@ -16,6 +16,8 @@ import { TextInputs } from "../../components/ui/inputField";
 import { PasswordField } from "../../components/ui/passwordField";
 import { ContinueBtn } from "../../components/ui/ContinueBtn";
 import { SwitchScreens } from "../../components/ui/switch_to_signup";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { signInRequest } from "@/lib/api";
 
 const AppLogo = () => (
   <View style={styles.logoContainer}>
@@ -45,7 +47,7 @@ export default function LoginScreen() {
     setContinueDisabled(false);
   }, [email, password]);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     setError("");
     if (!email || !password) {
       setError("All fields are required");
@@ -60,7 +62,18 @@ export default function LoginScreen() {
       return;
     }
 
-    // Navigate to next screen
+    try {
+      const result = await signInRequest(email, password);
+      if (result.accessToken) {
+        await AsyncStorage.setItem("userToken", result.accessToken);
+      }
+      if (result.data) {
+        await AsyncStorage.setItem("userInfo", JSON.stringify(result.data));
+      }
+      router.replace("/(tabs)/home");
+    } catch (error: any) {
+      setError(error?.message || "Login failed");
+    }
   };
 
   return (
@@ -94,7 +107,11 @@ export default function LoginScreen() {
           />
 
           {/* Forgot Password */}
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              router.push("/(auth)/forgotPassword");
+            }}
+          >
             <Text style={styles.forgotText}>Forgot password?</Text>
           </TouchableOpacity>
 
