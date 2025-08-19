@@ -1,4 +1,4 @@
-import { Redirect, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect } from "react";
 import { ActivityIndicator, Image, StyleSheet, View } from "react-native";
@@ -13,7 +13,7 @@ const SplashScreen = () => {
 
         setTimeout(() => {
           if (token) {
-            return <Redirect href="/(tabs)/home" />;
+            router.replace("/(tabs)/home");
           } else {
             router.replace("/(auth)/onboarding");
           }
@@ -55,7 +55,6 @@ const styles = StyleSheet.create({
 });
 
 export default SplashScreen;
-
 
 // export default function Index() {
 //   return <Redirect href="/(tabs)/home" />;
