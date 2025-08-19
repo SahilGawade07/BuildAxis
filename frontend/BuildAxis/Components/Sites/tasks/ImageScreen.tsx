@@ -3,15 +3,17 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   Image,
   Dimensions,
+  FlatList,
 } from "react-native";
 import { useTheme } from "../../../context/ThemeContext"; // ✅ import theme context
 
+// 🔹 Types
 type TaskImage = { url: string };
 type Task = { images: TaskImage[]; description: string; date: string; time: string };
 
+// 🔹 Dummy fetch
 const getTasks = async (): Promise<Task[]> => {
   return [
     {
@@ -49,7 +51,7 @@ const getTasks = async (): Promise<Task[]> => {
 
 export default function ImageBanner() {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const { theme } = useTheme(); // ✅ access theme
+  const { theme } = useTheme();
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -63,63 +65,64 @@ export default function ImageBanner() {
     fetchTasks();
   }, []);
 
-  return (
-    <ScrollView
-      style={[styles.page, { backgroundColor: theme.background }]} // ✅ dynamic background
-      showsVerticalScrollIndicator={false}
+  // 🔹 Render horizontal image slider for each task
+  const renderImages = ({ item }: { item: TaskImage }) => (
+    <View style={[styles.bannerCard, { backgroundColor: theme.backgroundgrey }]}>
+      <Image source={{ uri: item.url }} style={styles.bannerImage} />
+    </View>
+  );
+
+  // 🔹 Render each task card
+  const renderTask = ({ item }: { item: Task }) => (
+    <View
+      style={[
+        styles.taskCard,
+        { backgroundColor: theme.listItemFill, borderColor: theme.listItemBorder },
+      ]}
     >
-      {tasks.map((task, idx) => (
-        <View
-          key={idx}
-          style={[
-            styles.taskCard,
-            { backgroundColor: theme.listItemFill, borderColor: theme.listItemBorder },
-          ]}
-        >
-          {/* Header */}
-          <View style={styles.header}>
-            <View style={styles.userInfo}>
-              <Image
-                source={require("@/assets/images/logo.jpg")}
-                style={styles.profileImage}
-              />
-              <Text style={[styles.username, { color: theme.text }]}>
-                Shraddha Swant
-              </Text>
-            </View>
-            <Text style={[styles.dateText, { color: theme.icons }]}>
-              {task.date}
-            </Text>
-          </View>
-
-          {/* Horizontal Image Scroll */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.imageRow}
-          >
-            {task.images.map((item, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.bannerCard,
-                  { backgroundColor: theme.backgroundgrey },
-                ]}
-              >
-                <Image source={{ uri: item.url }} style={styles.bannerImage} />
-              </View>
-            ))}
-          </ScrollView>
-
-          {/* Description */}
-          <View style={styles.infoContainer}>
-            <Text style={[styles.description, { color: theme.text }]}>
-              {task.description}
-            </Text>
-          </View>
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.userInfo}>
+          <Image
+            source={require("@/assets/images/logo.jpg")}
+            style={styles.profileImage}
+          />
+          <Text style={[styles.username, { color: theme.text }]}>
+            Shraddha Swant
+          </Text>
         </View>
-      ))}
-    </ScrollView>
+        <Text style={[styles.dateText, { color: theme.icons }]}>
+          {item.date} • {item.time}
+        </Text>
+      </View>
+
+      {/* Horizontal Image Carousel */}
+      <FlatList
+        data={item.images}
+        keyExtractor={(_, i) => i.toString()}
+        renderItem={renderImages}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.imageRow}
+      />
+
+      {/* Description */}
+      <View style={styles.infoContainer}>
+        <Text style={[styles.description, { color: theme.text }]}>
+          {item.description}
+        </Text>
+      </View>
+    </View>
+  );
+
+  return (
+    <FlatList
+      data={tasks}
+      keyExtractor={(_, idx) => idx.toString()}
+      renderItem={renderTask}
+      contentContainerStyle={[styles.page, { backgroundColor: theme.background }]}
+    />
   );
 }
 
@@ -127,8 +130,8 @@ const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   page: {
-    flex: 1,
     padding: 12,
+    paddingBottom: 40,
   },
   taskCard: {
     marginBottom: 20,
@@ -170,7 +173,7 @@ const styles = StyleSheet.create({
     paddingTop: 12,
   },
   bannerCard: {
-    width: width * 0.8,
+    width: width * 0.85,
     borderRadius: 16,
     overflow: "hidden",
     marginRight: 14,

@@ -7,7 +7,7 @@ export default function Back_Text_Butt({path,text}:any) {
     return (
 
         <View style={styles.header}>
-            <TouchableOpacity onPress={()=>router.push(path)} >
+            <TouchableOpacity onPress={()=>router.back()} >
 
                 <Entypo name="chevron-left" size={30} color="black" />
             </TouchableOpacity >

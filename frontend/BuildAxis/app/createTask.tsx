@@ -18,7 +18,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Dimensions, StatusBar, Animated, FlatList, ScrollView, Image, StyleSheet, Text, TouchableOpacity, View, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Safe_area } from "@/components/ui/safeArea";
-
 const HEADER_MAX_HEIGHT = 390;
 const HEADER_MIN_HEIGHT = 50;
 
