@@ -3,7 +3,7 @@ import { Task } from "../../models/Task";
 import { Site } from "../../models/Site";
 import { User } from "../../models/User";
 import { Labour } from "../../models/Labour";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { Inventory } from "../../models/Inventory";
 
 export const checkSiteAccess = async (
@@ -311,49 +311,96 @@ export const getAllTasks = async (req: Request, res: Response) => {
   }
 };
 
-
 // ✅ Update Task Controller
 export const updateTask = async (req: Request, res: Response) => {
   try {
+    const user = (req as any).user; // { id, role, orgId }
+    const userId = user.id;
+    const userRole = user.role; // "promoter" or "supervisor"
     const { taskId } = req.params;
-    const user = (req as any).dbUser;
 
-    const task = await Task.findById(taskId);
+    // ✅ Validate taskId
+    if (!mongoose.Types.ObjectId.isValid(taskId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid task ID" });
+    }
+
+    const task = await Task.findById(taskId).populate("site");
     if (!task) {
-      return res.status(404).json({
+      return res
+        .status(404)
+        .json({ success: false, message: "Task not found" });
+    }
+
+    // ✅ Safe permission check
+    const isCreator = task.createdBy && task.createdBy.toString() === userId;
+    const isSupervisor =
+      Array.isArray(task.supervisors) &&
+      task.supervisors.some((id) => id.toString() === userId);
+
+    if (
+      !(
+        isCreator ||
+        (userRole === "supervisor" && isSupervisor) ||
+        userRole === "promoter"
+      )
+    ) {
+      return res.status(403).json({
         success: false,
-        message: "Task not found",
+        message: "Not authorized to update this task",
       });
     }
 
     const {
       title,
-      supervisors,
-      images,
+      description,
       status,
       priority,
       due,
-      inventoryUsed, // expected: [{ inventoryId, quantity }]
-      description,
-      attachment,
       progress,
+      attachment,
+      images,
+      supervisors,
+      inventoryUsed, // [{ inventoryId, usedQuantity/quantity }]
     } = req.body;
 
-    // ✅ Permission Check
-    const canUpdate =
-      task.createdBy.equals(user._id) ||
-      task.supervisors.some((sup: Types.ObjectId) => sup.equals(user._id)) ||
-      user.role === "promoter";
+    // ✅ Update general fields
+    if (title) task.title = title.trim();
+    if (description !== undefined) task.description = description.trim();
+    if (status) task.status = status;
+    if (priority) task.priority = priority;
+    if (due) task.due = new Date(due);
+    if (progress !== undefined) task.progress = progress;
+    if (attachment !== undefined) {
+      // Ensure task.attachment is always an array
+      if (!Array.isArray(task.attachment)) {
+        // If it's a string (old data), convert to array
+        task.attachment = task.attachment ? [task.attachment] : [];
+      }
 
-    if (!canUpdate) {
-      return res.status(403).json({
-        success: false,
-        message: "You don't have permission to update this task",
-      });
+      if (Array.isArray(attachment)) {
+        task.attachment.push(
+          ...attachment.filter(
+            (url: string) => typeof url === "string" && url.trim() !== ""
+          )
+        );
+      } else if (typeof attachment === "string") {
+        task.attachment.push(attachment.trim());
+      }
     }
 
-    // ✅ Validate supervisors if updated
-    if (supervisors) {
+    // ✅ Handle images (append instead of replacing)
+    if (Array.isArray(images) && images.length > 0) {
+      task.images.push(
+        ...images.filter(
+          (url: string) => typeof url === "string" && url.trim() !== ""
+        )
+      );
+    }
+
+    // ✅ Update supervisors if provided
+    if (Array.isArray(supervisors)) {
       const supervisorUsers = await User.find({
         _id: { $in: supervisors },
         orgId: user.orgId,
@@ -367,17 +414,20 @@ export const updateTask = async (req: Request, res: Response) => {
             "One or more supervisors not found or not in your organization",
         });
       }
+
+      task.supervisors = supervisors;
     }
 
-    // ✅ Handle inventory usage (decrement stock)
-    if (Array.isArray(inventoryUsed)) {
+    // ✅ Handle inventory usage
+    if (Array.isArray(inventoryUsed) && inventoryUsed.length > 0) {
       for (const item of inventoryUsed) {
-        const { inventoryId, quantity } = item;
+        const inventoryId = item.inventoryId;
+        const usedQuantity = item.usedQuantity ?? item.quantity; // support both naming
 
-        if (!Types.ObjectId.isValid(inventoryId)) {
+        if (!mongoose.Types.ObjectId.isValid(inventoryId)) {
           return res.status(400).json({
             success: false,
-            message: `Invalid inventoryId: ${inventoryId}`,
+            message: `Invalid inventory ID: ${inventoryId}`,
           });
         }
 
@@ -385,55 +435,59 @@ export const updateTask = async (req: Request, res: Response) => {
         if (!inventory) {
           return res.status(404).json({
             success: false,
-            message: `Inventory item not found: ${inventoryId}`,
+            message: `Inventory not found: ${inventoryId}`,
           });
         }
-
-        if (inventory.quantity < quantity) {
+        if (
+          !inventory.siteId ||
+          !task.site ||
+          inventory.siteId.toString() !== task.site._id.toString()
+        ) {
           return res.status(400).json({
             success: false,
-            message: `Not enough stock for ${inventory.name}. Available: ${inventory.quantity}, Requested: ${quantity}`,
+            message: "Inventory does not belong to this task's site",
           });
         }
 
-        inventory.quantity -= quantity;
+        // Check stock availability
+        if (usedQuantity > inventory.quantity) {
+          return res.status(400).json({
+            success: false,
+            message: `Not enough stock for ${inventory.name}. Available: ${inventory.quantity}, requested: ${usedQuantity}`,
+          });
+        }
+
+        inventory.quantity -= usedQuantity;
         await inventory.save();
+
+        // Add to task.inventoryUsed if not already there
+        if (!task.inventoryUsed.some((id) => id.toString() === inventoryId)) {
+          task.inventoryUsed.push(new mongoose.Types.ObjectId(inventoryId));
+        }
       }
     }
 
-    // ✅ Update Task
-    const updatedTask = await Task.findByIdAndUpdate(
-      task._id,
-      {
-        ...(title && { title }),
-        ...(supervisors && { supervisors }),
-        ...(images && { images }),
-        ...(status && { status }),
-        ...(priority && { priority }),
-        ...(due && { due }),
-        ...(description !== undefined && { description }),
-        ...(attachment !== undefined && { attachment }),
-        ...(progress !== undefined && { progress }),
-        ...(inventoryUsed && { inventoryUsed }),
-      },
-      { new: true }
-    )
+    await task.save();
+
+    // ✅ Populate detailed references
+    const updatedTask = await Task.findById(task._id)
       .populate("site", "name location")
-      .populate("createdBy", "fName lName email")
-      .populate("supervisors", "fName lName email")
-      .populate("inventoryUsed.inventoryId", "name quantity unit");
+      .populate("createdBy", "name role phone")
+      .populate("supervisors", "name phone")
+      .populate("labourers", "name phone skill")
+      .populate("inventoryUsed", "name specification quantity unit");
 
     return res.status(200).json({
       success: true,
       message: "Task updated successfully",
-      data: updatedTask,
+      task: updatedTask,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error updating task:", error);
     return res.status(500).json({
       success: false,
       message: "Server error",
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: error.message,
     });
   }
 };

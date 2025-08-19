@@ -18,7 +18,7 @@ export interface ITask extends Document {
   due: Date;
   inventoryUsed: Types.ObjectId[]; // Multiple inventory items
   description?: string;
-  attachment?: string; // e.g., PDF, document
+  attachment?: string[]; // e.g., PDF, document
   images: string[]; // Array of image URLs
   progress: number; // Completion percentage: 0 to 100
 }
@@ -100,9 +100,12 @@ const taskSchema = new Schema<ITask>(
     },
 
     // Optional file (PDF, doc, etc.)
-    attachment: {
-      type: String,
-    },
+    attachment: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
 
     // Array of image URLs taken/uploaded for the task
     images: [
