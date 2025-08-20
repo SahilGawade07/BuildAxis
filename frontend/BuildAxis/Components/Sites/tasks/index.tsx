@@ -1,105 +1,145 @@
 import * as React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import PagerView from "react-native-pager-view";
-import ImageScreen from "./ImageScreen";
-import Labour_list from "@/app/(tabs)/sites/[siteId]/tabs/labourScreen";
-import ItemTable from "@/app/(tabs)/sites/[siteId]/tabs/itemScreen";
-import MaterialsScreen from "./attachmentScreen";
+import {
+  useWindowDimensions,
+  Text,
+  View,
+  FlatList,
+  StyleSheet,
+} from "react-native";
+import { TabView, TabBar } from "react-native-tab-view";
 
-type Props = {
-  pageno?: number; // default page index
+type TopTabsProps = {
+  handleScroll: (event: any) => void;
 };
 
-const tabs = ["Images", "Labours", "Materials", "Attachments"];
+export default function TopTabs({ handleScroll }: TopTabsProps) {
+  const layout = useWindowDimensions();
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: "first", title: "List A" },
+    { key: "second", title: "Second" },
+    { key: "third", title: "List B" },
+  ]);
 
-export default function Sidesanim({ pageno = 0 }: Props) {
-  const pagerRef = React.useRef<PagerView>(null);
-  const [active, setActive] = React.useState(pageno);
-
-  // 🔹 When parent changes pageno, update pager
-  React.useEffect(() => {
-    if (pagerRef.current && pageno !== active) {
-      pagerRef.current.setPage(pageno);
-      setActive(pageno);
+  // ✅ render scenes
+  const renderScene = ({ route }: any) => {
+    switch (route.key) {
+      case "first":
+        return (
+          <FlatList
+            data={Array.from({ length: 30 }, (_, i) => `Item ${i + 1}`)}
+            keyExtractor={(item, index) => index.toString()}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
+            contentContainerStyle={styles.listContainer}
+            renderItem={({ item }) => (
+              <View style={styles.card}>
+                <Text style={styles.cardText}>{item}</Text>
+              </View>
+            )}
+          />
+        );
+      case "second":
+        return (
+          <View style={styles.centerPage}>
+            <Text style={styles.pageText}>📸 Second Page</Text>
+          </View>
+        );
+      case "third":
+        return (
+          <FlatList
+            data={Array.from({ length: 30 }, (_, i) => `Row ${i + 1}`)}
+            keyExtractor={(item, index) => index.toString()}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
+            contentContainerStyle={styles.listContainer}
+            renderItem={({ item }) => (
+              <View style={[styles.card, { backgroundColor: "#f5f5f5" }]}>
+                <Text style={styles.cardText}>{item}</Text>
+              </View>
+            )}
+          />
+        );
+      default:
+        return null;
     }
-  }, [pageno]);
-
-  const handleTabPress = (index: number) => {
-    pagerRef.current?.setPage(index);
-    setActive(index);
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      {/* 🔹 Top Tabs */}
-      <View style={styles.tabBar}>
-        {tabs.map((tab, i) => (
-          <TouchableOpacity
-            key={i}
-            style={[styles.tab, active === i && styles.activeTab]}
-            onPress={() => handleTabPress(i)}
-          >
-            <Text style={[styles.tabText, active === i && styles.activeTabText]}>
-              {tab}
+    <TabView
+      navigationState={{ index, routes }}
+      renderScene={renderScene}
+      onIndexChange={setIndex}
+      initialLayout={{ width: layout.width }}
+      renderTabBar={(props) => (
+        <TabBar
+          {...props}
+          indicatorStyle={styles.indicator}
+          style={styles.tabBar}
+          renderLabel={({ route, focused }) => (
+            <Text style={[styles.label, focused && styles.activeLabel]}>
+              {route.title}
             </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      {/* 🔹 PagerView */}
-      <PagerView
-        ref={pagerRef}
-        style={styles.pagerView}
-        initialPage={pageno}
-        onPageSelected={(e) => setActive(e.nativeEvent.position)}
-      >
-        <View key="1" style={styles.page}>
-          <ImageScreen />
-        </View>
-
-        <View key="2" style={styles.page}>
-          <Labour_list />
-        </View>
-
-        <View key="3" style={styles.page}>
-          <ItemTable />
-        </View>
-
-        <View key="4" style={styles.page}>
-          <MaterialsScreen />
-        </View>
-      </PagerView>
-    </View>
+          )}
+        />
+      )}
+    />
   );
 }
 
 const styles = StyleSheet.create({
   tabBar: {
-    flexDirection: "row",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+    backgroundColor: "#ff0000ff",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
-  tab: {
+  indicator: {
+    backgroundColor: "#007bff",
+    height: 3,
+    borderRadius: 2,
+  },
+  label: {
+    color: "#000000ff",
+    fontSize: 14,
+    fontWeight: "500",
+    textTransform: "capitalize",
+  },
+  activeLabel: {
+    color: "#007bff",
+    fontWeight: "700",
+  },
+  listContainer: {
+    padding: 16,
+  },
+  card: {
+    height: 80,
+    backgroundColor: "#fff",
+    marginBottom: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 12,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+  },
+  cardText: {
+    fontSize: 16,
+    color: "#333",
+    fontWeight: "500",
+  },
+  centerPage: {
     flex: 1,
-    paddingVertical: 12,
+    justifyContent: "center",
     alignItems: "center",
   },
-  activeTab: {
-    borderBottomWidth: 2,
-    borderBottomColor: "#007AFF", // blue highlight
-  },
-  tabText: {
-    fontSize: 14,
-    color: "#555",
-  },
-  activeTabText: {
-    fontWeight: "bold",
-    color: "#007AFF",
-  },
-  pagerView: {
-    flex: 1,
-  },
-  page: {
-    flex: 1,
+  pageText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#444",
   },
 });

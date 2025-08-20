@@ -39,7 +39,9 @@ export default function TaskDetailsScreen() {
   const renderPageContent = () => {
     switch (page) {
       case "Images":
-        return <ImageScreen />;
+        return <ImageScreen handleScroll={function (event: any): void {
+          throw new Error("Function not implemented.");
+        } } />;
       case "Labours":
         return <Labour_list />;
       case "Materials":

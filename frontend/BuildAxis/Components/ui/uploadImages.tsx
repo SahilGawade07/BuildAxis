@@ -6,7 +6,7 @@ import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 export default function Upload_img({ path, text }: any) {
   return (
     <>
-      <Text style={styles.label}>Upload Blueprint</Text>
+      <Text style={styles.label}>{text}</Text>
       <TouchableOpacity style={styles.uploadBox}>
         <AntDesign name="plus" size={32} color="#3D7BF7" />
       </TouchableOpacity></>

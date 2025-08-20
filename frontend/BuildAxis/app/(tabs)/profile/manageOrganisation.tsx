@@ -126,7 +126,7 @@ export default function ManageOrganization() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 2},
+  container: { flex: 1 },
 
   logoWrapper: {
     position: "absolute",
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     height: 90,
     borderRadius: 2,
     borderWidth: 2,
-    borderColor: "#999", // <-- gray color for all square borders
+    borderColor: "#d0cacaff", 
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 5,

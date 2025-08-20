@@ -1,132 +1,30 @@
-// import * as React from "react";
-// import { View, Text, StyleSheet } from "react-native";
-// import { TabView, SceneMap, TabBar } from "react-native-tab-view";
+import React from "react";
+import { SafeAreaView, StyleSheet, View } from "react-native";
+import { useTheme } from "@/context/ThemeContext";
+import { Safe_area } from "@/components/ui/safeArea";
+import DropImageExample from "@/components/ui/dropdownimg";
+import Main_Sites from "@/app/(tabs)/sites/[siteId]/tabs/index"; // import the tab view component
 
-// const HomeRoute = () => (
-//   <View style={styles.screen}>
-//     <Text style={styles.text}>🏠 Home</Text>
-//   </View>
-// );
-
-// const ProfileRoute = () => (
-//   <View style={styles.screen}>
-//     <Text style={styles.text}>👤 Profile</Text>
-//   </View>
-// );
-
-// const SettingsRoute = () => (
-//   <View style={styles.screen}>
-//     <Text style={styles.text}>⚙️ Settings</Text>
-//   </View>
-// );
-
-// export default function App() {
-//   const [index, setIndex] = React.useState(2);
-//   const [routes] = React.useState([
-//     { key: "home", title: "Home" },
-//     { key: "profile", title: "Profile" },
-//     { key: "settings", title: "Settings" },
-//   ]);
-
-//   const renderScene = SceneMap({
-//     home: HomeRoute,
-//     profile: ProfileRoute,
-//     settings: SettingsRoute,
-//   });
-
-//   // 👉 Custom TabBar with styling
-//   const renderTabBar = (props: any) => (
-//     <TabBar
-//       {...props}
-//       style={styles.tabBar}                // background style
-//       indicatorStyle={styles.indicator}    // line below active tab
-//       labelStyle={styles.label}            // text style
-//       activeColor="black"
-//       inactiveColor="lightgray"
-//     />
-//   );
-
-//   return (
-//     <TabView
-//       navigationState={{ index, routes }}
-//       renderScene={renderScene}
-//       onIndexChange={setIndex}
-//       renderTabBar={renderTabBar} // <-- add custom tab bar
-//       swipeEnabled={true}
-//     />
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   screen: {
-//     flex: 1,
-//     justifyContent: "center",
-//     alignItems: "center",
-//   },
-//   text: {
-//     fontSize: 22,
-    
-//   },
-//   // 👉 Top Tab Styles
-//   tabBar: {
-//     backgroundColor: "#ffffffff", // Blue background
-//   },
-//   indicator: {
-//     backgroundColor: "black",  // Yellow line under active tab
-//     height: 3,
-//   },
-//   label: {
-//     fontSize: 14,
-//     fontWeight: "bold",
-//      backgroundColor: "black",
-//   },
-// });
-
-
-import * as React from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
-import PagerView from "react-native-pager-view";
-import Labour_list from "@/app/(tabs)/sites/[siteId]/tabs/labourScreen";
-import ItemTable from "@/app/(tabs)/sites/[siteId]/tabs/itemScreen";
-import ImageScreen from "@/components/Sites/tasks/ImageScreen";
-import MaterialsScreen from "@/components/Sites/tasks/attachmentScreen";
-
-const { width, height } = Dimensions.get("window");
-
-export default function Sidesanim() {
-  const [page, setPage] = React.useState(0);
+export default function Main_Site() {
+  const { theme } = useTheme();
 
   return (
-    <PagerView
-      style={styles.pagerView}
-      initialPage={0}
-      onPageSelected={(e) => setPage(e.nativeEvent.position)}
-    >
-      <View key="1" style={styles.page}>
-        <ImageScreen />
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <Safe_area />
+
+      {/* Optional top header / image */}
+      <View style={{ backgroundColor: theme.primary ,paddingTop:40,marginBottom:20}}>
+        <DropImageExample />
       </View>
 
-      <View key="2" style={styles.page}>
-        <Labour_list />
-      </View>
-
-      <View key="3" style={styles.page}>
-        <ItemTable />
-      </View>
-
-      <View key="4" style={styles.page}>
-        <MaterialsScreen />
-      </View>
-    </PagerView>
+      {/* Swipeable tabs */}
+      <Main_Sites />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  pagerView: {
+  container: {
     flex: 1,
   },
-  page: {
-    
-  },
 });
-

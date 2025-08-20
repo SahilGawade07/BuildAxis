@@ -45,11 +45,11 @@ export default function MaterialsScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
-      <Addmaterial
+      {/* <Addmaterial
         text="Attachment"
         text2="Add attachments"
         funcations={activepopup}
-      />
+      /> */}
 
       {/* Grid */}
       <FlatList

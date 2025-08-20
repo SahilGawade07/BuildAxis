@@ -16,8 +16,7 @@ export const SiteBox = ({ item }: any) => {
           borderColor: theme.listItemBorder,
         },
       ]}
-      onPress={() => router.push(`/sites/${item.id}` as any)} 
-    >
+onPress={() => router.push(`/sites/${item.id}`)}    >
       {/* Card Header */}
       <View style={styles.cardHeader}>
         <View style={styles.cardHeaderLeft}>

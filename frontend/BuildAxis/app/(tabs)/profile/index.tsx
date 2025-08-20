@@ -116,6 +116,13 @@ const ProfilePage = () => {
         router.push("/(tabs)/profile/themeSettings");
       },
     },
+     {
+      iconName: "color-palette-outline",
+      menuItemName: "site map",
+      onPress: () => {
+        router.push("/_sitemap");
+      },
+    },
   ];
 
   if (loading) {
