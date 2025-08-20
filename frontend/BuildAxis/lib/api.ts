@@ -1,7 +1,31 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from "expo-constants";
 
+// ✅ Extract host (IPv4) from Metro URL
+function getLocalIpFromExpoUrl(): string | null {
+  const debuggerHost =
+    Constants.expoConfig?.hostUri ||
+    Constants.manifest2?.extra?.expoGo?.debuggerHost ||
+    Constants.manifest?.debuggerHost;
+
+  if (!debuggerHost) return null;
+
+  // debuggerHost is like "192.168.1.4:8081"
+  const ip = debuggerHost.split(":")[0];
+  return ip;
+}
+
+// ✅ Set API base dynamically
+const localIp = getLocalIpFromExpoUrl();
 export const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL || "http://10.243.117.112:8000";
+  //process.env.EXPO_PUBLIC_API_URL || // Deployment (server URL from .env/app.config.js)
+  (localIp ? `http://${localIp}:8000` : "http://localhost:8000"); // Dev fallback
+
+// (Optional) keep your old code commented for reference
+// export const API_BASE_URL = "http://10.243.117.112:8000";
+
+// export const API_BASE_URL =
+//   process.env.EXPO_PUBLIC_API_URL || "http://10.243.117.112:8000";
 
 type SignInResponse = {
   success: boolean;
