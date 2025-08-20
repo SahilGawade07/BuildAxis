@@ -6,7 +6,7 @@ import {
   StyleSheet,
 } from "react-native";
 import Topbar from "@/components/Sites/popupScreens/common/topBar";
-import { TextInputs } from "@/components/ui/inputField";
+import  TextInputs  from "@/components/ui/inputField";
 import { useTheme } from "@/context/ThemeContext";
 
 export default function Uploadblueprints({ fun }: any) {
