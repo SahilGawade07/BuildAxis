@@ -1,3 +1,4 @@
+// ... imports remain same
 import React, { useState } from "react";
 import {
   View,
@@ -10,6 +11,7 @@ import {
   Linking,
   ActivityIndicator,
   RefreshControl,
+  TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -22,6 +24,7 @@ import LogoutButton from "@/components/Profile/LogoutBtn";
 import { router } from "expo-router";
 import { useTheme } from "../../../context/ThemeContext";
 import { Feather } from "@expo/vector-icons";
+import { updatePasswordRequest } from "@/lib/api";
 
 interface MenuItem {
   iconName: React.ComponentProps<typeof Ionicons>["name"];
@@ -43,17 +46,34 @@ const ProfilePage = () => {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [storageData, setStorageData] = useState<Record<string, string>>({});
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState<string | null>(null);
 
-  // Fetch user data from AsyncStorage - This will run every time the screen comes into focus
+  // Fetch user + storage data every time screen comes into focus
   useFocusEffect(
     React.useCallback(() => {
       const fetchUser = async () => {
         try {
           setLoading(true);
+
+          // Load user info
           const storedData = await AsyncStorage.getItem("userInfo");
           if (storedData) {
             setUser(JSON.parse(storedData));
           }
+
+          // Load all key-value pairs from AsyncStorage
+          const keys = await AsyncStorage.getAllKeys();
+          const entries = await AsyncStorage.multiGet(keys);
+          const mapped: Record<string, string> = {};
+          entries.forEach(([key, value]) => {
+            mapped[key] = value ?? "";
+          });
+          setStorageData(mapped);
         } catch (error) {
           console.error("Failed to load user data", error);
         } finally {
@@ -73,6 +93,15 @@ const ProfilePage = () => {
       if (storedData) {
         setUser(JSON.parse(storedData));
       }
+
+      // Refresh storage values too
+      const keys = await AsyncStorage.getAllKeys();
+      const entries = await AsyncStorage.multiGet(keys);
+      const mapped: Record<string, string> = {};
+      entries.forEach(([key, value]) => {
+        mapped[key] = value ?? "";
+      });
+      setStorageData(mapped);
     } catch (error) {
       console.error("Failed to refresh user data", error);
     } finally {
@@ -80,43 +109,62 @@ const ProfilePage = () => {
     }
   };
 
-  // Pull to refresh callback
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     await refreshUserData();
     setRefreshing(false);
   }, []);
+interface MenuItemProps {
+  iconName: string;
+  menuItemName: string;
+  onPress: () => void;
+  componentName?: "Ionicons" | "MaterialIcons"; // optional, defaults to Ionicons
+}
 
-  const menuItems: MenuItem[] = [
-    {
-      iconName: "business-outline",
-      menuItemName: "Manage Organisation",
-      onPress: () => router.push("/(tabs)/profile/manageOrganisation"),
+const menuItems: MenuItemProps[] = [
+  {
+    iconName: "business-outline",
+    componentName: "Ionicons",
+    menuItemName: "Manage Organisation",
+    onPress: () => router.push("/(tabs)/profile/manageOrganisation"),
+  },
+  {
+    iconName: "language-outline",
+    componentName: "Ionicons",
+    menuItemName: "Select Language",
+    onPress: () => router.push("/(tabs)/profile/changePassword"),
+  },
+  {
+    iconName: "notifications-outline",
+    componentName: "Ionicons",
+    menuItemName: "Manage Notification",
+    onPress: async () => {
+      try {
+        await Linking.openSettings();
+      } catch (error) {
+        console.error("Failed to open settings:", error);
+      }
     },
-    {
-      iconName: "language-outline",
-      menuItemName: "Select Language",
-      onPress: () => router.push("/(tabs)/profile/themeSettings"),
+  },
+  {
+    iconName: "color-palette-outline",
+    componentName: "Ionicons",
+    menuItemName: "Theme Settings",
+    onPress: () => {
+      router.push("/(tabs)/profile/themeSettings");
     },
-    {
-      iconName: "notifications-outline",
-      menuItemName: "Manage Notification",
-      onPress: async () => {
-        try {
-          await Linking.openSettings();
-        } catch (error) {
-          console.error("Failed to open settings:", error);
-        }
-      },
+  },
+  {
+    iconName: "password",
+    componentName: "MaterialIcons", // ✅ matches union type
+    menuItemName: "Password",
+    onPress: () => {
+      router.push("/(tabs)/profile/changePassword");
     },
-    {
-      iconName: "color-palette-outline",
-      menuItemName: "Theme Settings",
-      onPress: () => {
-        router.push("/(tabs)/profile/themeSettings");
-      },
-    },
-  ];
+  },
+];
+
+
 
   if (loading) {
     return (
@@ -200,6 +248,91 @@ const ProfilePage = () => {
 
           <Menu items={menuItems} />
 
+          {/* Change Password Section */}
+          <View style={styles.passwordBox}>
+            <Text style={styles.passwordTitle}>Change Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Current password"
+              secureTextEntry
+              value={currentPassword}
+              onChangeText={setCurrentPassword}
+              placeholderTextColor="#888"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="New password"
+              secureTextEntry
+              value={newPassword}
+              onChangeText={setNewPassword}
+              placeholderTextColor="#888"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Confirm new password"
+              secureTextEntry
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              placeholderTextColor="#888"
+            />
+            {passwordMessage ? (
+              <Text style={styles.passwordMessage}>{passwordMessage}</Text>
+            ) : null}
+            <TouchableOpacity
+              style={[styles.updateBtn, isUpdatingPassword && { opacity: 0.6 }]}
+              disabled={isUpdatingPassword}
+              onPress={async () => {
+                try {
+                  setIsUpdatingPassword(true);
+                  setPasswordMessage(null);
+                  if (!currentPassword || !newPassword || !confirmPassword) {
+                    setPasswordMessage("All fields are required");
+                    return;
+                  }
+                  if (newPassword !== confirmPassword) {
+                    setPasswordMessage("New password and confirm do not match");
+                    return;
+                  }
+                  const res = await updatePasswordRequest({
+                    currentPassword,
+                    newPassword,
+                    confirmPassword,
+                  });
+                  if (res?.success) {
+                    setPasswordMessage("Password updated successfully");
+                    setCurrentPassword("");
+                    setNewPassword("");
+                    setConfirmPassword("");
+                  } else {
+                    setPasswordMessage(
+                      res?.message || "Failed to update password"
+                    );
+                  }
+                } catch (error: any) {
+                  setPasswordMessage(
+                    error?.message || "Failed to update password"
+                  );
+                } finally {
+                  setIsUpdatingPassword(false);
+                }
+              }}
+            >
+              <Text style={styles.updateBtnText}>
+                {isUpdatingPassword ? "Updating..." : "Update Password"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* 🔹 AsyncStorage Debug Box */}
+          <View style={styles.debugBox}>
+            <Text style={styles.debugTitle}>AsyncStorage Data:</Text>
+            {Object.entries(storageData).map(([key, value]) => (
+              <Text key={key} style={styles.debugText}>
+                {key}: {value}
+              </Text>
+            ))}
+          </View>
+
           <View style={{ flex: 1 }} />
           <LogoutButton />
         </View>
@@ -211,7 +344,7 @@ const ProfilePage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#9333ea", // Fallback color
+    backgroundColor: "#9333ea",
   },
   gradientHeader: {
     paddingTop: 20,
@@ -219,7 +352,7 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    justifyContent: "flex-end", // 🔹 Pushes edit icon to the right
+    justifyContent: "flex-end",
     alignItems: "center",
     paddingHorizontal: 20,
     paddingBottom: 20,
@@ -229,14 +362,8 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.15)", // subtle circle background
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
     borderRadius: 20,
-  },
-
-  headerButtonText: {
-    color: "white",
-    fontSize: 24,
-    fontWeight: "300",
   },
   profileSection: {
     alignItems: "center",
@@ -273,6 +400,65 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     letterSpacing: 1,
     marginBottom: 15,
+  },
+  debugBox: {
+    marginTop: 20,
+    padding: 15,
+    backgroundColor: "rgba(147, 51, 234, 0.1)", // subtle purple background
+    borderRadius: 12,
+  },
+  debugTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    marginBottom: 10,
+    color: "#9333ea",
+  },
+  debugText: {
+    fontSize: 12,
+    color: "#444",
+    marginBottom: 4,
+  },
+  passwordBox: {
+    marginTop: 20,
+    padding: 15,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  passwordTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    marginBottom: 10,
+    color: "#111",
+  },
+  input: {
+    height: 44,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    marginBottom: 10,
+    backgroundColor: "#fafafa",
+  },
+  updateBtn: {
+    height: 46,
+    backgroundColor: "#9333ea",
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 4,
+  },
+  updateBtnText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 15,
+  },
+  passwordMessage: {
+    color: "#6b7280",
+    marginBottom: 8,
   },
 });
 

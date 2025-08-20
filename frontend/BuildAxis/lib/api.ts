@@ -19,7 +19,7 @@ function getLocalIpFromExpoUrl(): string | null {
 const localIp = getLocalIpFromExpoUrl();
 export const API_BASE_URL =
   //process.env.EXPO_PUBLIC_API_URL || // Deployment (server URL from .env/app.config.js)
-  (localIp ? `http://${localIp}:8000` : "http://localhost:8000"); // Dev fallback
+  localIp ? `http://${localIp}:8000` : "http://localhost:8000"; // Dev fallback
 
 // (Optional) keep your old code commented for reference
 // export const API_BASE_URL = "http://10.243.117.112:8000";
@@ -210,6 +210,19 @@ export async function updateUserProfile(profileData: any): Promise<any> {
   if (!response.ok) {
     throw new Error("Failed to update profile");
   }
+  return response.json();
+}
+
+// Helper function to update user password
+export async function updatePasswordRequest(params: {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}): Promise<any> {
+  const response = await apiRequest("/api/common/my-profile", {
+    method: "PATCH",
+    body: JSON.stringify(params),
+  });
   return response.json();
 }
 
