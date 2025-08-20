@@ -71,7 +71,7 @@ export default function ReportScreen() {
       {/* Floating Button */}
       <TouchableOpacity
         style={[styles.floatingButton, { backgroundColor: theme.secondary }]}
-        onPress={() => router.push("/(tabs)/sites/[siteId]/CreateReport")}
+        onPress={() => router.push("/(tabs)/sites/[siteId]/tabs/CreateReport")}
         activeOpacity={0.8}
       >
         <Text style={styles.floatingButtonText}>Generate Report</Text>

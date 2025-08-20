@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router"; // ✅ Import router
 import React, { useState } from "react";
 import {
   View,
@@ -8,23 +9,30 @@ import {
   TextInput,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 
-// Define types for Calendar props
+// Calendar Component remains the same
 type CalendarProps = {
-  selectedDate: number; // day number selected
-  onDateSelect: (day: number) => void;
+  selectedDate: Date | null;
+  onDateSelect: (date: Date) => void;
   visible: boolean;
+  onClose: () => void;
 };
 
-// Calendar component with typed props
-const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect, visible }) => {
+const Calendar: React.FC<CalendarProps> = ({
+  selectedDate,
+  onDateSelect,
+  visible,
+  onClose,
+}) => {
   if (!visible) return null;
 
   const daysOfWeek = ["S", "M", "T", "W", "T", "F", "S"];
-  const currentMonth = new Date();
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
 
@@ -32,54 +40,60 @@ const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect, visible
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const daysInPrevMonth = new Date(year, month, 0).getDate();
 
-  const calendarDays: { day: number; isCurrentMonth: boolean; isNextMonth: boolean }[] = [];
+  const calendarDays: { day: number; isCurrentMonth: boolean }[] = [];
 
   for (let i = firstDay - 1; i >= 0; i--) {
-    calendarDays.push({
-      day: daysInPrevMonth - i,
-      isCurrentMonth: false,
-      isNextMonth: false,
-    });
+    calendarDays.push({ day: daysInPrevMonth - i, isCurrentMonth: false });
   }
 
   for (let day = 1; day <= daysInMonth; day++) {
-    calendarDays.push({
-      day,
-      isCurrentMonth: true,
-      isNextMonth: false,
-    });
+    calendarDays.push({ day, isCurrentMonth: true });
   }
 
-  const remainingCells = 42 - calendarDays.length;
-  for (let day = 1; day <= remainingCells; day++) {
-    calendarDays.push({
-      day,
-      isCurrentMonth: false,
-      isNextMonth: true,
-    });
+  let nextMonthDay = 1;
+  while (calendarDays.length < 42) {
+    calendarDays.push({ day: nextMonthDay++, isCurrentMonth: false });
   }
+
+  const formatDate = (day: number) => new Date(year, month, day);
+
+  const goToPrevMonth = () => setCurrentMonth(new Date(year, month - 1, 1));
+  const goToNextMonth = () => setCurrentMonth(new Date(year, month + 1, 1));
 
   return (
     <View style={styles.calendarContainer}>
+      <View style={styles.monthHeader}>
+        <TouchableOpacity onPress={goToPrevMonth}>
+          <Ionicons name="chevron-back" size={22} color="#0247D3" />
+        </TouchableOpacity>
+        <Text style={styles.monthText}>
+          {currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+        </Text>
+        <TouchableOpacity onPress={goToNextMonth}>
+          <Ionicons name="chevron-forward" size={22} color="#0247D3" />
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.calendarHeader}>
-        {daysOfWeek.map((day, index) => (
-          <Text key={index} style={styles.dayHeader}>
-            {day}
-          </Text>
+        {daysOfWeek.map((day, i) => (
+          <Text key={i} style={styles.dayHeader}>{day}</Text>
         ))}
       </View>
+
       <View style={styles.calendarGrid}>
-        {calendarDays.slice(0, 35).map((dateObj, index) => {
-          const isSelected = selectedDate === dateObj.day && dateObj.isCurrentMonth;
+        {calendarDays.map((dateObj, index) => {
+          const isSelected =
+            selectedDate &&
+            dateObj.isCurrentMonth &&
+            selectedDate.getDate() === dateObj.day &&
+            selectedDate.getMonth() === month &&
+            selectedDate.getFullYear() === year;
+
           return (
             <TouchableOpacity
               key={index}
-              style={[
-                styles.dayCell,
-                isSelected && styles.selectedDay,
-                !dateObj.isCurrentMonth && styles.inactiveDay,
-              ]}
-              onPress={() => dateObj.isCurrentMonth && onDateSelect(dateObj.day)}
+              style={[styles.dayCell, isSelected && styles.selectedDay]}
+              onPress={() => dateObj.isCurrentMonth && onDateSelect(formatDate(dateObj.day))}
             >
               <Text
                 style={[
@@ -94,58 +108,56 @@ const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect, visible
           );
         })}
       </View>
+
+      <TouchableOpacity style={styles.closeCalendar} onPress={onClose}>
+        <Text style={{ color: "#0247D3", fontWeight: "600" }}>Close</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
-// Define props for ReportModal
+// Report Modal with router back button
 type ReportModalProps = {
   visible: boolean;
   onClose: () => void;
 };
 
 const ReportModal: React.FC<ReportModalProps> = ({ visible, onClose }) => {
-  const [title, setTitle] = useState<string>("");
-  const [fromDate, setFromDate] = useState<string>("12-12-2022");
-  const [toDate, setToDate] = useState<string>("12-12-2022");
-  const [showCalendar, setShowCalendar] = useState<boolean>(false);
-  const [selectedDate, setSelectedDate] = useState<number>(24);
+  const router = useRouter();
+  const [title, setTitle] = useState("");
+  const [fromDate, setFromDate] = useState<Date | null>(null);
+  const [toDate, setToDate] = useState<Date | null>(null);
+  const [showCalendar, setShowCalendar] = useState(false);
   const [activeInput, setActiveInput] = useState<"from" | "to" | null>(null);
 
-  const handleDateSelect = (day: number) => {
-    const formattedDate = `${day}-12-2022`;
-    if (activeInput === "from") {
-      setFromDate(formattedDate);
-    } else if (activeInput === "to") {
-      setToDate(formattedDate);
-    }
-    setSelectedDate(day);
-    setShowCalendar(false); 
-  };
+  const formatDate = (date: Date | null) => (date ? date.toLocaleDateString("en-GB") : "Select Date");
 
-  const openDatePicker = (inputType: "from" | "to") => {
-    setActiveInput(inputType);
-    setShowCalendar(true);
+  const handleDateSelect = (date: Date) => {
+    if (activeInput === "from") setFromDate(date);
+    else if (activeInput === "to") setToDate(date);
+    setShowCalendar(false);
   };
 
   const handleGenerateReport = () => {
-    console.log("Generating report:", { title, fromDate, toDate });
+    Alert.alert(
+      "Report Generated ✅",
+      `Title: ${title || "Untitled"}\nFrom: ${formatDate(fromDate)}\nTo: ${formatDate(toDate)}`
+    );
     onClose();
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+    <Modal visible={visible} transparent animationType="slide">
       <View style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
-          {/* Header */}
           <View style={styles.modalHeader}>
+
             <Text style={styles.modalTitle}>Report</Text>
-            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+            <TouchableOpacity onPress={() => router.back()} style={{ paddingRight: 10 }}>
               <Ionicons name="close" size={24} color="#333" />
             </TouchableOpacity>
           </View>
 
-          {/* Form */}
           <View style={styles.formContainer}>
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Title</Text>
@@ -154,7 +166,6 @@ const ReportModal: React.FC<ReportModalProps> = ({ visible, onClose }) => {
                 placeholder="Title"
                 value={title}
                 onChangeText={setTitle}
-                placeholderTextColor="#999"
               />
             </View>
 
@@ -163,17 +174,20 @@ const ReportModal: React.FC<ReportModalProps> = ({ visible, onClose }) => {
                 <Text style={styles.label}>From</Text>
                 <TouchableOpacity
                   style={styles.dateInput}
-                  onPress={() => openDatePicker("from")}
+                  onPress={() => { setActiveInput("from"); setShowCalendar(true); }}
                 >
-                  <Text style={styles.dateText}>{fromDate}</Text>
+                  <Text style={styles.dateText}>{formatDate(fromDate)}</Text>
                   <Ionicons name="calendar-outline" size={20} color="#666" />
                 </TouchableOpacity>
               </View>
 
               <View style={styles.dateGroup}>
                 <Text style={styles.label}>To</Text>
-                <TouchableOpacity style={styles.dateInput} onPress={() => openDatePicker("to")}>
-                  <Text style={styles.dateText}>{toDate}</Text>
+                <TouchableOpacity
+                  style={styles.dateInput}
+                  onPress={() => { setActiveInput("to"); setShowCalendar(true); }}
+                >
+                  <Text style={styles.dateText}>{formatDate(toDate)}</Text>
                   <Ionicons name="calendar-outline" size={20} color="#666" />
                 </TouchableOpacity>
               </View>
@@ -184,20 +198,12 @@ const ReportModal: React.FC<ReportModalProps> = ({ visible, onClose }) => {
             </TouchableOpacity>
           </View>
 
-          {/* Calendar */}
           <Calendar
-            selectedDate={selectedDate}
+            selectedDate={activeInput === "from" ? fromDate : toDate}
             onDateSelect={handleDateSelect}
             visible={showCalendar}
+            onClose={() => setShowCalendar(false)}
           />
-
-          {/* Calendar Background */}
-          {showCalendar && (
-            <TouchableOpacity
-              style={styles.calendarBackground}
-              onPress={() => setShowCalendar(false)}
-            />
-          )}
         </View>
       </View>
     </Modal>
@@ -206,154 +212,166 @@ const ReportModal: React.FC<ReportModalProps> = ({ visible, onClose }) => {
 
 export default ReportModal;
 
+
 const styles = StyleSheet.create({
-  modalOverlay: {
+  modalOverlay:
+  {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "center"
   },
-  modalContainer: {
-    backgroundColor: "#FFFFFF",
+  modalContainer:
+  {
+    backgroundColor: "#fff",
     borderRadius: 16,
     width: width * 0.9,
     maxWidth: 400,
-    maxHeight: height * 0.8,
+    maxHeight: height * 0.9,
+    paddingBottom: 10
   },
-  modalHeader: {
+  modalHeader:
+  {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
+    borderBottomColor: "#eee"
   },
-  modalTitle: {
+  modalTitle:
+  {
     fontSize: 18,
     fontWeight: "600",
-    color: "#333",
+    color: "#333"
   },
-  closeButton: {
-    padding: 4,
+  closeButton:
+  {
+    padding: 4
   },
-  formContainer: {
-    padding: 20,
+  formContainer:
+  {
+    padding: 20
   },
-  inputGroup: {
-    marginBottom: 20,
+  inputGroup:
+  {
+    marginBottom: 20
   },
-  label: {
+  label:
+  {
     fontSize: 14,
     fontWeight: "500",
-    color: "#333",
-    marginBottom: 8,
+    marginBottom: 6,
+    color: "#333"
   },
-  textInput: {
+  textInput:
+  {
     borderWidth: 1,
-    borderColor: "#E0E0E0",
+    borderColor: "#ddd",
     borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    backgroundColor: "#FAFAFA",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 15
   },
-  dateRow: {
+  dateRow:
+  {
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
+  dateGroup:
+  {
+    flex: 0.48
+  },
+  dateInput:
+  {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 30,
-  },
-  dateGroup: {
-    flex: 0.48,
-  },
-  dateInput: {
-    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
     borderWidth: 1,
-    borderColor: "#E0E0E0",
+    borderColor: "#ddd",
     borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: "#FAFAFA",
+    paddingHorizontal: 12,
+    paddingVertical: 10
   },
-  dateText: {
-    fontSize: 16,
-    color: "#333",
+  dateText:
+  {
+    fontSize: 15,
+    color: "#333"
   },
-  generateButton: {
-    backgroundColor: "#0247D3",
-    paddingVertical: 16,
+  generateButton: 
+  { backgroundColor: "#0247D3", 
+    paddingVertical: 14, 
     borderRadius: 8,
     alignItems: "center",
-    marginBottom: 20,
+    marginTop: 25
   },
-  generateButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
+  generateButtonText: 
+  { color: "#fff", 
+    fontWeight: "600", 
+    fontSize: 15 
   },
-  calendarContainer: {
-    backgroundColor: "#FFFFFF",
-    margin: 20,
+  calendarContainer:
+   { margin: 20, 
+    backgroundColor: "#fff", 
     borderRadius: 12,
-    padding: 16,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    padding: 16, 
+    elevation: 3 
   },
-  calendarHeader: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginBottom: 12,
-    paddingBottom: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
+  monthHeader:
+   { flexDirection: "row", 
+     justifyContent: "space-between", 
+     alignItems: "center", 
+     marginBottom: 12 
   },
-  dayHeader: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#666",
-    textAlign: "center",
-    flex: 1,
+  monthText: 
+  { fontSize: 16, 
+    fontWeight: "600", 
+    color: "#0247D3" 
   },
-  calendarGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+  calendarHeader: 
+  { flexDirection: "row", 
+    justifyContent: "space-around", 
+    marginBottom: 12, 
+    borderBottomWidth: 1, 
+    borderBottomColor: "#eee", 
+    paddingBottom: 6 
   },
-  dayCell: {
-    width: "14.28%",
-    aspectRatio: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 8,
+  dayHeader: 
+  { flex: 1, 
+    textAlign: "center", 
+    fontWeight: "500", 
+    color: "#666" 
   },
-  selectedDay: {
-    backgroundColor: "#4A90E2",
-    borderRadius: 6,
+  calendarGrid: 
+  { flexDirection: "row", 
+    flexWrap: "wrap" 
   },
-  inactiveDay: {
-    // Styling for previous/next month days
+  dayCell: 
+  { width: "14.28%", 
+    aspectRatio: 1, 
+    alignItems: "center", 
+    justifyContent: "center" 
   },
-  dayText: {
-    fontSize: 14,
-    color: "#333",
-    fontWeight: "500",
+  selectedDay: 
+  { backgroundColor: "#0247D3", 
+    borderRadius: 6
   },
-  selectedDayText: {
-    color: "#FFFFFF",
-    fontWeight: "600",
+  dayText: 
+  { fontSize: 14, 
+    color: "#333" 
   },
-  inactiveDayText: {
-    color: "#CCC",
+  selectedDayText: 
+  { color: "#fff", 
+    fontWeight: "600" 
   },
-  calendarBackground: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "transparent",
+  inactiveDayText: 
+  { 
+    color: "#bbb" 
+  },
+  closeCalendar: 
+  { 
+    marginTop: 10, 
+    alignSelf: "center", 
+    padding: 8 
   },
 });
