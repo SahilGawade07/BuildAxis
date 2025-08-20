@@ -14,21 +14,21 @@ import Animated, { FadeInUp } from "react-native-reanimated";
 const slides = [
   {
     id: 1,
-    image: require("@/assets/images/SlideA.jpg"),
+    image: require("@/assets/images/slideA.jpg"),
     title: "Manage Projects Efficiently",
     subtitle:
       "Keep track of all your construction projects in one place with real-time updates.",
   },
   {
     id: 2,
-    image: require("@/assets/images/SlideB.jpg"),
+    image: require("@/assets/images/slideB.jpg"),
     title: "Monitor Workforce & Resources",
     subtitle:
       "Assign tasks, track workers, and manage materials to avoid delays and overspending.",
   },
   {
     id: 3,
-    image: require("@/assets/images/SlideC.jpg"),
+    image: require("@/assets/images/slideC.jpg"),
     title: "Simplify Reporting & Communication",
     subtitle:
       "Generate reports, share progress, and communicate seamlessly with your team.",
