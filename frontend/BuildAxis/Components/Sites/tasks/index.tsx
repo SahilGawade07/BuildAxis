@@ -3,45 +3,55 @@ import {
   useWindowDimensions,
   Text,
   View,
-  FlatList,
   StyleSheet,
 } from "react-native";
 import { TabView, TabBar } from "react-native-tab-view";
+
 import ImageBanner from "@/components/Sites/tasks/ImageScreen";
 import MaterialsScreen from "@/components/Sites/tasks/attachmentScreen";
-import MaterialsScreen from "@/components/Sites/tasks/attachmentScreen";
-
+import Labour_list from "@/components/Sites/tasks/labour";
+import ItemTable from "@/components/Sites/tasks/matarials";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function TopTabs() {
   const layout = useWindowDimensions();
   const [index, setIndex] = React.useState(0);
+  const { theme } = useTheme();
+
   const [routes] = React.useState([
-    { key: "first", title: "List A" },
-    { key: "MaterialsScreen", title: "Attachment" },
-    { key: "third", title: "List B" },
+    { key: "ImageBanner", title: "Site Images" },
+    { key: "Labour_list", title: "Labours" },
+    { key: "ItemTable", title: "Metarils" },
+    { key: "MaterialsScreen", title: "Attachments" },
   ]);
 
-  // ✅ render scenes
   const renderScene = ({ route }: any) => {
     switch (route.key) {
-      case "first":
-        return (
-          <ImageBanner />
-        );
-      case "second":
-        return (
-          <View style={styles.centerPage}>
-            <Text style={styles.pageText}>📸 Second Page</Text>
-          </View>
-        );
+      case "ImageBanner":
+        return <ImageBanner />;
+      case "Labour_list":
+        return <Labour_list />;
+      case "ItemTable":
+        return <ItemTable />;
       case "MaterialsScreen":
-        return (
-          <MaterialsScreen />
-        );
+        return <MaterialsScreen />;
       default:
         return null;
     }
   };
+
+  const renderTabBar = (props: any) => (
+    <TabBar
+      {...props}
+      scrollEnabled
+      indicatorStyle={[styles.indicator, { backgroundColor: theme.secondary }]}
+      style={styles.tabBar}
+      tabStyle={styles.tabStyle}
+      labelStyle={{ fontWeight: "900" }}
+      activeColor={theme.secondary}
+      inactiveColor={theme.text}
+    />
+  );
 
   return (
     <TabView
@@ -49,75 +59,28 @@ export default function TopTabs() {
       renderScene={renderScene}
       onIndexChange={setIndex}
       initialLayout={{ width: layout.width }}
-      renderTabBar={(props) => (
-        <TabBar
-          {...props}
-          indicatorStyle={styles.indicator}
-          style={styles.tabBar}
-          // renderLabel={({ route, focused }) => (
-          //   <Text style={[styles.label, focused && styles.activeLabel]}>
-          //     {route.title}
-          //   </Text>
-          // )}
-        />
-      )}
+      renderTabBar={renderTabBar}
     />
   );
 }
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: "#ff0000ff",
+    backgroundColor: "#fff",
     elevation: 4,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+  tabStyle: {
+    width: "auto",
+    paddingHorizontal: 13,
   },
   indicator: {
-    backgroundColor: "#007bff",
     height: 3,
-    borderRadius: 2,
-  },
-  label: {
-    color: "#000000ff",
-    fontSize: 14,
-    fontWeight: "500",
-    textTransform: "capitalize",
-  },
-  activeLabel: {
-    color: "#007bff",
-    fontWeight: "700",
-  },
-  listContainer: {
-    padding: 16,
-  },
-  card: {
-    height: 80,
-    backgroundColor: "#fff",
-    marginBottom: 12,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 12,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-  },
-  cardText: {
-    fontSize: 16,
-    color: "#333",
-    fontWeight: "500",
-  },
-  centerPage: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  pageText: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#444",
+    borderRadius: 3,
   },
 });

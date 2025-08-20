@@ -11,7 +11,7 @@ import Labour_list from "@/app/(tabs)/sites/[siteId]/tabs/labourScreen";
 import Report from "@/app/(tabs)/sites/[siteId]/tabs/report";
 import { useTheme } from "@/context/ThemeContext";
 
-export default function Main_Sites() {
+export default function Main_Sites({ dropped }: any) {
   const { theme } = useTheme();
   const layout = useWindowDimensions();
 
@@ -37,7 +37,7 @@ export default function Main_Sites() {
     switch (route.key) {
       case "task":
         return (
-          <View style={styles.tabContent}>
+          <View style={[styles.tabContent,{paddingBottom:dropped?260:60}]}>
             {projects.map((p) => (
               <TaskBox key={p.id} item={p} />
             ))}
@@ -45,37 +45,37 @@ export default function Main_Sites() {
         );
       case "report":
         return (
-          <View style={styles.tabContent}>
+          <View style={[styles.tabContent,{paddingBottom:dropped?260:60}]}>
             <Report />
           </View>
         );
       case "attendance":
         return (
-          <View style={styles.tabContent}>
+          <View style={[styles.tabContent,{paddingBottom:dropped?260:60}]}>
             <AttendanceSummary />
           </View>
         );
       case "labour":
         return (
-          <View style={styles.tabContent}>
+          <View style={[styles.tabContent,{paddingBottom:dropped?260:60}]}>
             <Labour_list />
           </View>
         );
       case "inventory":
         return (
-          <View style={styles.tabContent}>
+          <View style={[styles.tabContent,{paddingBottom:dropped?260:60}]}>
             <Inventory />
           </View>
         );
       case "material":
         return (
-          <View style={styles.tabContent}>
+          <View style={[styles.tabContent,{paddingBottom:dropped?260:60}]}>
             <ItemTable />
           </View>
         );
       case "expencess":
         return (
-          <View style={styles.tabContent}>
+          <View style={[styles.tabContent,{paddingBottom:dropped?260:60}]}>
             <ExpencessScreen />
           </View>
         );
@@ -113,7 +113,7 @@ export default function Main_Sites() {
 const styles = StyleSheet.create({
   tabContent: {
     flex: 1,
-    paddingTop: 0,
-    paddingBottom: 80,
+    paddingBottom: 90,
+    
   },
 });
