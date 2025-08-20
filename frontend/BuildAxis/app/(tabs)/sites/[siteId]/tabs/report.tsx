@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,10 +6,13 @@ import {
   FlatList,
   TouchableOpacity,
   SafeAreaView,
+  Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useTheme } from "@/context/ThemeContext";
+import { BlurView } from "expo-blur";
+import Reportui from "@/components/Sites/popupScreens/createreport";
 
 type ReportItem = {
   id: string;
@@ -29,6 +32,8 @@ const reports: ReportItem[] = [
 export default function ReportScreen() {
   const router = useRouter();
   const { theme } = useTheme();
+  const [popup, setpopup] = useState(false);
+  const activepopup = () => setpopup(!popup);
 
   const renderReportItem = ({ item }: { item: ReportItem }) => (
     <TouchableOpacity
@@ -68,14 +73,34 @@ export default function ReportScreen() {
         contentContainerStyle={styles.listContainer}
       />
 
-      {/* Floating Button */}
       <TouchableOpacity
         style={[styles.floatingButton, { backgroundColor: theme.secondary }]}
-        onPress={() => router.push("/(tabs)/sites/[siteId]/tabs/CreateReport")}
+        onPress={activepopup} // call the function directly
         activeOpacity={0.8}
       >
         <Text style={styles.floatingButtonText}>Generate Report</Text>
       </TouchableOpacity>
+      {/* Popup */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={popup}
+        onRequestClose={() => setpopup(false)}
+      >
+        <BlurView
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: "rgba(0, 0, 0, 0.67)" } // black overlay with 50% opacity
+          ]}
+          tint={theme.isDark ? "dark" : "light"}
+          intensity={20}
+        />
+        <View style={styles.overlay}>
+          <Reportui fun={activepopup} />
+        </View>
+      </Modal>
+      {/* Floating Button */}
+
     </SafeAreaView>
   );
 }
@@ -140,5 +165,10 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
+  },
+  overlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
