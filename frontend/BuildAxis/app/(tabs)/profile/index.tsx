@@ -11,7 +11,6 @@ import {
   Linking,
   ActivityIndicator,
   RefreshControl,
-  TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -24,7 +23,6 @@ import LogoutButton from "@/components/Profile/LogoutBtn";
 import { router } from "expo-router";
 import { useTheme } from "../../../context/ThemeContext";
 import { Feather } from "@expo/vector-icons";
-import { updatePasswordRequest } from "@/lib/api";
 
 interface MenuItem {
   iconName: React.ComponentProps<typeof Ionicons>["name"];
@@ -47,11 +45,6 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [storageData, setStorageData] = useState<Record<string, string>>({});
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
-  const [passwordMessage, setPasswordMessage] = useState<string | null>(null);
 
   // Fetch user + storage data every time screen comes into focus
   useFocusEffect(
@@ -114,57 +107,56 @@ const ProfilePage = () => {
     await refreshUserData();
     setRefreshing(false);
   }, []);
-interface MenuItemProps {
-  iconName: string;
-  menuItemName: string;
-  onPress: () => void;
-  componentName?: "Ionicons" | "MaterialIcons"; // optional, defaults to Ionicons
-}
 
-const menuItems: MenuItemProps[] = [
-  {
-    iconName: "business-outline",
-    componentName: "Ionicons",
-    menuItemName: "Manage Organisation",
-    onPress: () => router.push("/(tabs)/profile/manageOrganisation"),
-  },
-  {
-    iconName: "language-outline",
-    componentName: "Ionicons",
-    menuItemName: "Select Language",
-    onPress: () => router.push("/(tabs)/profile/changePassword"),
-  },
-  {
-    iconName: "notifications-outline",
-    componentName: "Ionicons",
-    menuItemName: "Manage Notification",
-    onPress: async () => {
-      try {
-        await Linking.openSettings();
-      } catch (error) {
-        console.error("Failed to open settings:", error);
-      }
-    },
-  },
-  {
-    iconName: "color-palette-outline",
-    componentName: "Ionicons",
-    menuItemName: "Theme Settings",
-    onPress: () => {
-      router.push("/(tabs)/profile/themeSettings");
-    },
-  },
-  {
-    iconName: "password",
-    componentName: "MaterialIcons", // ✅ matches union type
-    menuItemName: "Password",
-    onPress: () => {
-      router.push("/(tabs)/profile/changePassword");
-    },
-  },
-];
+  interface MenuItemProps {
+    iconName: string;
+    menuItemName: string;
+    onPress: () => void;
+    componentName?: "Ionicons" | "MaterialIcons"; // optional, defaults to Ionicons
+  }
 
-
+  const menuItems: MenuItemProps[] = [
+    {
+      iconName: "business-outline",
+      componentName: "Ionicons",
+      menuItemName: "Manage Organisation",
+      onPress: () => router.push("/(tabs)/profile/manageOrganisation"),
+    },
+    {
+      iconName: "language-outline",
+      componentName: "Ionicons",
+      menuItemName: "Select Language",
+      onPress: () => router.push("/(tabs)/profile/changePassword"),
+    },
+    {
+      iconName: "notifications-outline",
+      componentName: "Ionicons",
+      menuItemName: "Manage Notification",
+      onPress: async () => {
+        try {
+          await Linking.openSettings();
+        } catch (error) {
+          console.error("Failed to open settings:", error);
+        }
+      },
+    },
+    {
+      iconName: "color-palette-outline",
+      componentName: "Ionicons",
+      menuItemName: "Theme Settings",
+      onPress: () => {
+        router.push("/(tabs)/profile/themeSettings");
+      },
+    },
+    {
+      iconName: "password",
+      componentName: "MaterialIcons", // ✅ matches union type
+      menuItemName: "Password",
+      onPress: () => {
+        router.push("/(tabs)/profile/changePassword");
+      },
+    },
+  ];
 
   if (loading) {
     return (
@@ -247,81 +239,6 @@ const menuItems: MenuItemProps[] = [
           </Text>
 
           <Menu items={menuItems} />
-
-          {/* Change Password Section */}
-          <View style={styles.passwordBox}>
-            <Text style={styles.passwordTitle}>Change Password</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Current password"
-              secureTextEntry
-              value={currentPassword}
-              onChangeText={setCurrentPassword}
-              placeholderTextColor="#888"
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="New password"
-              secureTextEntry
-              value={newPassword}
-              onChangeText={setNewPassword}
-              placeholderTextColor="#888"
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm new password"
-              secureTextEntry
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              placeholderTextColor="#888"
-            />
-            {passwordMessage ? (
-              <Text style={styles.passwordMessage}>{passwordMessage}</Text>
-            ) : null}
-            <TouchableOpacity
-              style={[styles.updateBtn, isUpdatingPassword && { opacity: 0.6 }]}
-              disabled={isUpdatingPassword}
-              onPress={async () => {
-                try {
-                  setIsUpdatingPassword(true);
-                  setPasswordMessage(null);
-                  if (!currentPassword || !newPassword || !confirmPassword) {
-                    setPasswordMessage("All fields are required");
-                    return;
-                  }
-                  if (newPassword !== confirmPassword) {
-                    setPasswordMessage("New password and confirm do not match");
-                    return;
-                  }
-                  const res = await updatePasswordRequest({
-                    currentPassword,
-                    newPassword,
-                    confirmPassword,
-                  });
-                  if (res?.success) {
-                    setPasswordMessage("Password updated successfully");
-                    setCurrentPassword("");
-                    setNewPassword("");
-                    setConfirmPassword("");
-                  } else {
-                    setPasswordMessage(
-                      res?.message || "Failed to update password"
-                    );
-                  }
-                } catch (error: any) {
-                  setPasswordMessage(
-                    error?.message || "Failed to update password"
-                  );
-                } finally {
-                  setIsUpdatingPassword(false);
-                }
-              }}
-            >
-              <Text style={styles.updateBtnText}>
-                {isUpdatingPassword ? "Updating..." : "Update Password"}
-              </Text>
-            </TouchableOpacity>
-          </View>
 
           {/* 🔹 AsyncStorage Debug Box */}
           <View style={styles.debugBox}>
@@ -417,48 +334,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#444",
     marginBottom: 4,
-  },
-  passwordBox: {
-    marginTop: 20,
-    padding: 15,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  passwordTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    marginBottom: 10,
-    color: "#111",
-  },
-  input: {
-    height: 44,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    marginBottom: 10,
-    backgroundColor: "#fafafa",
-  },
-  updateBtn: {
-    height: 46,
-    backgroundColor: "#9333ea",
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 4,
-  },
-  updateBtnText: {
-    color: "#fff",
-    fontWeight: "700",
-    fontSize: 15,
-  },
-  passwordMessage: {
-    color: "#6b7280",
-    marginBottom: 8,
   },
 });
 

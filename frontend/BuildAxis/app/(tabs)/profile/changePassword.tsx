@@ -1,34 +1,18 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
+import HeaderBar from "@/components/ui/headerBar";
+import { SafeAreaView } from "react-native-safe-area-context";
+import TextInputs from "@/components/ui/inputField";
+import PrimaryBtn from "@/components/ui/primaryBtn";
+import { updatePasswordRequest } from "@/lib/api";
 
-// ⬅️ Replace this with your real API call
-async function updatePasswordRequest({
-  currentPassword,
-  newPassword,
-  confirmPassword,
-}: {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
-}) {
-  // Mock API delay
-  return new Promise<{ success: boolean; message?: string }>((resolve) =>
-    setTimeout(() => {
-      if (currentPassword === "123456") {
-        resolve({ success: true });
-      } else {
-        resolve({ success: false, message: "Invalid current password" });
-      }
-    }, 1200)
-  );
-}
+// Simple password strength checker
+const getPasswordStrength = (password: string) => {
+  if (password.length === 0) return { strength: 0, color: "#e0e0e0" };
+  if (password.length < 6) return { strength: 1, color: "#ff6b6b" };
+  if (password.length < 8) return { strength: 2, color: "#ffd93d" };
+  return { strength: 3, color: "#6bcf7f" };
+};
 
 export default function ChangePasswordPage() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -37,130 +21,272 @@ export default function ChangePasswordPage() {
   const [passwordMessage, setPasswordMessage] = useState<string | null>(null);
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
 
+  const passwordStrength = getPasswordStrength(newPassword);
+
+  const handleUpdatePassword = async () => {
+    try {
+      setIsUpdatingPassword(true);
+      setPasswordMessage(null);
+
+      if (!currentPassword || !newPassword || !confirmPassword) {
+        setPasswordMessage("⚠️ All fields are required");
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        setPasswordMessage("⚠️ Password must be at least 6 characters");
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        setPasswordMessage("⚠️ New password and confirm do not match");
+        return;
+      }
+
+      const res = await updatePasswordRequest({
+        currentPassword,
+        newPassword,
+        confirmPassword,
+      });
+
+      if (res?.success) {
+        setPasswordMessage("✅ Password updated successfully");
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+      } else {
+        setPasswordMessage(res?.message || "❌ Failed to update password");
+      }
+    } catch (error: any) {
+      setPasswordMessage(error?.message || "❌ Failed to update password");
+    } finally {
+      setIsUpdatingPassword(false);
+    }
+  };
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.passwordBox}>
-        <Text style={styles.passwordTitle}>Change Password</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <HeaderBar title="Change Password" />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Current password"
-          secureTextEntry
-          value={currentPassword}
-          onChangeText={setCurrentPassword}
-          placeholderTextColor="#888"
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="New password"
-          secureTextEntry
-          value={newPassword}
-          onChangeText={setNewPassword}
-          placeholderTextColor="#888"
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Confirm new password"
-          secureTextEntry
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          placeholderTextColor="#888"
-        />
-
-        {passwordMessage ? (
-          <Text style={styles.passwordMessage}>{passwordMessage}</Text>
-        ) : null}
-
-        <TouchableOpacity
-          style={[styles.updateBtn, isUpdatingPassword && { opacity: 0.6 }]}
-          disabled={isUpdatingPassword}
-          onPress={async () => {
-            try {
-              setIsUpdatingPassword(true);
-              setPasswordMessage(null);
-
-              if (!currentPassword || !newPassword || !confirmPassword) {
-                setPasswordMessage("All fields are required");
-                return;
-              }
-              if (newPassword !== confirmPassword) {
-                setPasswordMessage("New password and confirm do not match");
-                return;
-              }
-
-              const res = await updatePasswordRequest({
-                currentPassword,
-                newPassword,
-                confirmPassword,
-              });
-
-              if (res?.success) {
-                setPasswordMessage("✅ Password updated successfully");
-                setCurrentPassword("");
-                setNewPassword("");
-                setConfirmPassword("");
-              } else {
-                setPasswordMessage(res?.message || "Failed to update password");
-              }
-            } catch (error: any) {
-              setPasswordMessage(error?.message || "Failed to update password");
-            } finally {
-              setIsUpdatingPassword(false);
-            }
-          }}
-        >
-          <Text style={styles.updateBtnText}>
-            {isUpdatingPassword ? "Updating..." : "Update Password"}
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.iconContainer}>
+            <Text style={styles.icon}>🔐</Text>
+          </View>
+          <Text style={styles.title}>Update Your Password</Text>
+          <Text style={styles.subtitle}>
+            Keep your account secure by updating your password regularly.
           </Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        </View>
+
+        <View style={styles.card}>
+          <TextInputs
+            value={currentPassword}
+            onChangeText={setCurrentPassword}
+            placeholder="Enter current password"
+            textname="Current Password"
+          />
+
+          <View style={styles.passwordSection}>
+            <TextInputs
+              value={newPassword}
+              onChangeText={setNewPassword}
+              placeholder="Enter new password"
+              textname="New Password"
+            />
+            {newPassword.length > 0 && (
+              <View style={styles.strengthContainer}>
+                <View style={styles.strengthBars}>
+                  {[1, 2, 3].map((level) => (
+                    <View
+                      key={level}
+                      style={[
+                        styles.strengthBar,
+                        {
+                          backgroundColor:
+                            level <= passwordStrength.strength
+                              ? passwordStrength.color
+                              : "#e0e0e0",
+                        },
+                      ]}
+                    />
+                  ))}
+                </View>
+                <Text style={styles.strengthText}>
+                  {passwordStrength.strength === 1 && "Weak"}
+                  {passwordStrength.strength === 2 && "Good"}
+                  {passwordStrength.strength === 3 && "Strong"}
+                </Text>
+              </View>
+            )}
+          </View>
+
+          <View style={styles.confirmSection}>
+            <TextInputs
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              placeholder="Confirm new password"
+              textname="Confirm Password"
+            />
+            {confirmPassword.length > 0 && newPassword !== confirmPassword && (
+              <Text style={styles.errorText}>❌ Passwords do not match</Text>
+            )}
+            {confirmPassword.length > 0 &&
+              newPassword === confirmPassword &&
+              newPassword.length > 0 && (
+                <Text style={styles.successText}>✅ Passwords match</Text>
+              )}
+          </View>
+
+          {passwordMessage && (
+            <View style={styles.messageContainer}>
+              <Text
+                style={[
+                  styles.passwordMessage,
+                  passwordMessage.includes("✅")
+                    ? styles.successMessage
+                    : styles.errorMessage,
+                ]}
+              >
+                {passwordMessage}
+              </Text>
+            </View>
+          )}
+
+          <PrimaryBtn
+            text={isUpdatingPassword ? "Updating..." : "Update Password"}
+            onPress={handleUpdatePassword}
+          />
+
+          <View style={styles.tipsContainer}>
+            <Text style={styles.tipsTitle}>💡 Password Tips:</Text>
+            <Text style={styles.tipText}>• Use at least 8 characters</Text>
+            <Text style={styles.tipText}>• Mix letters, numbers & symbols</Text>
+            <Text style={styles.tipText}>• Avoid personal information</Text>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#f5f7fa",
+  },
   container: {
     flexGrow: 1,
+    padding: 20,
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: 30,
+  },
+  iconContainer: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: "#e8f2ff",
     justifyContent: "center",
-    padding: 20,
-    backgroundColor: "#fff",
+    alignItems: "center",
+    marginBottom: 16,
   },
-  passwordBox: {
-    padding: 20,
-    backgroundColor: "#f9f9f9",
-    borderRadius: 12,
-    elevation: 2,
+  icon: {
+    fontSize: 28,
   },
-  passwordTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginBottom: 20,
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#1a1a1a",
+    marginBottom: 8,
     textAlign: "center",
   },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
+  subtitle: {
     fontSize: 16,
+    color: "#666",
+    textAlign: "center",
+    lineHeight: 22,
+  },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 24,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 12,
+  },
+  passwordSection: {
+    marginBottom: 4,
+  },
+  strengthContainer: {
+    marginTop: 8,
+  },
+  strengthBars: {
+    flexDirection: "row",
+    gap: 4,
+    marginBottom: 4,
+  },
+  strengthBar: {
+    flex: 1,
+    height: 3,
+    borderRadius: 2,
+  },
+  strengthText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#666",
+  },
+  confirmSection: {
+    marginBottom: 8,
+  },
+  errorText: {
+    fontSize: 12,
+    color: "#ff4757",
+    marginTop: 6,
+    fontWeight: "500",
+  },
+  successText: {
+    fontSize: 12,
+    color: "#2ed573",
+    marginTop: 6,
+    fontWeight: "500",
+  },
+  messageContainer: {
+    backgroundColor: "#f8f9fa",
+    padding: 12,
+    borderRadius: 12,
+    marginBottom: 8,
   },
   passwordMessage: {
-    color: "red",
-    marginBottom: 10,
     textAlign: "center",
-  },
-  updateBtn: {
-    backgroundColor: "#0247D3",
-    paddingVertical: 14,
-    borderRadius: 8,
-  },
-  updateBtnText: {
-    color: "#fff",
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "600",
-    textAlign: "center",
+  },
+  errorMessage: {
+    color: "#ff4757",
+  },
+  successMessage: {
+    color: "#2ed573",
+  },
+  tipsContainer: {
+    backgroundColor: "#f8f9fa",
+    padding: 16,
+    borderRadius: 12,
+    marginTop: 16,
+  },
+  tipsTitle: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 8,
+  },
+  tipText: {
+    fontSize: 13,
+    color: "#666",
+    marginBottom: 4,
+    lineHeight: 18,
   },
 });

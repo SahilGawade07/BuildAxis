@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 
+
 export const getMyProfile = async (req: Request, res: Response) => {
   try {
     const user = (req as any).dbUser;

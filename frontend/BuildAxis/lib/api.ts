@@ -78,9 +78,11 @@ export async function apiRequest(
   requireAuth: boolean = true
 ): Promise<Response> {
   let token: string | null = null;
+  let refreshToken: string | null = null;
 
   if (requireAuth) {
     token = await AsyncStorage.getItem("userToken");
+    refreshToken = await AsyncStorage.getItem("refreshToken");
     if (!token) {
       throw new Error("No authentication token found");
     }
@@ -107,11 +109,20 @@ export async function apiRequest(
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
+  if (refreshToken) {
+    headers["x-refresh-token"] = refreshToken;
+  }
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers,
   });
+
+  // If backend refreshed the token on-the-fly, capture and persist it
+  const newAccessToken = response.headers.get("X-New-Access-Token");
+  if (newAccessToken) {
+    await AsyncStorage.setItem("userToken", newAccessToken);
+  }
 
   // Check if token expired and try to refresh
   if (response.status === 403 && requireAuth) {
@@ -119,6 +130,11 @@ export async function apiRequest(
     if (newToken) {
       // Retry the request with new token
       headers["Authorization"] = `Bearer ${newToken}`;
+      // Also re-send refresh token header if available
+      const latestRefreshToken = await AsyncStorage.getItem("refreshToken");
+      if (latestRefreshToken) {
+        headers["x-refresh-token"] = latestRefreshToken;
+      }
       return fetch(`${API_BASE_URL}${endpoint}`, {
         ...options,
         headers,
