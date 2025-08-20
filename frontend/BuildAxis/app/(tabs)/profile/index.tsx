@@ -96,7 +96,7 @@ const ProfilePage = () => {
     {
       iconName: "language-outline",
       menuItemName: "Select Language",
-      onPress: () => router.push("/(tabs)/profile/themeSettings"),
+      onPress: () => router.push("/(tabs)/profile/language"),
     },
     {
       iconName: "notifications-outline",
