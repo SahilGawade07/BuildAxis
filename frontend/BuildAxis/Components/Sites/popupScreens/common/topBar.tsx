@@ -40,12 +40,14 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     headerText: {
-        fontSize: 16,
+        fontSize: 20,
         fontWeight: "bold",
     },
     close: {
-        fontSize: 16,
+        fontSize: 20,
         color: "#555",
+                fontWeight: "bold",
+
     },
   
 });
