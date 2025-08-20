@@ -148,8 +148,9 @@ export default function TaskDetailsScreen() {
             { useNativeDriver: false }
           )}
         >
-         
-
+         <View style={{height:windowHeight}}>
+<TopTabs handleScroll={handleScroll} />
+</View>
         </Animated.ScrollView>
 
 
@@ -165,7 +166,7 @@ export default function TaskDetailsScreen() {
 />  */}
 
       </View>
-      <TopTabs />
+      
     </SafeAreaView>
   );
 }

@@ -8,6 +8,7 @@ import {
   FlatList,
 } from "react-native";
 import { useTheme } from "../../../context/ThemeContext"; 
+import { useScrollHeader } from "@/components/ui/scrollbarFun";
 
 // 🔹 Types
 type TaskImage = { url: string };
@@ -49,7 +50,11 @@ const getTasks = async (): Promise<Task[]> => {
   ];
 };
 
-export default function ImageBanner() {
+type ImageBannerProps = {
+  handleScroll: (event: any) => void;
+};
+
+export default function ImageBanner({ handleScroll }: ImageBannerProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const { theme } = useTheme();
 
@@ -117,13 +122,20 @@ export default function ImageBanner() {
   );
 
   return (
-    <FlatList
+<FlatList
       data={tasks}
       keyExtractor={(_, idx) => idx.toString()}
       renderItem={renderTask}
+      onScroll={handleScroll}
+
+      scrollEventThrottle={16}
       showsVerticalScrollIndicator={true}
-      contentContainerStyle={[styles.page, { backgroundColor: theme.background }]}
+      contentContainerStyle={[
+        styles.page,
+        { backgroundColor: theme.background },
+      ]}
     />
+       
   );
 }
 

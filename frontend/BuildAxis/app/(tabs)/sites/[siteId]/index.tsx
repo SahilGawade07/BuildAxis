@@ -21,7 +21,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Labour_list from "@/app/(tabs)/sites/[siteId]/tabs/labourScreen";
 import Report from "@/app/(tabs)/sites/[siteId]/tabs/report";
 import { useTheme } from "../../../../context/ThemeContext";
-
+import DropImageExample from "@/components/ui/dropdownimg"
 export default function Main_Site() {
   const [active, setActive] = useState("Assign Task");
   const [page, setPage] = useState("Assign Task");
@@ -107,15 +107,7 @@ export default function Main_Site() {
       <Safe_area />
       <ScrollView>
         <CompanyBar />
-        <Back_Text_Butt path="/tabs/Sites/Site" text="Site Name" />
-
-        {/* Header Image */}
-        <View style={{ height: 200, padding: 5, alignItems: "center" }}>
-          <Image
-            source={require("@/assets/images/Construction.png")}
-            style={{ width: "100%", height: "100%" }}
-          />
-        </View>
+<DropImageExample/>
 
         {/* Tab Bar */}
         <View
