@@ -7,21 +7,20 @@ export const ContinueBtn = ({ text, touchable, onPresss }: any) => {
       style={[
         styles.continue,
         touchable
-          ? { backgroundColor: "#f9f9f9" }
-          : { backgroundColor: "#007AFF" },
+          ? { backgroundColor: "#007AFF" } // Blue when enabled
+          : { backgroundColor: "#f9f9f9" }, // Light grey when disabled
       ]}
-      disabled={false}
+      disabled={!touchable} // 👈 Also: actually disable the button when not touchable
       onPress={() => {
-        onPresss();
+        if (touchable) onPresss();
       }}
     >
       <Text
         style={[
           styles.forwordbutt,
-          touchable ? { color: "#999" } : { color: "#ffffffff" },
+          touchable ? { color: "#ffffff" } : { color: "#999" },
         ]}
       >
-        {" "}
         {text}
       </Text>
     </TouchableOpacity>
