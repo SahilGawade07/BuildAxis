@@ -75,7 +75,7 @@ export default function ItemTable() {
         onRequestClose={() => setpopup(false)}
       >
         <BlurView
-          style={[StyleSheet.absoluteFill]}
+          style={[StyleSheet.absoluteFill,{backgroundColor:"rgba"}]}
           tint={theme.isDark ? "dark" : "light"} // ✅ dynamic blur
           intensity={20}
         />

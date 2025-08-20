@@ -10,7 +10,7 @@ export default function Back_Text_Butt({path,text}:any) {
         <View style={styles.header}>
             <TouchableOpacity onPress={()=>router.back()} >
 
-                <Entypo name="chevron-left" size={30} color="black" />
+                <Entypo name="chevron-left" size={30} color="white" />
             </TouchableOpacity >
             <View style={{ width: 6 }} /> {/* Placeholder for spacing */}
             <Text style={styles.headerText}>{text}</Text>
@@ -23,11 +23,12 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingTop: 10,
+    
     paddingHorizontal: 10,
   },
   headerText: {
     fontSize: 25,
     fontWeight: "bold",
+    color:"white"
   },
 });
