@@ -8,12 +8,15 @@ import {
   ScrollView,
   Alert,
   StatusBar,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import { TextInputs } from "../../components/ui/inputField";
+import TextInputs from "../../components/ui/inputField";
 import { ContinueBtn } from "../../components/ui/ContinueBtn";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const AppLogo = () => (
   <View style={styles.logoContainer}>
@@ -37,15 +40,45 @@ export default function AddOrganizationScreen() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleAddOrganization = () => {
+  const handleAddOrganization = async () => {
     if (!orgName || !email || !phone || !address) {
       Alert.alert("Error", "Please fill all fields");
       return;
     }
 
-    Alert.alert("Success", "Organization added successfully!");
-    router.push("/(tabs)/home");
+    try {
+      setLoading(true);
+
+      // Simulated API call (replace with actual API call)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Store organization info in AsyncStorage
+      const orgData = {
+        orgName: orgName.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        address: address.trim(),
+        createdAt: new Date().toISOString(),
+      };
+
+      await AsyncStorage.setItem("organizationInfo", JSON.stringify(orgData));
+
+      Alert.alert("Success", "Organization created successfully!", [
+        {
+          text: "Continue",
+          onPress: () => {
+            router.replace("/(tabs)/home");
+          },
+        },
+      ]);
+    } catch (error) {
+      console.error("Error creating organization:", error);
+      Alert.alert("Error", "Failed to create organization. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const isFormValid = orgName && email && phone && address;
@@ -53,81 +86,82 @@ export default function AddOrganizationScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 40}
+        style={styles.keyboardAvoidingContainer}
       >
-        <View style={styles.centeredContent}>
-          {/* Logo with Add Icon */}
-          <AppLogo />
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.centeredContent}>
+            {/* Logo with Add Icon */}
+            <AppLogo />
 
-          {/* Headers */}
-          <Text style={styles.headerTop}>Create Organization</Text>
-          <Text style={styles.subHeader}>
-            Create your organization profile to get started with BuildAxis
-          </Text>
+            {/* Headers */}
+            <Text style={styles.headerTop}>Create Organization</Text>
+            <Text style={styles.subHeader}>
+              Create your organization profile to get started with BuildAxis
+            </Text>
 
-          {/* Form */}
-          <View style={styles.form}>
-            <TextInputs
-              value={orgName}
-              onChangeText={setOrgName}
-              placeholder="Enter organization name"
-              keyboardType="default"
-              textname="Organization Name"
-              icon="business-outline"
-            />
+            {/* Form */}
+            <View style={styles.form}>
+              <TextInputs
+                value={orgName}
+                onChangeText={setOrgName}
+                placeholder="Enter organization name"
+                keyboardType="default"
+                textname="Organization Name"
+              />
 
-            <TextInputs
-              value={email}
-              onChangeText={setEmail}
-              placeholder="Enter organization email"
-              keyboardType="email-address"
-              textname="Email"
-              icon="mail-outline"
-            />
+              <TextInputs
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Enter organization email"
+                keyboardType="email-address"
+                textname="Email"
+              />
 
-            <TextInputs
-              value={phone}
-              onChangeText={setPhone}
-              placeholder="Enter phone number"
-              keyboardType="phone-pad"
-              textname="Phone Number"
-              icon="call-outline"
-            />
+              <TextInputs
+                value={phone}
+                onChangeText={setPhone}
+                placeholder="Enter phone number"
+                keyboardType="phone-pad"
+                textname="Phone Number"
+              />
 
-            <TextInputs
-              value={address}
-              onChangeText={setAddress}
-              placeholder="Enter organization address"
-              keyboardType="default"
-              textname="Address"
-              icon="location-outline"
-            />
+              <TextInputs
+                value={address}
+                onChangeText={setAddress}
+                placeholder="Enter organization address"
+                keyboardType="default"
+                textname="Address"
+              />
 
-            {/* Add Organization Button */}
-            <ContinueBtn
-              text="Create Organization"
-              touchable={isFormValid}
-              onPresss={handleAddOrganization}
-            />
+              {/* Add Organization Button */}
+              <ContinueBtn
+                text={loading ? "Creating..." : "Create Organization"}
+                touchable={isFormValid && !loading}
+                onPresss={handleAddOrganization}
+              />
 
-            {/* Skip Button */}
-            <TouchableOpacity
-              style={styles.skipButton}
-              onPress={() => router.push("/(tabs)/home")}
-            >
-              <Text style={styles.skipButtonText}>Skip for now</Text>
-            </TouchableOpacity>
+              {/* Skip Button */}
+              <TouchableOpacity
+                style={styles.skipButton}
+                onPress={() => router.push("/(tabs)/home")}
+              >
+                <Text style={styles.skipButtonText}>Skip for now</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Helper Text */}
+            <Text style={styles.helperText}>
+              You can always add this information later in your profile settings
+            </Text>
           </View>
-
-          {/* Helper Text */}
-          <Text style={styles.helperText}>
-            You can always add this information later in your profile settings
-          </Text>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -137,16 +171,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f9f9fb",
   },
+  keyboardAvoidingContainer: {
+    flex: 1,
+  },
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: 24,
     paddingVertical: 20,
   },
   centeredContent: {
-    flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    minHeight: "100%",
   },
   logoContainer: {
     alignItems: "center",

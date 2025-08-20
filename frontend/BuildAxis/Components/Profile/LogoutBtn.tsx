@@ -14,7 +14,7 @@ const LogoutButton: React.FC = () => {
         {
           text: "OK",
           onPress: () => {
-            router.replace("/login");
+            router.replace("/(auth)/login");
           },
         },
       ]);
@@ -24,9 +24,23 @@ const LogoutButton: React.FC = () => {
     }
   };
 
+  const showLogoutConfirmation = () => {
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Yes",
+        style: "destructive",
+        onPress: handleLogout,
+      },
+    ]);
+  };
+
   return (
     <View>
-      <TouchableOpacity style={styles.logout} onPress={handleLogout}>
+      <TouchableOpacity style={styles.logout} onPress={showLogoutConfirmation}>
         <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>
     </View>

@@ -121,8 +121,15 @@ export default function SignUpScreen() {
         await AsyncStorage.setItem("userInfo", JSON.stringify(result.data));
       }
 
-      Alert.alert("Success", "Account created successfully!");
-      router.replace("/(tabs)/home");
+      Alert.alert("Success", "Account created successfully! Now create your organization.", [
+        {
+          text: "Continue",
+          onPress: () => {
+            // Redirect to create organization page instead of home
+            router.replace("/(auth)/createOrg");
+          },
+        },
+      ]);
     } catch (error: any) {
       console.error("Signup error:", error);
       setError(error?.message || "Sign up failed");
