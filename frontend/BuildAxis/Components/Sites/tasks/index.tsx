@@ -7,17 +7,17 @@ import {
   StyleSheet,
 } from "react-native";
 import { TabView, TabBar } from "react-native-tab-view";
+import ImageBanner from "@/components/Sites/tasks/ImageScreen";
+import MaterialsScreen from "@/components/Sites/tasks/attachmentScreen";
+import MaterialsScreen from "@/components/Sites/tasks/attachmentScreen";
 
-type TopTabsProps = {
-  handleScroll: (event: any) => void;
-};
 
-export default function TopTabs({ handleScroll }: TopTabsProps) {
+export default function TopTabs() {
   const layout = useWindowDimensions();
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     { key: "first", title: "List A" },
-    { key: "second", title: "Second" },
+    { key: "MaterialsScreen", title: "Attachment" },
     { key: "third", title: "List B" },
   ]);
 
@@ -26,18 +26,7 @@ export default function TopTabs({ handleScroll }: TopTabsProps) {
     switch (route.key) {
       case "first":
         return (
-          <FlatList
-            data={Array.from({ length: 30 }, (_, i) => `Item ${i + 1}`)}
-            keyExtractor={(item, index) => index.toString()}
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-            contentContainerStyle={styles.listContainer}
-            renderItem={({ item }) => (
-              <View style={styles.card}>
-                <Text style={styles.cardText}>{item}</Text>
-              </View>
-            )}
-          />
+          <ImageBanner />
         );
       case "second":
         return (
@@ -45,20 +34,9 @@ export default function TopTabs({ handleScroll }: TopTabsProps) {
             <Text style={styles.pageText}>📸 Second Page</Text>
           </View>
         );
-      case "third":
+      case "MaterialsScreen":
         return (
-          <FlatList
-            data={Array.from({ length: 30 }, (_, i) => `Row ${i + 1}`)}
-            keyExtractor={(item, index) => index.toString()}
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-            contentContainerStyle={styles.listContainer}
-            renderItem={({ item }) => (
-              <View style={[styles.card, { backgroundColor: "#f5f5f5" }]}>
-                <Text style={styles.cardText}>{item}</Text>
-              </View>
-            )}
-          />
+          <MaterialsScreen />
         );
       default:
         return null;
@@ -76,11 +54,11 @@ export default function TopTabs({ handleScroll }: TopTabsProps) {
           {...props}
           indicatorStyle={styles.indicator}
           style={styles.tabBar}
-          renderLabel={({ route, focused }) => (
-            <Text style={[styles.label, focused && styles.activeLabel]}>
-              {route.title}
-            </Text>
-          )}
+          // renderLabel={({ route, focused }) => (
+          //   <Text style={[styles.label, focused && styles.activeLabel]}>
+          //     {route.title}
+          //   </Text>
+          // )}
         />
       )}
     />

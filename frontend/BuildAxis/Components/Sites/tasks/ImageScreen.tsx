@@ -50,11 +50,9 @@ const getTasks = async (): Promise<Task[]> => {
   ];
 };
 
-type ImageBannerProps = {
-  handleScroll: (event: any) => void;
-};
+;
 
-export default function ImageBanner({ handleScroll }: ImageBannerProps) {
+export default function ImageBanner() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const { theme } = useTheme();
 
@@ -126,7 +124,7 @@ export default function ImageBanner({ handleScroll }: ImageBannerProps) {
       data={tasks}
       keyExtractor={(_, idx) => idx.toString()}
       renderItem={renderTask}
-      onScroll={handleScroll}
+
 
       scrollEventThrottle={16}
       showsVerticalScrollIndicator={true}

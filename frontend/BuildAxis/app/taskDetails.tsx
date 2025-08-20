@@ -149,7 +149,7 @@ export default function TaskDetailsScreen() {
           )}
         >
          <View style={{height:windowHeight}}>
-<TopTabs handleScroll={handleScroll} />
+<TopTabs />
 </View>
         </Animated.ScrollView>
 

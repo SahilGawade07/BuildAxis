@@ -89,7 +89,7 @@ export default function TaskDetailsScreen() {
                 source={{ uri: m.img }}
                 style={[
                   styles.memberImg,
-                  { borderColor: theme.background }, // border adapts to theme
+                  { borderColor: theme.background }, 
                 ]}
               />
             ))}

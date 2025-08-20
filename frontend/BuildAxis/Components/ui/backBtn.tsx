@@ -5,9 +5,11 @@ import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { useTheme } from "../../context/ThemeContext"; // adjust path
 
 export default function Back_Text_Butt({path,text}:any) {
+    const { theme } = useTheme();
+  
     return (
 
-        <View style={styles.header}>
+        <View style={[styles.header,{backgroundColor: theme.primary}]}>
             <TouchableOpacity onPress={()=>router.back()} >
 
                 <Entypo name="chevron-left" size={30} color="white" />

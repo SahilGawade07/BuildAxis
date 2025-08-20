@@ -1,7 +1,7 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { Expencess } from "@/components/ui/expencesseBox";
-import { useTheme } from "../../../../../context/ThemeContext"; // ✅ import theme
+import { useTheme } from "../../../../../context/ThemeContext"; 
 
 const projects = [
   {

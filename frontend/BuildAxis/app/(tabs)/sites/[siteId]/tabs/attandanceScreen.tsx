@@ -13,8 +13,7 @@ import Submit_bbutt from "../../../../../components/ui/SubmitBtn";
 import LabourList from "../../../../../components/ui/labourList";
 import { BlurView } from "expo-blur";
 import AttendanceModal from "@/components/Sites/popupScreens/attandancePopup";
-import { useTheme } from "../../../../../context/ThemeContext"; // ✅ Use theme
-
+import { useTheme } from "../../../../../context/ThemeContext"; 
 const data = [
   { id: "1", name: "Shraddha Sawant" },
   { id: "2", name: "Shraddha Sawant" },
@@ -26,7 +25,7 @@ export default function AttendanceSummary() {
   const [active, setActive] = useState("Present");
   const [popup, setpopup] = useState(false);
 
-  const { theme } = useTheme(); // ✅ Get theme colors
+  const { theme } = useTheme(); 
 
   const activepopup = () => setpopup(!popup);
 
@@ -116,7 +115,7 @@ export default function AttendanceSummary() {
             StyleSheet.absoluteFill,
             { backgroundColor: "rgba(65, 65, 65, 0.84)" },
           ]}
-          tint={theme.isDark ? "dark" : "light"} // ✅ Adapt blur tint
+          tint={theme.isDark ? "dark" : "light"} 
           intensity={20}
         />
         <View style={styles.overlay}>

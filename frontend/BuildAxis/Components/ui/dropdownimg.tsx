@@ -81,8 +81,9 @@ export default function DropImageExample() {
 
 const styles = StyleSheet.create({
   container: {
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+   
+  
+    paddingTop: 15,
   },
   image: {
     width: "100%",
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     alignContent:"center",
-    paddingVertical:10
+    
   },
   button: {
     paddingRight: 15,

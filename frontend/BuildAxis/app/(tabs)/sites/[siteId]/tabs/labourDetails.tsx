@@ -16,6 +16,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import  TextInputs  from "../../../../../components/ui/inputField";
 import { ContinueBtn } from "../../../../../components/ui/ContinueBtn";
 import { useTheme } from "../../../../../context/ThemeContext";
+import Back_Text_Butt from "@/components/ui/backBtn";
 
 export default function LabourDetailsScreen() {
   const router = useRouter();
@@ -54,19 +55,14 @@ export default function LabourDetailsScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar
         barStyle={theme.isDark ? "light-content" : "dark-content"}
-        backgroundColor={theme.profileHeader}
+        backgroundColor={theme.primary}
       />
 
       {/* Header */}
-      <View style={[styles.header, { backgroundColor: theme.profileHeader }]}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Ionicons name="chevron-back" size={30} color={theme.text} />
-          </View>
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.text }]}>
-          Labour Details
-        </Text>
+
+
+      <View style={[styles.header, { backgroundColor: theme.primary }]}>    
+              <Back_Text_Butt path="/tabs/Sites/Site" text="Labour Details" />
       </View>
 
       {/* Form */}
@@ -134,7 +130,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 18,
-    paddingHorizontal: 12,
   },
   headerTitle: { fontSize: 18, fontWeight: "600" },
   form: { marginTop: 16, paddingHorizontal: 16 },

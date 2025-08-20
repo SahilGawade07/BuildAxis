@@ -98,7 +98,7 @@ export default function Main_Sites() {
             {...props}
             scrollEnabled
             indicatorStyle={{ backgroundColor: theme.secondary }}
-            style={{ backgroundColor: theme.listItemFill, marginBottom: 10, marginTop: -20 }}
+            style={{ backgroundColor: theme.listItemFill, marginBottom: 10, marginTop: 0 }}
             labelStyle={{ fontWeight: "600" }}
             activeColor={theme.secondary}
             inactiveColor={theme.text}
