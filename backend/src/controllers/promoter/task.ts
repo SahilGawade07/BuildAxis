@@ -4,8 +4,9 @@ import mongoose from "mongoose";
 import { User } from "../../models/User";
 import { Labour } from "../../models/Labour";
 import { Site } from "../../models/Site";
-import { Inventory } from "../../models/Inventory";
 import { Task } from "../../models/Task";
+import { Inventory } from "../../models/Inventory";
+
 
 // Interface for request body
 interface CreateTaskBody {
@@ -22,20 +23,13 @@ interface CreateTaskBody {
     | "cancelled";
   priority: "low" | "medium" | "high" | "urgent";
   due: string;
-  inventoryUsed?: string[];
   description?: string;
   attachment?: string;
   images?: string[];
 }
 
-/**
- * Controller: createTask
- * Description: Creates a task. Expects promoter to be authenticated and authorized
- * via middleware chain (authenticateJWT → isAuthenticated → isPromoter).
- */
 export const createTask = async (req: Request, res: Response) => {
   try {
-    // ✅ Trusted: promoterId comes from JWT and is validated by middleware
     const promoterId = new mongoose.Types.ObjectId((req as any).user.id);
 
     const {
@@ -46,13 +40,11 @@ export const createTask = async (req: Request, res: Response) => {
       status,
       priority,
       due,
-      inventoryUsed = [],
       description = "",
       attachment = "",
       images = [],
     } = req.body as CreateTaskBody;
 
-    // 1. Validate required fields (business logic)
     if (!title?.trim()) {
       return res.status(400).json({
         success: false,
@@ -168,34 +160,8 @@ export const createTask = async (req: Request, res: Response) => {
       labourerIds.push(...ids);
     }
 
-    // 5. Validate inventoryUsed (if any)
-    const inventoryIds: mongoose.Types.ObjectId[] = [];
-    if (inventoryUsed.length > 0) {
-      const validIds = inventoryUsed.every((id) =>
-        mongoose.Types.ObjectId.isValid(id)
-      );
-      if (!validIds) {
-        return res.status(400).json({
-          success: false,
-          message: "One or more inventory IDs are invalid.",
-        });
-      }
 
-      const ids = inventoryUsed.map((id) => new mongoose.Types.ObjectId(id));
-      const inventoryCount = await Inventory.countDocuments({
-        _id: { $in: ids },
-      });
-
-      if (inventoryCount !== ids.length) {
-        return res.status(400).json({
-          success: false,
-          message: "One or more inventory items not found.",
-        });
-      }
-      inventoryIds.push(...ids);
-    }
-
-    // 6. Validate images
+    // Validate images
     if (!Array.isArray(images)) {
       return res.status(400).json({
         success: false,
@@ -218,7 +184,6 @@ export const createTask = async (req: Request, res: Response) => {
       status,
       priority,
       due: dueDate,
-      inventoryUsed: inventoryIds,
       description: description.trim(),
       attachment: attachment.trim() || undefined,
       images: cleanedImages,
@@ -232,7 +197,6 @@ export const createTask = async (req: Request, res: Response) => {
       .populate("createdBy", "name phone role")
       .populate("supervisors", "name phone")
       .populate("labourers", "name phone skill")
-      .populate("inventoryUsed", "itemName quantity unit")
       .lean(); // Use lean() for better performance
 
     return res.status(201).json({
@@ -268,3 +232,7 @@ export const createTask = async (req: Request, res: Response) => {
     });
   }
 };
+
+
+
+

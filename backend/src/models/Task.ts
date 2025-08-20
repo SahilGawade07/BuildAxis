@@ -18,8 +18,9 @@ export interface ITask extends Document {
   due: Date;
   inventoryUsed: Types.ObjectId[]; // Multiple inventory items
   description?: string;
-  attachment?: string; // e.g., PDF, document
+  attachment?: string[]; // e.g., PDF, document
   images: string[]; // Array of image URLs
+  progress: number; // Completion percentage: 0 to 100
 }
 
 // Schema: taskSchema
@@ -99,9 +100,12 @@ const taskSchema = new Schema<ITask>(
     },
 
     // Optional file (PDF, doc, etc.)
-    attachment: {
-      type: String,
-    },
+    attachment: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
 
     // Array of image URLs taken/uploaded for the task
     images: [
@@ -109,6 +113,20 @@ const taskSchema = new Schema<ITask>(
         type: String,
       },
     ],
+    progress: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 100,
+      validate: {
+        validator: function (value: number) {
+          return (
+            Number.isInteger(value) || value === parseFloat(value.toFixed(1))
+          );
+        },
+        message: "Progress must be a number with at most one decimal place.",
+      },
+    },
   },
   {
     timestamps: true,

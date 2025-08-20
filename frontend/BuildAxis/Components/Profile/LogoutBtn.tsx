@@ -1,17 +1,47 @@
-import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
+import { TouchableOpacity, View, Text, StyleSheet, Alert } from "react-native";
 import React from "react";
-import { router, useRouter } from "expo-router";
-const LogoutButton = () => {
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+
+const LogoutButton: React.FC = () => {
   const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.multiRemove(["userToken", "userInfo"]);
+
+      Alert.alert("Success", "Logged out successfully", [
+        {
+          text: "OK",
+          onPress: () => {
+            router.replace("/(auth)/login");
+          },
+        },
+      ]);
+    } catch (error) {
+      console.error("Error during logout:", error);
+      Alert.alert("Error", "Failed to log out. Please try again.");
+    }
+  };
+
+  const showLogoutConfirmation = () => {
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Yes",
+        style: "destructive",
+        onPress: handleLogout,
+      },
+    ]);
+  };
+
   return (
     <View>
-      <TouchableOpacity
-        style={styles.logout}
-        onPress={() => {
-          router.push("/theme");
-        }}
-      >
-        <Text style={styles.logoutText}> Logout</Text>
+      <TouchableOpacity style={styles.logout} onPress={showLogoutConfirmation}>
+        <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>
     </View>
   );
