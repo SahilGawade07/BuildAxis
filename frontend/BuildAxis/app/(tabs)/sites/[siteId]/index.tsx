@@ -13,7 +13,7 @@ export default function Main_Site() {
       
 
       {/* Optional top header / image */}
-      <View style={{ backgroundColor: theme.primary ,marginBottom:20}}>
+      <View style={{ backgroundColor: theme.primary ,paddingTop:0,marginBottom:20}}>
         <DropImageExample />
       </View>
 
@@ -26,5 +26,6 @@ export default function Main_Site() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingBottom:40,
   },
 });

@@ -85,7 +85,7 @@ export default function Main_Sites() {
   };
 
   return (
-    <View style={{ flex: 1, minHeight: layout.height }}>
+    <View style={{ flex: 1, minHeight: layout.height,paddingBottom:90, }}>
       <TabView
         navigationState={{ index, routes }}
         renderScene={renderScene} // use dynamic function
