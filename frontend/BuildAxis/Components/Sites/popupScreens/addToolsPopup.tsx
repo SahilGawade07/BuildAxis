@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Topbar from "@/components/Sites/popupScreens/common/topBar";
-import { TextInputs } from "@/components/ui/inputField";
+import  TextInputs  from "@/components/ui/inputField";
 import { useTheme } from "@/context/ThemeContext";
 
 export default function Addtools({ fun }: any) {

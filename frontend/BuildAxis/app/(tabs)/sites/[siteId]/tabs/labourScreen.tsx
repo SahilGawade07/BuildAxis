@@ -42,7 +42,7 @@ export default function Labour_list() {
   }, []);
 
   const handleAddPress = () => {
-    router.push("/(tabs)/sites/[siteId]/labourDetails");
+    router.push("/(tabs)/sites/[siteId]/tabs/labourDetails");
   };
 
   // Enhanced Empty State

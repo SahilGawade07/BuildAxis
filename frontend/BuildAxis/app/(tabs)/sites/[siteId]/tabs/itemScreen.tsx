@@ -15,7 +15,7 @@ type MaterialItem = {
 };
 
 export default function ItemTable() {
-  const { theme } = useTheme(); // ✅ use theme
+  const { theme } = useTheme();
   const [popup, setpopup] = useState(false);
 
   const data: MaterialItem[] = [
@@ -75,8 +75,11 @@ export default function ItemTable() {
         onRequestClose={() => setpopup(false)}
       >
         <BlurView
-          style={[StyleSheet.absoluteFill]}
-          tint={theme.isDark ? "dark" : "light"} // ✅ dynamic blur
+         style={[
+  StyleSheet.absoluteFill,
+  { backgroundColor: "rgba(0, 0, 0, 0.67)" } // black overlay with 50% opacity
+]}
+          tint={theme.isDark ? "dark" : "light"} 
           intensity={20}
         />
         <View style={styles.overlay}>
@@ -102,7 +105,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 1,
-    borderWidth: 1, // ✅ allow border theming
+    borderWidth: 1, 
   },
   itemLeft: {
     flexDirection: "row",
