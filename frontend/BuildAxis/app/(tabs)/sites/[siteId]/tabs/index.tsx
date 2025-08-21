@@ -10,6 +10,7 @@ import ItemTable from "@/app/(tabs)/sites/[siteId]/tabs/itemScreen";
 import Labour_list from "@/app/(tabs)/sites/[siteId]/tabs/labourScreen";
 import Report from "@/app/(tabs)/sites/[siteId]/tabs/report";
 import { useTheme } from "@/context/ThemeContext";
+import { Assigntask } from "./assigntask";
 
 export default function Main_Sites({ dropped }: any) {
   const { theme } = useTheme();
@@ -17,8 +18,8 @@ export default function Main_Sites({ dropped }: any) {
 
   // Dummy data for TaskBox
   const projects = [
-    { id: "1", name: "JJ Hormony", progress: "20%" ,status:"Active",date:"08-08-2006"},
-    { id: "2", name: "Green Heights", progress: "45%" ,status:"Active",date:"08-08-2006"},
+    { id: "1", name: "JJ Hormony", progress: "20%", status: "Active", date: "08-08-2006" },
+    { id: "2", name: "Green Heights", progress: "45%", status: "Active", date: "08-08-2006" },
   ];
 
   const [index, setIndex] = React.useState(0);
@@ -33,49 +34,47 @@ export default function Main_Sites({ dropped }: any) {
   ]);
 
   // Dynamic renderScene instead of SceneMap
-  const renderScene = ({ route }:any) => {
+  const renderScene = ({ route }: any) => {
     switch (route.key) {
       case "task":
         return (
-          <View style={[styles.tabContent,{paddingBottom:dropped?260:60}]}>
-            {projects.map((p) => (
-              <TaskBox key={p.id} item={p} />
-            ))}
+          <View style={[styles.tabContent, { paddingBottom: dropped ? 260 : 60 }]}>
+            <Assigntask />
           </View>
         );
       case "report":
         return (
-          <View style={[styles.tabContent,{paddingBottom:dropped?260:60}]}>
+          <View style={[styles.tabContent, { paddingBottom: dropped ? 260 : 60 }]}>
             <Report />
           </View>
         );
       case "attendance":
         return (
-          <View style={[styles.tabContent,{paddingBottom:dropped?260:60}]}>
+          <View style={[styles.tabContent, { paddingBottom: dropped ? 260 : 60 }]}>
             <AttendanceSummary />
           </View>
         );
       case "labour":
         return (
-          <View style={[styles.tabContent,{paddingBottom:dropped?260:60}]}>
+          <View style={[styles.tabContent, { paddingBottom: dropped ? 260 : 60 }]}>
             <Labour_list />
           </View>
         );
       case "inventory":
         return (
-          <View style={[styles.tabContent,{paddingBottom:dropped?260:60}]}>
+          <View style={[styles.tabContent, { paddingBottom: dropped ? 260 : 60 }]}>
             <Inventory />
           </View>
         );
       case "material":
         return (
-          <View style={[styles.tabContent,{paddingBottom:dropped?260:60}]}>
+          <View style={[styles.tabContent, { paddingBottom: dropped ? 260 : 60 }]}>
             <ItemTable />
           </View>
         );
       case "expencess":
         return (
-          <View style={[styles.tabContent,{paddingBottom:dropped?260:60}]}>
+          <View style={[styles.tabContent, { paddingBottom: dropped ? 260 : 60 }]}>
             <ExpencessScreen />
           </View>
         );
@@ -85,7 +84,7 @@ export default function Main_Sites({ dropped }: any) {
   };
 
   return (
-    <View style={{ flex: 1, minHeight: layout.height,paddingBottom:90, }}>
+    <View style={{ flex: 1, minHeight: layout.height, paddingBottom: 90, }}>
       <TabView
         navigationState={{ index, routes }}
         renderScene={renderScene} // use dynamic function
@@ -114,6 +113,6 @@ const styles = StyleSheet.create({
   tabContent: {
     flex: 1,
     paddingBottom: 90,
-    
+
   },
 });
