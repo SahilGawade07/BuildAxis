@@ -14,6 +14,7 @@ import LabourList from "../../../../../components/ui/labourList";
 import { BlurView } from "expo-blur";
 import AttendanceModal from "@/components/Sites/popupScreens/attandancePopup";
 import { useTheme } from "../../../../../context/ThemeContext"; 
+import { FloatingButtons } from "@/components/ui/floatingbutton";
 const data = [
   { id: "1", name: "Shraddha Sawant" },
   { id: "2", name: "Shraddha Sawant" },
@@ -98,10 +99,13 @@ export default function AttendanceSummary() {
         data={data}
         renderItem={({ item }) => <LabourList item={item} />}
         keyExtractor={(item) => item.id}
+                contentContainerStyle={styles.listContainer}
+
       />
 
-      {/* Submit Button */}
-      <Submit_bbutt text="Mark Attandance" funcations={activepopup} />
+      {/* FloatingButtons Button */}
+            <FloatingButtons activepopup={activepopup} text="Mark Attandance"/>
+      
 
       {/* Popup */}
       <Modal
@@ -156,5 +160,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
+  },
+    listContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 100,
   },
 });
