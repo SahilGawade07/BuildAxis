@@ -29,9 +29,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
 
 
-    
-
-   
   },
   headerText: {
     fontSize: 25,
