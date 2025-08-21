@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 // Reusable components
 import { TopTextHeader } from "@/components/ui/topHeaderText";
-import { TextInputs } from "@/components/ui/inputField";
+import TextInputs  from "@/components/ui/inputField";
 import { ContinueBtn } from "@/components/ui/ContinueBtn";
 
 const AppLogo = () => (

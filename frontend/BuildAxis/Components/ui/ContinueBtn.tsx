@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, StyleSheet, TouchableOpacity } from "react-native";
 
-export const ContinueBtn = ({ text, touchable, onPresss }: any) => {
+export const ContinueBtn = ({ text, touchable, onPress }: any) => {
   return (
     <TouchableOpacity
       style={[
@@ -12,7 +12,7 @@ export const ContinueBtn = ({ text, touchable, onPresss }: any) => {
       ]}
       disabled={!touchable} // 👈 Also: actually disable the button when not touchable
       onPress={() => {
-        if (touchable) onPresss();
+        if (touchable) onPress();
       }}
     >
       <Text

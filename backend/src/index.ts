@@ -17,7 +17,7 @@ const PORT: number = parseInt(process.env.PORT || "8000", 10);
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:3000" || "*",
+    origin: process.env.CORS_ORIGIN || "http://localhost:8081" || "*",
     credentials: true,
   })
 );
