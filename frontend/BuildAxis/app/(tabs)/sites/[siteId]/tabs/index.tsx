@@ -30,8 +30,8 @@ export default function Main_Sites({ dropped }: any) {
 
   const renderScene = ({ route }: any) => {
     const paddingBottom = dropped
-      ? 390
-      :170
+      ? 310
+      :90
 
     switch (route.key) {
       case "task": return <View style={[styles.tabContent, { paddingBottom }]}><Assigntask /></View>;
