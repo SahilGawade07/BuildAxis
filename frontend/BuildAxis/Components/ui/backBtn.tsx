@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     
     paddingHorizontal: 10,
+    paddingVertical: 15,
   },
   headerText: {
     fontSize: 25,
