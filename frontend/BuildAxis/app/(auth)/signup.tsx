@@ -121,15 +121,19 @@ export default function SignUpScreen() {
         await AsyncStorage.setItem("userInfo", JSON.stringify(result.data));
       }
 
-      Alert.alert("Success", "Account created successfully! Now create your organization.", [
-        {
-          text: "Continue",
-          onPress: () => {
-            // Redirect to create organization page instead of home
-            router.replace("/(auth)/createOrg");
+      Alert.alert(
+        "Success",
+        "Account created successfully! Now create your organization.",
+        [
+          {
+            text: "Continue",
+            onPress: () => {
+              // Redirect to create organization page instead of home
+              router.replace("/(auth)/createOrg");
+            },
           },
-        },
-      ]);
+        ]
+      );
     } catch (error: any) {
       console.error("Signup error:", error);
       setError(error?.message || "Sign up failed");
@@ -195,14 +199,19 @@ export default function SignUpScreen() {
 
               <PasswordField value={password} onChangeText={setPassword} />
 
-              <PasswordField value={confirmPassword} label="Confirm Password" placeholder="Confirm your password"onChangeText={setConfirmPassword} />
+              <PasswordField
+                value={confirmPassword}
+                label="Confirm Password"
+                placeholder="Confirm your password"
+                onChangeText={setConfirmPassword}
+              />
 
               {err ? <Text style={styles.error}>{err}</Text> : null}
 
               <ContinueBtn
                 text={loading ? "Creating Account..." : "Sign Up"}
                 touchable={!continueDisabled && !loading}
-                onPresss={handleSignUp}
+                onPress={handleSignUp}
               />
             </View>
 
