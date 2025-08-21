@@ -242,6 +242,26 @@ export async function updatePasswordRequest(params: {
   return response.json();
 }
 
+// Manage Organisation page data
+export async function getManageOrgPageData(orgId: string): Promise<{
+  success: boolean;
+  data?: {
+    promoters: any[];
+    supervisors: any[];
+    labours: any[];
+    vendors: any[];
+  };
+  message?: string;
+}> {
+  const response = await apiRequest(
+    `/api/common/manage-org-page-data/${orgId}`,
+    {
+      method: "GET",
+    }
+  );
+  return response.json();
+}
+
 // Utility function to logout and clear all tokens
 export async function logout(): Promise<void> {
   try {
@@ -260,7 +280,12 @@ export async function logout(): Promise<void> {
     console.error("Logout API call failed:", error);
   } finally {
     // Always clear local storage
-    await AsyncStorage.multiRemove(["userToken", "refreshToken", "userInfo"]);
+    await AsyncStorage.multiRemove([
+      "userToken",
+      "refreshToken",
+      "userInfo",
+      "organizationInfo",
+    ]);
   }
 }
 
@@ -325,5 +350,15 @@ export async function createOrganizationRequest(orgData: {
     throw new Error("Failed to create organization");
   }
 
+  return response.json();
+}
+
+// Organisation helpers
+export async function getOrganisationById(orgId: string): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  const response = await apiRequest(`/api/organisations/${orgId}`);
   return response.json();
 }
