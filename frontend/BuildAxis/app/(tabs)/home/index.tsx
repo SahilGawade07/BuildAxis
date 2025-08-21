@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome, FontAwesome5, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -45,12 +45,16 @@ export default function Home() {
           Text1="Attendance"
           text2="Supervisor: 20"
           text3="Labours: 100"
+          icon={<Ionicons name="people" size={60} color={theme.boxes01[2]} />}
         />
+
         <Overview
           variant="boxes02"
           Ionicons_name="cash-outline"
           Text1="Daily Expenses"
           text2="10000 Rs"
+          icon={<FontAwesome name="rupee" size={60}  color={theme.boxes02[2]} />}
+
         />
         <Overview
           variant="boxes03"
@@ -58,6 +62,8 @@ export default function Home() {
           Text1="Inventory"
           text2="Crush sand is required."
           text3="Bricks are required."
+          icon={<FontAwesome5 name="boxes" size={50}  color={theme.boxes03[2]} />}
+
         />
         <Overview
           variant="boxes04"
@@ -65,6 +71,8 @@ export default function Home() {
           Text1="Sites"
           text2="Active: 7"
           text3="Inactive: 4"
+          icon={<MaterialCommunityIcons name="pier-crane" size={60}  color={theme.boxes04[2]} />}
+
         />
       </View>
     </SafeAreaView>

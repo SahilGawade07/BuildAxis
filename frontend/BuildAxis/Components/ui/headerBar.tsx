@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   title: {
-    fontSize: 18,
-    fontWeight: "bold",
+    fontSize: 22,
+    fontWeight: "600"
   },
 });

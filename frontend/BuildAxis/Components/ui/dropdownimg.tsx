@@ -1,8 +1,10 @@
 import React, { useRef, useState } from "react";
-import { View, StyleSheet, Image, TouchableOpacity, Animated } from "react-native";
+import { View, StyleSheet, Image, TouchableOpacity, Animated, Dimensions } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import Back_Text_Butt from "@/components/ui/backBtn";
 import { useTheme } from "@/context/ThemeContext";
+
+const screenHeight = Dimensions.get("window").height;
 
 export default function DropImageExample({ onDropChange }: any) {
   const heightAnim = useRef(new Animated.Value(0)).current;
@@ -11,28 +13,25 @@ export default function DropImageExample({ onDropChange }: any) {
   const { theme } = useTheme();
 
   const toggleDrop = async () => {
-  const newValue = !dropped;   // ✅ calculate new value
-  setDropped(newValue);        // ✅ update local state
+    const newValue = !dropped;
+    setDropped(newValue);
 
-  if (onDropChange) {
-    await onDropChange(newValue);   // ✅ await if async
-  }
+    if (onDropChange) {
+      await onDropChange(newValue);
+    }
 
-  // animations
-  Animated.timing(heightAnim, {
-    toValue: newValue ? 200 : 0,
-    duration: 250,
-    useNativeDriver: false,
-  }).start();
+    Animated.timing(heightAnim, {
+      toValue: newValue ? screenHeight * 0.25 : 0, // 25% of screen height
+      duration: 250,
+      useNativeDriver: false,
+    }).start();
 
-  Animated.timing(rotateAnim, {
-    toValue: newValue ? 1 : 0,
-    duration: 250,
-    useNativeDriver: false,
-  }).start();
-};
-
-
+    Animated.timing(rotateAnim, {
+      toValue: newValue ? 1 : 0,
+      duration: 250,
+      useNativeDriver: false,
+    }).start();
+  };
 
   const rotate = rotateAnim.interpolate({
     inputRange: [0, 1],
@@ -40,9 +39,9 @@ export default function DropImageExample({ onDropChange }: any) {
   });
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.primary, paddingBottom: dropped ? 20 : 0 }]}>
+    <View style={[styles.container, { backgroundColor: theme.primary, paddingBottom: dropped ? 10 : 0 }]}>
       <View style={styles.row}>
-        <Back_Text_Butt path="/tabs/Sites/Site" text="Site Name" />
+        <Back_Text_Butt text="Site Name" />
         <TouchableOpacity onPress={toggleDrop} style={styles.button}>
           <Animated.View style={{ transform: [{ rotate }] }}>
             <AntDesign name="down" size={28} color="white" />
@@ -50,7 +49,7 @@ export default function DropImageExample({ onDropChange }: any) {
         </TouchableOpacity>
       </View>
 
-      <Animated.View style={{ height: heightAnim, overflow: "hidden", padding: 10 }}>
+      <Animated.View style={{ height: heightAnim, overflow: "hidden", paddingHorizontal: 10 }}>
         {dropped && (
           <Image source={require("@/assets/images/Construction.png")} style={styles.image} />
         )}
@@ -61,23 +60,18 @@ export default function DropImageExample({ onDropChange }: any) {
 
 const styles = StyleSheet.create({
   container: {
-   
-  
     paddingTop: 15,
   },
   image: {
     width: "100%",
-    height: 190,
+    height: "100%", // fill Animated height
     resizeMode: "cover",
-    
     borderRadius: 8,
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    alignContent:"center",
-    
   },
   button: {
     paddingRight: 15,
