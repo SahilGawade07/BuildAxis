@@ -4,6 +4,7 @@ import { useTheme } from "../../../../../context/ThemeContext";
 import { TaskBox } from "@/components/Sites/taskBox";
 import { FontAwesome6, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Addbuttons } from "@/components/ui/addbutton";
+import { Addbuttonspage } from "@/components/ui/addbuttonforpage";
 
 export const Assigntask = () => {
     const { theme } = useTheme(); // ✅ get theme
@@ -26,7 +27,7 @@ export const Assigntask = () => {
                 contentContainerStyle={{ paddingBottom: 16 }}
             />
 
-            <Addbuttons
+            <Addbuttonspage
                 iconname={
                     <FontAwesome6 name="add" size={20} color="white" />
                 }

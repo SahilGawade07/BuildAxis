@@ -55,12 +55,7 @@ export default function ItemTable() {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
-      {/* <Addbuttons
-        iconname={
-          <FontAwesome6 name="add" size={20} color="white" />
-        }
-        functions={activepopup}
-      /> */}
+
 
       {/* List */}
       <FlatList
@@ -92,13 +87,10 @@ export default function ItemTable() {
       </Modal>
 
       {/* Floating Add Button */}
-      <Addbuttons
-        iconname={
-          <FontAwesome6 name="add" size={20} color="white" />
-        }
-        // onPress to open popup
-        onPress={activepopup}
-      />
+    <Addbuttons
+      iconname={<FontAwesome6 name="add" size={20} color="white" />}
+      functions={activepopup} // ✅ trigger popup on press
+    />
     </View>
   );
 }

@@ -13,7 +13,7 @@ import Submit_bbutt from "../../../../../components/ui/SubmitBtn";
 import LabourList from "../../../../../components/ui/labourList";
 import { BlurView } from "expo-blur";
 import AttendanceModal from "@/components/Sites/popupScreens/attandancePopup";
-import { useTheme } from "../../../../../context/ThemeContext"; 
+import { useTheme } from "../../../../../context/ThemeContext";
 import { FloatingButtons } from "@/components/ui/floatingbutton";
 const data = [
   { id: "1", name: "Shraddha Sawant" },
@@ -26,7 +26,7 @@ export default function AttendanceSummary() {
   const [active, setActive] = useState("Present");
   const [popup, setpopup] = useState(false);
 
-  const { theme } = useTheme(); 
+  const { theme } = useTheme();
 
   const activepopup = () => setpopup(!popup);
 
@@ -99,13 +99,13 @@ export default function AttendanceSummary() {
         data={data}
         renderItem={({ item }) => <LabourList item={item} />}
         keyExtractor={(item) => item.id}
-                contentContainerStyle={styles.listContainer}
+        contentContainerStyle={styles.listContainer}
 
       />
 
       {/* FloatingButtons Button */}
-            <FloatingButtons activepopup={activepopup} text="Mark Attandance"/>
-      
+      <FloatingButtons activepopup={activepopup} text="Mark Attandance" />
+
 
       {/* Popup */}
       <Modal
@@ -119,7 +119,7 @@ export default function AttendanceSummary() {
             StyleSheet.absoluteFill,
             { backgroundColor: "rgba(65, 65, 65, 0.84)" },
           ]}
-          tint={theme.isDark ? "dark" : "light"} 
+          tint={theme.isDark ? "dark" : "light"}
           intensity={20}
         />
         <View style={styles.overlay}>
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-    listContainer: {
+  listContainer: {
     paddingHorizontal: 16,
     paddingBottom: 100,
   },

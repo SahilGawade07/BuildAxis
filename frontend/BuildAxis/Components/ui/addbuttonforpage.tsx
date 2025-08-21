@@ -3,14 +3,17 @@ import { FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme } from "@/context/ThemeContext";
 import React from "react";
+import { router } from "expo-router";
+import { useRouter } from "expo-router";
 
-export const Addbuttons = ({ iconname ,functions }: any) => {
+export const Addbuttonspage = ({ iconname ,path }: any) => {
   const { theme } = useTheme();
+  const router = useRouter();
 
   return (
     <TouchableOpacity
       style={[styles.fab, { backgroundColor: theme.secondary }]}
-    onPress={functions}
+    onPress={()=>{router.push("/sideanimation")}}
     >
       {iconname}   {/* render the passed icon here */}
     </TouchableOpacity>
