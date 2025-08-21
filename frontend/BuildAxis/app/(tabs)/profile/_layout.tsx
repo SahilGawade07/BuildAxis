@@ -7,6 +7,7 @@ export default function ProfileLayout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="themeSettings" />
       <Stack.Screen name="manageOrganisation" />
+      <Stack.Screen name="changePassword" />
     </Stack>
   );
 }

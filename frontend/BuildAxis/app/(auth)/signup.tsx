@@ -15,7 +15,7 @@ import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TopTextHeader } from "@/components/ui/topHeaderText";
 import TextInputs from "../../components/ui/inputField";
-import { PasswordField } from "../../components/ui/passwordField";
+import PasswordField from "@/components/ui/passwordField";
 import { ContinueBtn } from "../../components/ui/ContinueBtn";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -121,15 +121,19 @@ export default function SignUpScreen() {
         await AsyncStorage.setItem("userInfo", JSON.stringify(result.data));
       }
 
-      Alert.alert("Success", "Account created successfully! Now create your organization.", [
-        {
-          text: "Continue",
-          onPress: () => {
-            // Redirect to create organization page instead of home
-            router.replace("/(auth)/createOrg");
+      Alert.alert(
+        "Success",
+        "Account created successfully! Now create your organization.",
+        [
+          {
+            text: "Continue",
+            onPress: () => {
+              // Redirect to create organization page instead of home
+              router.replace("/(auth)/createOrg");
+            },
           },
-        },
-      ]);
+        ]
+      );
     } catch (error: any) {
       console.error("Signup error:", error);
       setError(error?.message || "Sign up failed");
@@ -193,20 +197,13 @@ export default function SignUpScreen() {
                 icon="call-outline"
               />
 
-              <PasswordField
-                value={password}
-                onChangeText={setPassword}
-                placeholder="Enter your password"
-                textname="Password"
-                icon="lock-closed-outline"
-              />
+              <PasswordField value={password} onChangeText={setPassword} />
 
               <PasswordField
                 value={confirmPassword}
-                onChangeText={setConfirmPassword}
+                label="Confirm Password"
                 placeholder="Confirm your password"
-                textname="Confirm Password"
-                icon="lock-closed-outline"
+                onChangeText={setConfirmPassword}
               />
 
               {err ? <Text style={styles.error}>{err}</Text> : null}
@@ -214,7 +211,7 @@ export default function SignUpScreen() {
               <ContinueBtn
                 text={loading ? "Creating Account..." : "Sign Up"}
                 touchable={!continueDisabled && !loading}
-                onPresss={handleSignUp}
+                onPress={handleSignUp}
               />
             </View>
 

@@ -16,6 +16,7 @@ const SplashScreen = () => {
             router.replace("/(tabs)/home");
           } else {
             router.replace("/(auth)/onboarding");
+            // router.replace("/(tabs)/home");
           }
         }, 0);
       } catch (error) {

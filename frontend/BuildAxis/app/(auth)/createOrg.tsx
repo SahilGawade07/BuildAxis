@@ -17,6 +17,7 @@ import { ContinueBtn } from "../../components/ui/ContinueBtn";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createOrganizationRequest } from "../../lib/api";
 
 const AppLogo = () => (
   <View style={styles.logoContainer}>
@@ -48,34 +49,70 @@ export default function AddOrganizationScreen() {
       return;
     }
 
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert("Error", "Please enter a valid email address");
+      return;
+    }
+
+    // Basic phone validation (at least 10 digits)
+    const phoneRegex = /^\d{10,}$/;
+    if (!phoneRegex.test(phone.replace(/\D/g, ""))) {
+      Alert.alert(
+        "Error",
+        "Please enter a valid phone number (at least 10 digits)"
+      );
+      return;
+    }
+
     try {
       setLoading(true);
 
-      // Simulated API call (replace with actual API call)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Store organization info in AsyncStorage
-      const orgData = {
-        orgName: orgName.trim(),
+      // Call the actual API to create organization
+      const response = await createOrganizationRequest({
+        name: orgName.trim(),
         email: email.trim(),
         phone: phone.trim(),
         address: address.trim(),
-        createdAt: new Date().toISOString(),
-      };
+        logoUrl: "", // Optional field, can be empty for now
+      });
 
-      await AsyncStorage.setItem("organizationInfo", JSON.stringify(orgData));
+      if (response.success) {
+        // Store organization info in AsyncStorage for local reference
+        const orgData = {
+          orgName: orgName.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
+          address: address.trim(),
+          createdAt: new Date().toISOString(),
+          orgId: response.data?.id, // Store the backend-generated ID
+        };
 
-      Alert.alert("Success", "Organization created successfully!", [
-        {
-          text: "Continue",
-          onPress: () => {
-            router.replace("/(tabs)/home");
+        await AsyncStorage.setItem("organizationInfo", JSON.stringify(orgData));
+
+        Alert.alert("Success", "Organization created successfully!", [
+          {
+            text: "Continue",
+            onPress: () => {
+              router.replace("/(tabs)/home");
+            },
           },
-        },
-      ]);
+        ]);
+      } else {
+        Alert.alert(
+          "Error",
+          response.message || "Failed to create organization"
+        );
+      }
     } catch (error) {
       console.error("Error creating organization:", error);
-      Alert.alert("Error", "Failed to create organization. Please try again.");
+      Alert.alert(
+        "Error",
+        error instanceof Error
+          ? error.message
+          : "Failed to create organization. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -143,7 +180,7 @@ export default function AddOrganizationScreen() {
               <ContinueBtn
                 text={loading ? "Creating..." : "Create Organization"}
                 touchable={isFormValid && !loading}
-                onPresss={handleAddOrganization}
+                onPress={handleAddOrganization}
               />
 
               {/* Skip Button */}
