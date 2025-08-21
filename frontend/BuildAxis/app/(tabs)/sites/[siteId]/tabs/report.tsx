@@ -13,6 +13,7 @@ import { useRouter } from "expo-router";
 import { useTheme } from "@/context/ThemeContext";
 import { BlurView } from "expo-blur";
 import Reportui from "@/components/Sites/popupScreens/createreport";
+import { FloatingButtons } from "@/components/ui/floatingbutton";
 
 type ReportItem = {
   id: string;
@@ -73,13 +74,9 @@ export default function ReportScreen() {
         contentContainerStyle={styles.listContainer}
       />
 
-      <TouchableOpacity
-        style={[styles.floatingButton, { backgroundColor: theme.secondary }]}
-        onPress={activepopup} // call the function directly
-        activeOpacity={0.8}
-      >
-        <Text style={styles.floatingButtonText}>Generate Report</Text>
-      </TouchableOpacity>
+
+
+      <FloatingButtons activepopup={activepopup} text="Generate Report"/>
       {/* Popup */}
       <Modal
         animationType="fade"
