@@ -16,7 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 // Import reusable components
 import { TopTextHeader } from "@/components/ui/topHeaderText";
 import TextInputs from "../../components/ui/inputField";
-import { PasswordField } from "../../components/ui/passwordField";
+import PasswordField from "../../components/ui/passwordField";
 import { ContinueBtn } from "../../components/ui/ContinueBtn";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { signInRequest } from "@/lib/api";
@@ -63,6 +63,7 @@ export default function LoginScreen() {
 
     try {
       const result = await signInRequest(email, password);
+
       if (result.accessToken) {
         await AsyncStorage.setItem("userToken", result.accessToken);
       }
@@ -72,6 +73,7 @@ export default function LoginScreen() {
       if (result.data) {
         await AsyncStorage.setItem("userInfo", JSON.stringify(result.data));
       }
+
       router.replace("/(tabs)/home");
     } catch (error: any) {
       setError(error?.message || "Login failed");
@@ -115,8 +117,6 @@ export default function LoginScreen() {
                 value={password}
                 onChangeText={setPassword}
                 placeholder="Enter your password"
-                textname="Password"
-                icon="lock-closed-outline"
               />
 
               {/* Forgot Password */}
@@ -135,15 +135,15 @@ export default function LoginScreen() {
               <ContinueBtn
                 text="Login"
                 touchable={!continueDisabled}
-                onPresss={handleLogin}
+                onPress={handleLogin} // ✅ fixed
               />
             </View>
 
-            {/* Sign Up*/}
+            {/* Sign Up */}
             <View style={{ flexDirection: "row", justifyContent: "center" }}>
               <Text style={styles.smallText}>Don’t have an account?</Text>
               <TouchableOpacity onPress={() => router.push("/(auth)/signup")}>
-                <Text style={styles.registerText}>{"Sign  up"}</Text>
+                <Text style={styles.registerText}>{" Sign up"}</Text>
               </TouchableOpacity>
             </View>
           </View>
