@@ -2,7 +2,12 @@ import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { Expencess } from "@/components/ui/expencesseBox";
 import { useTheme } from "../../../../../context/ThemeContext"; 
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import { Addbuttons } from "@/components/ui/addbutton";
+import {  useRouter } from "expo-router";
 
+
+const router = useRouter();
 const projects = [
   {
     id: "1",
@@ -35,8 +40,7 @@ const projects = [
 ];
 
 export const ExpencessScreen = () => {
-  const { theme } = useTheme(); // ✅ get theme
-
+  const { theme } = useTheme(); 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <FlatList
@@ -45,9 +49,20 @@ export const ExpencessScreen = () => {
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingTop: 10 }}
       />
+
+      {/* Floating Add Button */}
+      <Addbuttons
+        iconname={
+          <FontAwesome6 name="add" size={20} color="white" />
+        }
+        // onPress to open popup
+        onPress={() => router.push("/(tabs)/sites/[siteId]/tabs/screens/addexpenses")}
+      />
     </View>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   container: {
