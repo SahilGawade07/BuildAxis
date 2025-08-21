@@ -3,29 +3,110 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   TouchableOpacity,
   ScrollView,
   StatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useTheme } from "@/context/ThemeContext";
 import HeaderBar from "@/components/ui/headerBar";
 import CompanyInfoCard from "@/components/Profile/ManageOrganisation/companyInfo";
+import OwnersSection from "@/components/Profile/ManageOrganisation/profilesRow";
 
 export default function ManageOrganization() {
   const { theme } = useTheme();
 
-  const roles = [
-    { title: "Owners" },
-    { title: "Supervisors" },
-    { title: "Labours" },
-    { title: "Vendors" },
+  // Fixed sample profiles data structure for OwnersSection
+  const sampleProfiles = [
+    {
+      name: "sahil",
+      imgUrl:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+    },
+    {
+      name: "Shraddha",
+      imgUrl:
+        "https://images.unsplash.com/photo-1494790108755-2616b612b65c?w=150&h=150&fit=crop&crop=face",
+    },
+    {
+      name: "siddharth",
+      imgUrl:
+        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+    },
+    {
+      name: "Priy",
+      imgUrl:
+        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
+    },
+    {
+      name: "John",
+      imgUrl:
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
+    },
+    {
+      name: "Alice",
+      imgUrl:
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
+    },
+    {
+      name: "Bob",
+      imgUrl:
+        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face",
+    },
   ];
 
-  // Example profile data (no images, just names)
+  // Sample profiles for other sections (Supervisors, Labours, Vendors)
+  const supervisorProfiles = [
+    {
+      name: "Alex",
+      imgUrl:
+        "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face",
+    },
+    {
+      name: "Maya",
+      imgUrl:
+        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face",
+    },
+    {
+      name: "David",
+      imgUrl:
+        "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&h=150&fit=crop&crop=face",
+    },
+  ];
+
+  const labourProfiles = [
+    {
+      name: "Raj",
+      imgUrl:
+        "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=150&h=150&fit=crop&crop=face",
+    },
+    {
+      name: "Amit",
+      imgUrl:
+        "https://images.unsplash.com/photo-1566492031773-4f4e44671d66?w=150&h=150&fit=crop&crop=face",
+    },
+    { name: "Vikram" }, // No image URL - will show fallback
+    { name: "Suresh" }, // No image URL - will show fallback
+  ];
+
+  const vendorProfiles = [
+    {
+      name: "Steel Co.",
+      imgUrl:
+        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=150&h=150&fit=crop&crop=center",
+    },
+    { name: "Cement Ltd." }, // No image URL - will show fallback
+    { name: "Paint Corp." }, // No image URL - will show fallback
+  ];
+
+  const roles = [
+    { title: "Supervisors", profiles: supervisorProfiles },
+    { title: "Labours", profiles: labourProfiles },
+    { title: "Vendors", profiles: vendorProfiles },
+  ];
+
+  // Example profile data (no images, just names) - keeping for fallback
   const mockProfiles = [
     { id: 1, name: "sahil" },
     { id: 2, name: "Shraddha" },
@@ -36,7 +117,9 @@ export default function ManageOrganization() {
   const renderProfileSection = (title: string, profiles: any[]) => {
     return (
       <View style={styles.sectionContainer}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>{title}</Text>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>
+          {title}
+        </Text>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={true}
@@ -57,9 +140,16 @@ export default function ManageOrganization() {
               <View style={styles.squareBorder}>
                 {/* Circular icon inside square */}
                 <View
-                  style={[styles.iconCircle, { backgroundColor: theme.secondary + "22" }]}
+                  style={[
+                    styles.iconCircle,
+                    { backgroundColor: theme.secondary + "22" },
+                  ]}
                 >
-                  <Ionicons name="person-outline" size={28} color={theme.icons} />
+                  <Ionicons
+                    name="person-outline"
+                    size={28}
+                    color={theme.icons}
+                  />
                 </View>
               </View>
               <Text style={[styles.profileName, { color: theme.text }]}>
@@ -78,8 +168,15 @@ export default function ManageOrganization() {
               },
             ]}
           >
-            <View style={[styles.squareBorder, { justifyContent: "center", alignItems: "center" }]}>
-              <Text style={[styles.addButtonText, { color: theme.icons }]}>+</Text>
+            <View
+              style={[
+                styles.squareBorder,
+                { justifyContent: "center", alignItems: "center" },
+              ]}
+            >
+              <Text style={[styles.addButtonText, { color: theme.icons }]}>
+                +
+              </Text>
             </View>
           </TouchableOpacity>
         </ScrollView>
@@ -95,35 +192,57 @@ export default function ManageOrganization() {
       <HeaderBar title="Manage Organisation" />
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <CompanyInfoCard imageUrl="https://static.vecteezy.com/system/resources/thumbnails/008/998/006/small/url-logo-url-letter-url-letter-logo-design-initials-url-logo-linked-with-circle-and-uppercase-monogram-logo-url-typography-for-technology-business-and-real-estate-brand-vector.jpg" organizationName="Chemte" address="bhosari" />
+        <CompanyInfoCard
+          imageUrl="https://static.vecteezy.com/system/resources/thumbnails/008/998/006/small/url-logo-url-letter-url-letter-logo-design-initials-url-logo-linked-with-circle-and-uppercase-monogram-logo-url-typography-for-technology-business-and-real-estate-brand-vector.jpg"
+          organizationName="MK Counstructions"
+          address="Charholi, Kaljewadi, Pune -39"
+        />
 
-        {/* Banner + Floating Logo */}
-        <View style={{ height: 200, marginBottom: 40 }}>
-          <Image
-            source={require("@/assets/images/Construction.png")}
-            style={{ width: "100%", height: "100%", borderRadius: 6 }}
+        {/* Using the new OwnersSection component */}
+        <OwnersSection
+          rowTitle="Owners"
+          profiles={sampleProfiles}
+          onViewAll={() => console.log("View all owners pressed")}
+          onAddNew={() => console.log("Add new owner pressed")}
+          onProfilePress={(profile, index) =>
+            console.log(`Owner ${profile.name} at index ${index} pressed`)
+          }
+        />
+
+        {/* Other role sections using the new component */}
+        {roles.map((role) => (
+          <OwnersSection
+            key={role.title}
+            rowTitle={role.title}
+            profiles={role.profiles}
+            onViewAll={() =>
+              console.log(`View all ${role.title.toLowerCase()} pressed`)
+            }
+            onAddNew={() =>
+              console.log(
+                `Add new ${role.title.toLowerCase().slice(0, -1)} pressed`
+              )
+            }
+            onProfilePress={(profile, index) =>
+              console.log(
+                `${role.title} ${profile.name} at index ${index} pressed`
+              )
+            }
           />
-          <View style={styles.logoWrapper}>
-            <Image
-              source={require("@/assets/images/logo.jpg")}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-            <TouchableOpacity style={styles.plusIcon}>
-              <FontAwesome6 name="add" size={16} color="#1976D2" />
-            </TouchableOpacity>
-          </View>
-        </View>
+        ))}
 
-        {/* Role Sections */}
+        {/* Fallback - keeping original renderProfileSection for comparison */}
+        {/* You can remove this section once you're satisfied with OwnersSection */}
+        {/*
         {roles.map((role) => renderProfileSection(role.title, mockProfiles))}
+        */}
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 2},
+  container: { flex: 1 }, // Fixed: was flex: 2
 
   logoWrapper: {
     position: "absolute",

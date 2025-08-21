@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
-import Icon from "react-native-vector-icons/Feather"; // or your preferred icon library
+import Icon from "react-native-vector-icons/Feather";
+import { useTheme } from "../../../context/ThemeContext";
 
 interface CompanyInfoCardProps {
   imageUrl?: string;
@@ -15,13 +16,15 @@ const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
   address,
   onEdit,
 }) => {
+  const { theme } = useTheme();
+
   // Function to get first letter of organization name for fallback
   const getInitial = (name: string): string => {
     return name ? name.charAt(0).toUpperCase() : "O";
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Left side with profile and info */}
       <View style={styles.leftContainer}>
         {/* Profile picture */}
@@ -33,7 +36,12 @@ const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
               resizeMode="cover"
             />
           ) : (
-            <View style={styles.fallbackProfile}>
+            <View
+              style={[
+                styles.fallbackProfile,
+                { backgroundColor: theme.primary },
+              ]}
+            >
               <Text style={styles.initialText}>
                 {getInitial(organizationName)}
               </Text>
@@ -43,10 +51,16 @@ const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
 
         {/* Organization info */}
         <View style={styles.infoContainer}>
-          <Text style={styles.organizationName} numberOfLines={1}>
+          <Text
+            style={[styles.organizationName, { color: theme.text }]}
+            numberOfLines={1}
+          >
             {organizationName}
           </Text>
-          <Text style={styles.address} numberOfLines={2}>
+          <Text
+            style={[styles.address, { color: theme.icons }]}
+            numberOfLines={2}
+          >
             {address}
           </Text>
         </View>
@@ -58,7 +72,7 @@ const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
         onPress={onEdit}
         activeOpacity={0.7}
       >
-        <Icon name="edit-2" size={20} color="#666" />
+        <Icon name="edit-2" size={20} color={theme.icons} />
       </TouchableOpacity>
     </View>
   );
@@ -71,7 +85,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: "#ffffff",
     padding: 16,
-    borderRadius: 12,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -80,10 +93,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 3,
-    marginHorizontal: 16,
-    marginVertical: 8,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
   },
   leftContainer: {
     flexDirection: "row",
