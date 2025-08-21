@@ -303,3 +303,27 @@ export async function signupRequest(userData: {
 
   return payload;
 }
+
+// Create Organization API Call
+export async function createOrganizationRequest(orgData: {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  logoUrl?: string;
+}): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  const response = await apiRequest("/api/organisations", {
+    method: "POST",
+    body: JSON.stringify(orgData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create organization");
+  }
+
+  return response.json();
+}

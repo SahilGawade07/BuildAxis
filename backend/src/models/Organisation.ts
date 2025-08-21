@@ -8,7 +8,8 @@ export interface IOrganisation extends Document {
   siteId: Types.ObjectId[];
   vendor: Types.ObjectId[]; // renamed and updated
   email: string;
-  phone: number;
+  phone: string;
+  address: string;
   logoUrl?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -58,9 +59,14 @@ const organisationSchema = new Schema<IOrganisation>(
       lowercase: true,
     },
     phone: {
-      type: Number,
+      type: String,
       required: true,
       unique: true,
+    },
+    address: {
+      type: String,
+      required: true,
+      trim: true,
     },
     logoUrl: {
       type: String,
