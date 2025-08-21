@@ -54,6 +54,7 @@ export const ExpencessScreen = () => {
                 iconname={
                     <FontAwesome6 name="add" size={20} color="white" />
                 }
+                path={"/(tabs)/sites/[siteId]/tabs/screens/addexpenses"}
             />
     </View>
   );

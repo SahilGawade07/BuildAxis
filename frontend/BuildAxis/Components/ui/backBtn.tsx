@@ -27,12 +27,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     
     paddingHorizontal: 10,
-<<<<<<< HEAD
 
-    paddingVertical: 15,
-=======
+
+    
+
    
->>>>>>> 5afd87c181f1ebac50d7cd4ee45782fc67923758
   },
   headerText: {
     fontSize: 25,

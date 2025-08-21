@@ -31,6 +31,7 @@ export const Assigntask = () => {
                 iconname={
                     <FontAwesome6 name="add" size={20} color="white" />
                 }
+                path={"/addtask"}
             />
         </View>
     );

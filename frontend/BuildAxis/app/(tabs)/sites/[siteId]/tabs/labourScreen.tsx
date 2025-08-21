@@ -54,7 +54,7 @@ export default function Labour_list() {
                 iconname={
                     <FontAwesome6 name="add" size={20} color="white" />
                 }
-                path="/"
+                path="/(tabs)/sites/[siteId]/tabs/labourDetails"
             />
 
     </SafeAreaView>

@@ -14,7 +14,7 @@ export const Addbuttonspage = ({ iconname ,path }: any) => {
     <TouchableOpacity
       style={[styles.fab, { backgroundColor: theme.secondary }]}
       onPress={() => {
-        router.push("/(tabs)/sites/[siteId]/tabs/screens/addexpenses");
+        router.push(path);
       }}
     >
       {iconname}   {/* render the passed icon here */}
