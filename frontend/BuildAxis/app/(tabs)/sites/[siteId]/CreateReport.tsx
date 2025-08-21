@@ -20,7 +20,11 @@ type CalendarProps = {
 };
 
 // Calendar component with typed props
-const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect, visible }) => {
+const Calendar: React.FC<CalendarProps> = ({
+  selectedDate,
+  onDateSelect,
+  visible,
+}) => {
   if (!visible) return null;
 
   const daysOfWeek = ["S", "M", "T", "W", "T", "F", "S"];
@@ -32,7 +36,11 @@ const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect, visible
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const daysInPrevMonth = new Date(year, month, 0).getDate();
 
-  const calendarDays: { day: number; isCurrentMonth: boolean; isNextMonth: boolean }[] = [];
+  const calendarDays: {
+    day: number;
+    isCurrentMonth: boolean;
+    isNextMonth: boolean;
+  }[] = [];
 
   for (let i = firstDay - 1; i >= 0; i--) {
     calendarDays.push({
@@ -70,7 +78,8 @@ const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect, visible
       </View>
       <View style={styles.calendarGrid}>
         {calendarDays.slice(0, 35).map((dateObj, index) => {
-          const isSelected = selectedDate === dateObj.day && dateObj.isCurrentMonth;
+          const isSelected =
+            selectedDate === dateObj.day && dateObj.isCurrentMonth;
           return (
             <TouchableOpacity
               key={index}
@@ -79,7 +88,9 @@ const Calendar: React.FC<CalendarProps> = ({ selectedDate, onDateSelect, visible
                 isSelected && styles.selectedDay,
                 !dateObj.isCurrentMonth && styles.inactiveDay,
               ]}
-              onPress={() => dateObj.isCurrentMonth && onDateSelect(dateObj.day)}
+              onPress={() =>
+                dateObj.isCurrentMonth && onDateSelect(dateObj.day)
+              }
             >
               <Text
                 style={[
@@ -120,7 +131,7 @@ const ReportModal: React.FC<ReportModalProps> = ({ visible, onClose }) => {
       setToDate(formattedDate);
     }
     setSelectedDate(day);
-    setShowCalendar(false); 
+    setShowCalendar(false);
   };
 
   const openDatePicker = (inputType: "from" | "to") => {
@@ -129,12 +140,16 @@ const ReportModal: React.FC<ReportModalProps> = ({ visible, onClose }) => {
   };
 
   const handleGenerateReport = () => {
-    console.log("Generating report:", { title, fromDate, toDate });
     onClose();
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={onClose}
+    >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
           {/* Header */}
@@ -172,14 +187,20 @@ const ReportModal: React.FC<ReportModalProps> = ({ visible, onClose }) => {
 
               <View style={styles.dateGroup}>
                 <Text style={styles.label}>To</Text>
-                <TouchableOpacity style={styles.dateInput} onPress={() => openDatePicker("to")}>
+                <TouchableOpacity
+                  style={styles.dateInput}
+                  onPress={() => openDatePicker("to")}
+                >
                   <Text style={styles.dateText}>{toDate}</Text>
                   <Ionicons name="calendar-outline" size={20} color="#666" />
                 </TouchableOpacity>
               </View>
             </View>
 
-            <TouchableOpacity style={styles.generateButton} onPress={handleGenerateReport}>
+            <TouchableOpacity
+              style={styles.generateButton}
+              onPress={handleGenerateReport}
+            >
               <Text style={styles.generateButtonText}>Generate Report</Text>
             </TouchableOpacity>
           </View>
