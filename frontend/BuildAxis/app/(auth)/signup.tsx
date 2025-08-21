@@ -15,7 +15,7 @@ import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TopTextHeader } from "@/components/ui/topHeaderText";
 import TextInputs from "../../components/ui/inputField";
-import { PasswordField } from "../../components/ui/passwordField";
+import PasswordField from "@/components/ui/passwordField";
 import { ContinueBtn } from "../../components/ui/ContinueBtn";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -193,21 +193,9 @@ export default function SignUpScreen() {
                 icon="call-outline"
               />
 
-              <PasswordField
-                value={password}
-                onChangeText={setPassword}
-                placeholder="Enter your password"
-                textname="Password"
-                icon="lock-closed-outline"
-              />
+              <PasswordField value={password} onChangeText={setPassword} />
 
-              <PasswordField
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-                placeholder="Confirm your password"
-                textname="Confirm Password"
-                icon="lock-closed-outline"
-              />
+              <PasswordField value={confirmPassword} label="Confirm Password" placeholder="Confirm your password"onChangeText={setConfirmPassword} />
 
               {err ? <Text style={styles.error}>{err}</Text> : null}
 

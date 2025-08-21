@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import HeaderBar from "@/components/ui/headerBar";
 import { SafeAreaView } from "react-native-safe-area-context";
-import TextInputs from "@/components/ui/inputField";
+import PasswordField from "@/components/ui/passwordField";
 import PrimaryBtn from "@/components/ui/primaryBtn";
 import { updatePasswordRequest } from "@/lib/api";
 
@@ -80,19 +80,21 @@ export default function ChangePasswordPage() {
         </View>
 
         <View style={styles.card}>
-          <TextInputs
+          {/* Current Password */}
+          <PasswordField
             value={currentPassword}
             onChangeText={setCurrentPassword}
             placeholder="Enter current password"
-            textname="Current Password"
+            label="Current Password"
           />
 
+          {/* New Password */}
           <View style={styles.passwordSection}>
-            <TextInputs
+            <PasswordField
               value={newPassword}
               onChangeText={setNewPassword}
               placeholder="Enter new password"
-              textname="New Password"
+              label="New Password"
             />
             {newPassword.length > 0 && (
               <View style={styles.strengthContainer}>
@@ -121,13 +123,15 @@ export default function ChangePasswordPage() {
             )}
           </View>
 
+          {/* Confirm Password */}
           <View style={styles.confirmSection}>
-            <TextInputs
+            <PasswordField
               value={confirmPassword}
               onChangeText={setConfirmPassword}
-              placeholder="Confirm new password"
-              textname="Confirm Password"
+              placeholder="Re-enter new password"
+              label="Confirm Password"
             />
+
             {confirmPassword.length > 0 && newPassword !== confirmPassword && (
               <Text style={styles.errorText}>❌ Passwords do not match</Text>
             )}
@@ -138,6 +142,7 @@ export default function ChangePasswordPage() {
               )}
           </View>
 
+          {/* Message */}
           {passwordMessage && (
             <View style={styles.messageContainer}>
               <Text
@@ -153,11 +158,13 @@ export default function ChangePasswordPage() {
             </View>
           )}
 
+          {/* Update button */}
           <PrimaryBtn
             text={isUpdatingPassword ? "Updating..." : "Update Password"}
             onPress={handleUpdatePassword}
           />
 
+          {/* Tips */}
           <View style={styles.tipsContainer}>
             <Text style={styles.tipsTitle}>💡 Password Tips:</Text>
             <Text style={styles.tipText}>• Use at least 8 characters</Text>
