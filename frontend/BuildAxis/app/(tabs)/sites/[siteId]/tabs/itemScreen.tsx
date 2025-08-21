@@ -4,6 +4,9 @@ import Addmaterial from "../../../../../components/Sites/tasks/common/addmateria
 import { BlurView } from "expo-blur";
 import Addtools from "../../../../../components/Sites/popupScreens/addToolsPopup";
 import { useTheme } from "../../../../../context/ThemeContext";
+import { Addbuttons } from "@/components/ui/addbutton";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { FontAwesome6 } from "@expo/vector-icons";
 
 // Define type for each item
 type MaterialItem = {
@@ -52,11 +55,12 @@ export default function ItemTable() {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
-      <Addmaterial
-        text="Material"
-        text2="Add materials"
-        funcations={activepopup}
-      />
+      {/* <Addbuttons
+        iconname={
+          <FontAwesome6 name="add" size={20} color="white" />
+        }
+        functions={activepopup}
+      /> */}
 
       {/* List */}
       <FlatList
@@ -75,17 +79,26 @@ export default function ItemTable() {
         onRequestClose={() => setpopup(false)}
       >
         <BlurView
-         style={[
-  StyleSheet.absoluteFill,
-  { backgroundColor: "rgba(0, 0, 0, 0.67)" } // black overlay with 50% opacity
-]}
-          tint={theme.isDark ? "dark" : "light"} 
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: "rgba(0, 0, 0, 0.67)" }, // overlay
+          ]}
+          tint={theme.isDark ? "dark" : "light"}
           intensity={20}
         />
         <View style={styles.overlay}>
           <Addtools fun={activepopup} />
         </View>
       </Modal>
+
+      {/* Floating Add Button */}
+      <Addbuttons
+        iconname={
+          <FontAwesome6 name="add" size={20} color="white" />
+        }
+        // onPress to open popup
+        onPress={activepopup}
+      />
     </View>
   );
 }
@@ -105,7 +118,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 1,
-    borderWidth: 1, 
+    borderWidth: 1,
   },
   itemLeft: {
     flexDirection: "row",

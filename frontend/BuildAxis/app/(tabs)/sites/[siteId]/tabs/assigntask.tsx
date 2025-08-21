@@ -2,7 +2,7 @@ import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { useTheme } from "../../../../../context/ThemeContext";
 import { TaskBox } from "@/components/Sites/taskBox";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome6, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Addbuttons } from "@/components/ui/addbutton";
 
 export const Assigntask = () => {
@@ -28,7 +28,7 @@ export const Assigntask = () => {
 
             <Addbuttons
                 iconname={
-<MaterialIcons name="add" size={34} color="#fff" />
+                    <FontAwesome6 name="add" size={20} color="white" />
                 }
             />
         </View>
