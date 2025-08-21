@@ -78,13 +78,13 @@ export const checkPromoterAccess = async (
 
 export const createOrganisation = async (req: Request, res: Response) => {
   try {
-    const { name, email, phone, logoUrl } = req.body;
+    const { name, email, phone, address, logoUrl } = req.body;
     const user = (req as any).dbUser;
 
-    if (!name || !email || !phone) {
+    if (!name || !email || !phone || !address) {
       return res.status(400).json({
         success: false,
-        message: "Name, email, and phone are required",
+        message: "Name, email, phone, and address are required",
       });
     }
 
@@ -103,6 +103,7 @@ export const createOrganisation = async (req: Request, res: Response) => {
       name,
       email,
       phone,
+      address,
       logoUrl,
       promoters: [user._id],
       supervisorsId: [],
@@ -121,6 +122,7 @@ export const createOrganisation = async (req: Request, res: Response) => {
         name: newOrganisation.name,
         email: newOrganisation.email,
         phone: newOrganisation.phone,
+        address: newOrganisation.address,
         logoUrl: newOrganisation.logoUrl,
         promoters: newOrganisation.promoters,
         supervisorsId: newOrganisation.supervisorsId,

@@ -19,7 +19,7 @@ function getLocalIpFromExpoUrl(): string | null {
 const localIp = getLocalIpFromExpoUrl();
 export const API_BASE_URL =
   //process.env.EXPO_PUBLIC_API_URL || // Deployment (server URL from .env/app.config.js)
-  (localIp ? `http://${localIp}:8000` : "http://localhost:8000"); // Dev fallback
+  localIp ? `http://${localIp}:8000` : "http://localhost:8000"; // Dev fallback
 
 // (Optional) keep your old code commented for reference
 // export const API_BASE_URL = "http://10.243.117.112:8000";
@@ -78,9 +78,11 @@ export async function apiRequest(
   requireAuth: boolean = true
 ): Promise<Response> {
   let token: string | null = null;
+  let refreshToken: string | null = null;
 
   if (requireAuth) {
     token = await AsyncStorage.getItem("userToken");
+    refreshToken = await AsyncStorage.getItem("refreshToken");
     if (!token) {
       throw new Error("No authentication token found");
     }
@@ -107,11 +109,20 @@ export async function apiRequest(
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
+  if (refreshToken) {
+    headers["x-refresh-token"] = refreshToken;
+  }
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers,
   });
+
+  // If backend refreshed the token on-the-fly, capture and persist it
+  const newAccessToken = response.headers.get("X-New-Access-Token");
+  if (newAccessToken) {
+    await AsyncStorage.setItem("userToken", newAccessToken);
+  }
 
   // Check if token expired and try to refresh
   if (response.status === 403 && requireAuth) {
@@ -119,6 +130,11 @@ export async function apiRequest(
     if (newToken) {
       // Retry the request with new token
       headers["Authorization"] = `Bearer ${newToken}`;
+      // Also re-send refresh token header if available
+      const latestRefreshToken = await AsyncStorage.getItem("refreshToken");
+      if (latestRefreshToken) {
+        headers["x-refresh-token"] = latestRefreshToken;
+      }
       return fetch(`${API_BASE_URL}${endpoint}`, {
         ...options,
         headers,
@@ -213,6 +229,19 @@ export async function updateUserProfile(profileData: any): Promise<any> {
   return response.json();
 }
 
+// Helper function to update user password
+export async function updatePasswordRequest(params: {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}): Promise<any> {
+  const response = await apiRequest("/api/common/my-profile", {
+    method: "PATCH",
+    body: JSON.stringify(params),
+  });
+  return response.json();
+}
+
 // Utility function to logout and clear all tokens
 export async function logout(): Promise<void> {
   try {
@@ -273,4 +302,28 @@ export async function signupRequest(userData: {
   }
 
   return payload;
+}
+
+// Create Organization API Call
+export async function createOrganizationRequest(orgData: {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  logoUrl?: string;
+}): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  const response = await apiRequest("/api/organisations", {
+    method: "POST",
+    body: JSON.stringify(orgData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create organization");
+  }
+
+  return response.json();
 }

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
+import { User } from "../../models/User";
 
 export const getMyProfile = async (req: Request, res: Response) => {
   try {
@@ -39,8 +40,8 @@ export const updateMyProfile = async (req: Request, res: Response) => {
     if (phone) user.phone = phone;
     if (profilePic) user.profilePic = profilePic;
     if (password) {
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(password, salt);
+      // Let mongoose pre-save hook hash the password
+      user.password = password;
     }
 
     await user.save();
@@ -87,8 +88,8 @@ export const updatePassword = async (req: Request, res: Response) => {
       });
     }
 
-    // Need to fetch user with password field since middleware excludes it by default
-    const userWithPassword = await user.findById(user._id).select("+password");
+    // Always fetch fresh user data with password field to ensure we have the most current data
+    const userWithPassword = await User.findById(user._id).select("+password");
 
     if (!userWithPassword) {
       return res.status(404).json({
@@ -97,10 +98,7 @@ export const updatePassword = async (req: Request, res: Response) => {
       });
     }
 
-    const isMatch = await bcrypt.compare(
-      currentPassword,
-      userWithPassword.password
-    );
+    const isMatch = await userWithPassword.isPasswordCorrect(currentPassword);
     if (!isMatch) {
       return res.status(401).json({
         success: false,
@@ -108,11 +106,13 @@ export const updatePassword = async (req: Request, res: Response) => {
       });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
-    userWithPassword.password = hashedPassword;
+    // Assign plain new password; pre-save hook will hash it
+    userWithPassword.password = newPassword;
 
     await userWithPassword.save();
+
+    // Update the req.dbUser object to reflect the changes
+    (req as any).dbUser = userWithPassword;
 
     return res.status(200).json({
       success: true,

@@ -1,3 +1,4 @@
+// ... imports remain same
 import React, { useState } from "react";
 import {
   View,
@@ -43,17 +44,29 @@ const ProfilePage = () => {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [storageData, setStorageData] = useState<Record<string, string>>({});
 
-  // Fetch user data from AsyncStorage - This will run every time the screen comes into focus
+  // Fetch user + storage data every time screen comes into focus
   useFocusEffect(
     React.useCallback(() => {
       const fetchUser = async () => {
         try {
           setLoading(true);
+
+          // Load user info
           const storedData = await AsyncStorage.getItem("userInfo");
           if (storedData) {
             setUser(JSON.parse(storedData));
           }
+
+          // Load all key-value pairs from AsyncStorage
+          const keys = await AsyncStorage.getAllKeys();
+          const entries = await AsyncStorage.multiGet(keys);
+          const mapped: Record<string, string> = {};
+          entries.forEach(([key, value]) => {
+            mapped[key] = value ?? "";
+          });
+          setStorageData(mapped);
         } catch (error) {
           console.error("Failed to load user data", error);
         } finally {
@@ -73,6 +86,15 @@ const ProfilePage = () => {
       if (storedData) {
         setUser(JSON.parse(storedData));
       }
+
+      // Refresh storage values too
+      const keys = await AsyncStorage.getAllKeys();
+      const entries = await AsyncStorage.multiGet(keys);
+      const mapped: Record<string, string> = {};
+      entries.forEach(([key, value]) => {
+        mapped[key] = value ?? "";
+      });
+      setStorageData(mapped);
     } catch (error) {
       console.error("Failed to refresh user data", error);
     } finally {
@@ -80,26 +102,35 @@ const ProfilePage = () => {
     }
   };
 
-  // Pull to refresh callback
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     await refreshUserData();
     setRefreshing(false);
   }, []);
 
-  const menuItems: MenuItem[] = [
+  interface MenuItemProps {
+    iconName: string;
+    menuItemName: string;
+    onPress: () => void;
+    componentName?: "Ionicons" | "MaterialIcons"; // optional, defaults to Ionicons
+  }
+
+  const menuItems: MenuItemProps[] = [
     {
       iconName: "business-outline",
+      componentName: "Ionicons",
       menuItemName: "Manage Organisation",
       onPress: () => router.push("/(tabs)/profile/manageOrganisation"),
     },
     {
       iconName: "language-outline",
+      componentName: "Ionicons",
       menuItemName: "Select Language",
       onPress: () => router.push("/(tabs)/profile/language"),
     },
     {
       iconName: "notifications-outline",
+      componentName: "Ionicons",
       menuItemName: "Manage Notification",
       onPress: async () => {
         try {
@@ -111,9 +142,18 @@ const ProfilePage = () => {
     },
     {
       iconName: "color-palette-outline",
+      componentName: "Ionicons",
       menuItemName: "Theme Settings",
       onPress: () => {
         router.push("/(tabs)/profile/themeSettings");
+      },
+    },
+    {
+      iconName: "password",
+      componentName: "MaterialIcons", // ✅ matches union type
+      menuItemName: "Password",
+      onPress: () => {
+        router.push("/(tabs)/profile/changePassword");
       },
     },
      {
@@ -207,6 +247,16 @@ const ProfilePage = () => {
 
           <Menu items={menuItems} />
 
+          {/* 🔹 AsyncStorage Debug Box */}
+          <View style={styles.debugBox}>
+            <Text style={styles.debugTitle}>AsyncStorage Data:</Text>
+            {Object.entries(storageData).map(([key, value]) => (
+              <Text key={key} style={styles.debugText}>
+                {key}: {value}
+              </Text>
+            ))}
+          </View>
+
           <View style={{ flex: 1 }} />
           <LogoutButton />
         </View>
@@ -218,7 +268,7 @@ const ProfilePage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#9333ea", // Fallback color
+    backgroundColor: "#9333ea",
   },
   gradientHeader: {
     paddingTop: 20,
@@ -226,7 +276,7 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    justifyContent: "flex-end", // 🔹 Pushes edit icon to the right
+    justifyContent: "flex-end",
     alignItems: "center",
     paddingHorizontal: 20,
     paddingBottom: 20,
@@ -236,14 +286,8 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.15)", // subtle circle background
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
     borderRadius: 20,
-  },
-
-  headerButtonText: {
-    color: "white",
-    fontSize: 24,
-    fontWeight: "300",
   },
   profileSection: {
     alignItems: "center",
@@ -280,6 +324,23 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     letterSpacing: 1,
     marginBottom: 15,
+  },
+  debugBox: {
+    marginTop: 20,
+    padding: 15,
+    backgroundColor: "rgba(147, 51, 234, 0.1)", // subtle purple background
+    borderRadius: 12,
+  },
+  debugTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    marginBottom: 10,
+    color: "#9333ea",
+  },
+  debugText: {
+    fontSize: 12,
+    color: "#444",
+    marginBottom: 4,
   },
 });
 

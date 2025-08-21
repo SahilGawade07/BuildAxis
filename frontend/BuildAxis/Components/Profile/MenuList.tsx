@@ -1,10 +1,13 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTheme } from "@/context/ThemeContext"; // adjust import path if needed
 
+// Extend props to include componentName
 interface MenuItemProps {
-  iconName: React.ComponentProps<typeof Ionicons>["name"];
+  componentName?: "Ionicons" | "MaterialIcons"; // Add more if needed
+  iconName: string;
   menuItemName: string;
   onPress?: () => void;
 }
@@ -12,6 +15,12 @@ interface MenuItemProps {
 interface MenuProps {
   items: MenuItemProps[];
 }
+
+// Map component names to actual icon components
+const iconComponents: Record<string, any> = {
+  Ionicons,
+  MaterialIcons,
+};
 
 const Menu = ({ items }: MenuProps) => {
   const { theme } = useTheme();
@@ -23,26 +32,33 @@ const Menu = ({ items }: MenuProps) => {
         { backgroundColor: theme.listItemFill, shadowColor: theme.text },
       ]}
     >
-      {items.map((item, index) => (
-        <TouchableOpacity
-          key={index}
-          style={[
-            styles.menuItem,
-            { borderBottomColor: theme.sepratorLine },
-            // Remove bottom border for the last item
-            index === items.length - 1 && styles.lastMenuItem,
-          ]}
-          onPress={item.onPress}
-        >
-          <View style={styles.iconContainer}>
-            <Ionicons name={item.iconName} size={24} color={theme.secondary} />
-          </View>
-          <Text style={[styles.menuText, { color: theme.text }]}>
-            {item.menuItemName}
-          </Text>
-          <Text style={[styles.chevron, { color: theme.icons }]}>›</Text>
-        </TouchableOpacity>
-      ))}
+      {items.map((item, index) => {
+        const IconComponent = iconComponents[item.componentName || "Ionicons"]; // default Ionicons
+
+        return (
+          <TouchableOpacity
+            key={index}
+            style={[
+              styles.menuItem,
+              { borderBottomColor: theme.sepratorLine },
+              index === items.length - 1 && styles.lastMenuItem,
+            ]}
+            onPress={item.onPress}
+          >
+            <View style={styles.iconContainer}>
+              <IconComponent
+                name={item.iconName}
+                size={24}
+                color={theme.secondary}
+              />
+            </View>
+            <Text style={[styles.menuText, { color: theme.text }]}>
+              {item.menuItemName}
+            </Text>
+            <Text style={[styles.chevron, { color: theme.icons }]}>›</Text>
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 };
