@@ -3,12 +3,15 @@ import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@/context/ThemeContext";
 
+import { ReactNode } from "react";
+
 interface OverviewProps {
-  variant: "boxes01" | "boxes02" | "boxes03" | "boxes04"; // ✅ choose which color set to use
-  Ionicons_name: React.ComponentProps<typeof Ionicons>["name"];
+  variant: "boxes01" | "boxes02" | "boxes03" | "boxes04"; // choose color set
+  Ionicons_name: React.ComponentProps<typeof Ionicons>["name"]; // icon name
   Text1: string;
   text2?: string;
   text3?: string;
+  icon?: ReactNode; // ✅ allow passing custom icon component
 }
 
 export function Overview({
@@ -17,6 +20,7 @@ export function Overview({
   Text1,
   text2,
   text3,
+  icon
 }: OverviewProps) {
   const { theme } = useTheme();
 
@@ -27,7 +31,8 @@ export function Overview({
     <View style={[styles.card, { backgroundColor: cardBg }]}>
       {/* Circle with Icon */}
       <View style={[styles.circle, { backgroundColor: circleBg }]}>
-        <Ionicons name={Ionicons_name} size={60} color={iconColor} />
+        {/* <Ionicons name={Ionicons_name} size={60} color={iconColor} /> */}
+        {icon} 
       </View>
 
       {/* Texts */}

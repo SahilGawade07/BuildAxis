@@ -17,6 +17,7 @@ import  TextInputs  from "../../../../../components/ui/inputField";
 import { ContinueBtn } from "../../../../../components/ui/ContinueBtn";
 import { useTheme } from "../../../../../context/ThemeContext";
 import Back_Text_Butt from "@/components/ui/backBtn";
+import HeaderBar from "@/components/ui/headerBar";
 
 export default function LabourDetailsScreen() {
   const router = useRouter();
@@ -61,9 +62,8 @@ export default function LabourDetailsScreen() {
       {/* Header */}
 
 
-      <View style={[styles.header, { backgroundColor: theme.primary }]}>    
-              <Back_Text_Butt path="/tabs/Sites/Site" text="Labour Details" />
-      </View>
+<HeaderBar title="Add Labours" />
+
 
       {/* Form */}
       <View style={styles.form}>

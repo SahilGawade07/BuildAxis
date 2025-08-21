@@ -9,6 +9,7 @@ import Back_Text_Butt from "@/components/ui/backBtn";
 import TextInputs from "@/components/ui/inputField";
 import Submit_bbutt from "@/components/ui/SubmitBtn";
 import { useTheme } from "@/context/ThemeContext";
+import HeaderBar from "@/components/ui/headerBar";
 
 export default function EditMaterialScreen() {
   const { theme } = useTheme();
@@ -37,8 +38,7 @@ export default function EditMaterialScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
-      <Back_Text_Butt path="/(tabs)/sites" text="Edit Material" />
-
+<HeaderBar title="Add Tools" />
       <View style={styles.form}>
         <TextInputs
           value={materialName}

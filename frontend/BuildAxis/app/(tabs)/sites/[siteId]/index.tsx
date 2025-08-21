@@ -1,10 +1,9 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
-import { useTheme } from "@/context/ThemeContext";
-import { Safe_area } from "@/components/ui/safeArea";
-import DropImageExample from "@/components/ui/dropdownimg";
-import Main_Sites from "@/app/(tabs)/sites/[siteId]/tabs/index"; // import the tab view component
+import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "@/context/ThemeContext";
+import DropImageExample from "@/components/ui/dropdownimg";
+import Main_Sites from "@/app/(tabs)/sites/[siteId]/tabs/index";
 
 export default function Main_Site() {
   const { theme } = useTheme();
@@ -12,20 +11,16 @@ export default function Main_Site() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
-      {/* Drop header, notify parent when toggled */}
-<DropImageExample onDropChange={(value: boolean) => setDropped(value)} />
-
-
-      {/* Now Main_Sites receives dropped */}
+      {/* Drop header */}
+      <DropImageExample onDropChange={(value: boolean) => setDropped(value)} />
+      {/* Main Tabs */}
       <Main_Sites dropped={dropped} />
     </SafeAreaView>
   );
 }
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom:40,
   },
 });
