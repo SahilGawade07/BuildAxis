@@ -11,10 +11,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import { Safe_area } from "@/components/ui/safeArea";
 import { useTheme } from "@/context/ThemeContext";
-import Back_Text_Butt from "@/components/ui/backBtn";
-import { CompanyBar } from "@/components/ui/orgNameBar";
+import HeaderBar from "@/components/ui/headerBar";
+import CompanyInfoCard from "@/components/Profile/ManageOrganisation/companyInfo";
 
 export default function ManageOrganization() {
   const { theme } = useTheme();
@@ -93,12 +92,10 @@ export default function ManageOrganization() {
       style={[styles.container, { backgroundColor: theme.background }]}
     >
       <StatusBar barStyle="light-content" backgroundColor={theme.primary} />
-      <Safe_area />
+      <HeaderBar title="Manage Organisation" />
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Top Bar */}
-        <CompanyBar />
-        <Back_Text_Butt path="/tabs/Sites/Site" text="Manage Organization" />
+        <CompanyInfoCard imageUrl="https://static.vecteezy.com/system/resources/thumbnails/008/998/006/small/url-logo-url-letter-url-letter-logo-design-initials-url-logo-linked-with-circle-and-uppercase-monogram-logo-url-typography-for-technology-business-and-real-estate-brand-vector.jpg" organizationName="Chemte" address="bhosari" />
 
         {/* Banner + Floating Logo */}
         <View style={{ height: 200, marginBottom: 40 }}>
