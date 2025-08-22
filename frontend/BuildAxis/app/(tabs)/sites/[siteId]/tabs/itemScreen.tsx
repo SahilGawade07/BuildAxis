@@ -89,7 +89,7 @@ export default function ItemTable() {
       {/* Floating Add Button */}
     <Addbuttons
       iconname={<FontAwesome6 name="add" size={20} color="white" />}
-      functions={activepopup} // ✅ trigger popup on press
+      functions={activepopup} 
     />
     </View>
   );
