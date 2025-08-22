@@ -8,7 +8,7 @@ const generateAccessToken = (userId: string, email: string, role: string) => {
   return jwt.sign(
     { id: userId, email, role },
     process.env.JWT_SECRET as string,
-    { expiresIn: "15m" }
+    { expiresIn: "1d" }
   );
 };
 
@@ -127,7 +127,8 @@ export const signIn = async (req: Request, res: Response) => {
       });
     }
 
-    const userResponse = {
+    // Build basic user payload
+    const userResponse: any = {
       id: user._id,
       email: user.email,
       fName: user.fName,
@@ -135,8 +136,23 @@ export const signIn = async (req: Request, res: Response) => {
       phone: user.phone,
       role: user.role,
       profilePic: user.profilePic,
-      createdAt: user.createdAt,
     };
+
+    if (user.orgId) {
+      try {
+        const org = await Organisation.findById(user.orgId).select(
+          "name address logoUrl _id"
+        );
+        if (org) {
+          userResponse.org = {
+            id: org._id,
+            name: org.name,
+            address: org.address,
+            logoUrl: org.logoUrl,
+          };
+        }
+      } catch {}
+    }
 
     const accessToken = generateAccessToken(
       (user._id as Types.ObjectId).toString(),

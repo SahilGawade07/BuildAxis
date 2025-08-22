@@ -4,6 +4,7 @@ import { User } from "../../models/User";
 import { Site } from "../../models/Site";
 import { Labour } from "../../models/Labour";
 import { Types } from "mongoose";
+import { uploadOnCloudinary } from "../../utils/cloudinary";
 
 // Middleware for organization access control (from params or body)
 export const checkOrgAccessFromParams = async (
@@ -324,8 +325,18 @@ export const addSupervisor = async (req: Request, res: Response) => {
 
 export const createSupervisor = async (req: Request, res: Response) => {
   try {
-    const { fName, lName, email, phone, password, profilePic } = req.body;
-    const orgId = (req as any).orgId;
+    const { fName, lName, email, phone, password } = req.body;
+    const user = (req as any).dbUser;
+
+    // Get orgId from the authenticated user's context
+    const orgId = user.orgId;
+
+    if (!orgId) {
+      return res.status(400).json({
+        success: false,
+        message: "User is not associated with any organisation",
+      });
+    }
 
     if (!fName || !lName || !email || !phone || !password) {
       return res.status(400).json({
@@ -346,6 +357,36 @@ export const createSupervisor = async (req: Request, res: Response) => {
       });
     }
 
+    // ✅ Handle file upload (multer stores file locally first)
+    let profilePicUrl: string =
+      "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"; // fallback
+
+    if (req.file) {
+      console.log("📁 File received:", {
+        originalname: req.file.originalname,
+        filename: req.file.filename,
+        path: req.file.path,
+        size: req.file.size,
+        mimetype: req.file.mimetype,
+      });
+
+      try {
+        const uploadResult = await uploadOnCloudinary(req.file.path);
+
+        if (uploadResult?.url) {
+          profilePicUrl = uploadResult.url;
+          console.log("✅ Profile pic uploaded to Cloudinary:", profilePicUrl);
+        } else {
+          console.log("⚠️ Cloudinary upload failed, using fallback URL");
+        }
+      } catch (uploadError) {
+        console.error("❌ File upload error:", uploadError);
+        // Continue with default profile pic
+      }
+    } else {
+      console.log("📁 No file received in request");
+    }
+
     // Create new supervisor
     const newSupervisor = await User.create({
       fName,
@@ -354,9 +395,7 @@ export const createSupervisor = async (req: Request, res: Response) => {
       phone,
       password,
       role: "supervisor",
-      profilePic:
-        profilePic ||
-        "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png",
+      profilePic: profilePicUrl,
       orgId: orgId as Types.ObjectId,
     });
 
@@ -382,6 +421,7 @@ export const createSupervisor = async (req: Request, res: Response) => {
         supervisorName: `${newSupervisor.fName} ${newSupervisor.lName}`,
         supervisorEmail: newSupervisor.email,
         supervisorPhone: newSupervisor.phone,
+        supervisorPic: newSupervisor.profilePic,
         organisationId: orgId,
       },
     });
@@ -460,7 +500,17 @@ export const addLabour = async (req: Request, res: Response) => {
 export const createLabour = async (req: Request, res: Response) => {
   try {
     const { fName, lName, phone, profilePic, documentsUrl, work } = req.body;
-    const orgId = (req as any).orgId;
+    const user = (req as any).dbUser;
+
+    // Get orgId from the authenticated user's context
+    const orgId = user.orgId;
+
+    if (!orgId) {
+      return res.status(400).json({
+        success: false,
+        message: "User is not associated with any organisation",
+      });
+    }
 
     if (!fName || !lName || !phone || !profilePic || !documentsUrl || !work) {
       return res.status(400).json({
