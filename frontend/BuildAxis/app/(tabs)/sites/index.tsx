@@ -37,8 +37,10 @@ export default function Site() {
         style={[
           styles.searchContainer,
           {
-            backgroundColor: theme.listItemFill,
-            borderColor: theme.listItemBorder,
+            // backgroundColor: theme.listItemFill,
+            // borderColor: theme.listItemBorder,
+            backgroundColor:"#f0f0f0",
+             borderColor: "#f0f0f0",
           },
         ]}
       >
@@ -90,6 +92,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 27,
     borderWidth: 1,
+    paddingVertical:2
   },
   searchInput: {
     flex: 1,

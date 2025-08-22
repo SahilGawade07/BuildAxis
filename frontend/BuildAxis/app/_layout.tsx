@@ -1,9 +1,12 @@
 import React from "react";
 import { Stack } from "expo-router";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function RootLayout() {
   return (
+        <GestureHandlerRootView style={{ flex: 1 }}>
+
     <ThemeProvider>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
@@ -12,8 +15,11 @@ export default function RootLayout() {
         <Stack.Screen name="createTask" />
         <Stack.Screen name="taskDetails" />
         <Stack.Screen name="sideanimation" />
+        <Stack.Screen name="raw" />
         <Stack.Screen name="+not-found" />
       </Stack>
     </ThemeProvider>
+        </GestureHandlerRootView>
+
   );
 }

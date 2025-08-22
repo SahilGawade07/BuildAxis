@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet ,View} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@/context/ThemeContext";
 import DropImageExample from "@/components/ui/dropdownimg";
@@ -14,7 +14,10 @@ export default function Main_Site() {
       {/* Drop header */}
       <DropImageExample onDropChange={(value: boolean) => setDropped(value)} />
       {/* Main Tabs */}
+
+      
       <Main_Sites dropped={dropped} />
+    
     </SafeAreaView>
   );
 }
