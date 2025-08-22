@@ -60,7 +60,7 @@ export async function signInRequest(
   let payload: SignInResponse;
   try {
     payload = (await response.json()) as SignInResponse;
-  } catch (error) {
+  } catch {
     payload = { success: false, message: "Invalid server response" };
   }
 
@@ -262,6 +262,43 @@ export async function getManageOrgPageData(orgId: string): Promise<{
   return response.json();
 }
 
+// Get all people with pagination for view all page
+export async function getViewAllPeople(
+  orgId: string,
+  role?: string,
+  page: number = 1
+): Promise<{
+  success: boolean;
+  data?: {
+    people: any[];
+    pagination: {
+      currentPage: number;
+      totalPages: number;
+      totalCount: number;
+      hasNextPage: boolean;
+      hasPrevPage: boolean;
+    };
+  };
+  message?: string;
+}> {
+  const params = new URLSearchParams({
+    all: "true",
+    page: page.toString(),
+  });
+
+  if (role) {
+    params.append("role", role);
+  }
+
+  const response = await apiRequest(
+    `/api/common/manage-org-page-data/${orgId}?${params.toString()}`,
+    {
+      method: "GET",
+    }
+  );
+  return response.json();
+}
+
 // Utility function to logout and clear all tokens
 export async function logout(): Promise<void> {
   try {
@@ -318,7 +355,7 @@ export async function signupRequest(userData: {
   let payload: SignUpResponse;
   try {
     payload = (await response.json()) as SignUpResponse;
-  } catch (error) {
+  } catch {
     payload = { success: false, message: "Invalid server response" };
   }
 
@@ -361,4 +398,86 @@ export async function getOrganisationById(orgId: string): Promise<{
 }> {
   const response = await apiRequest(`/api/organisations/${orgId}`);
   return response.json();
+}
+
+// Add Supervisor to Organisation API Call
+export async function addSupervisorToOrganisation(
+  supervisorPhone: string
+): Promise<{
+  success: boolean;
+  message: string;
+  action?: string;
+  data?: any;
+}> {
+  const response = await apiRequest("/api/organisations/add-supervisor", {
+    method: "POST",
+    body: JSON.stringify({ supervisorPhone }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to add supervisor to organisation");
+  }
+
+  return response.json();
+}
+
+// Create Supervisor API Call
+export async function createSupervisorRequest(supervisorData: {
+  fName: string;
+  lName: string;
+  email: string;
+  phone: string;
+  password: string;
+  profilePic?: { uri: string; name: string; type: string };
+}): Promise<{
+  success: boolean;
+  message: string;
+  action?: string;
+  data?: any;
+}> {
+  const formData = new FormData();
+  formData.append("fName", supervisorData.fName);
+  formData.append("lName", supervisorData.lName);
+  formData.append("email", supervisorData.email);
+  formData.append("phone", supervisorData.phone);
+  formData.append("password", supervisorData.password);
+
+  if (supervisorData.profilePic) {
+    formData.append("profilePic", supervisorData.profilePic as unknown as any);
+  }
+
+  const token = await AsyncStorage.getItem("userToken");
+  if (!token) {
+    throw new Error("No authentication token found");
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/organisations/create-supervisor`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    }
+  );
+
+  // Try to parse JSON regardless of status to surface server message
+  let payload: any = null;
+  try {
+    payload = await response.json();
+  } catch {
+    payload = null;
+  }
+
+  if (!response.ok) {
+    return (
+      payload || {
+        success: false,
+        message: response.statusText || "Failed to create supervisor",
+      }
+    );
+  }
+
+  return payload as any;
 }

@@ -7,14 +7,17 @@ import {
   RefreshControl,
   ActivityIndicator,
   View,
+  Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@/context/ThemeContext";
 import HeaderBar from "@/components/ui/headerBar";
-import {CompanyInfoCard} from "@/components/Profile/ManageOrganisation/companyInfo";
+import { CompanyInfoCard } from "@/components/Profile/ManageOrganisation/companyInfo";
 import ProfilesRow from "@/components/Profile/ManageOrganisation/profilesRow";
+import AddSupervisorPopup from "@/components/Profile/ManageOrganisation/addSupervisorPopup";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getManageOrgPageData, getUserProfile } from "@/lib/api";
+import { router } from "expo-router";
 
 export default function ManageOrganization() {
   const { theme } = useTheme();
@@ -28,6 +31,11 @@ export default function ManageOrganization() {
   const [vendors, setVendors] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [showAddSupervisorPopup, setShowAddSupervisorPopup] =
+    useState<boolean>(false);
+  const [hasShownSupervisorAlert, setHasShownSupervisorAlert] =
+    useState<boolean>(false);
+  const [orgId, setOrgId] = useState<string>("");
 
   const fetchData = async (showRefreshIndicator = false) => {
     try {
@@ -68,6 +76,9 @@ export default function ManageOrganization() {
         throw new Error("No organisation found for this user");
       }
 
+      // Store orgId for navigation
+      setOrgId(resolvedOrgId);
+
       // Fetch manage-organisation page data
       const result = await getManageOrgPageData(resolvedOrgId);
       if (!result.success) {
@@ -107,8 +118,67 @@ export default function ManageOrganization() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // If no supervisors are found, prompt user to create one and navigate on OK
+  useEffect(() => {
+    if (!loading && !hasShownSupervisorAlert && supervisors.length === 0) {
+      setHasShownSupervisorAlert(true);
+      Alert.alert(
+        "No supervisors found",
+        "You don't have any supervisors yet. Would you like to create one now?",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+          {
+            text: "OK",
+            onPress: () =>
+              router.push("/profile/manageOrganisation/createSupervisor"),
+          },
+        ]
+      );
+    }
+  }, [loading, supervisors, hasShownSupervisorAlert]);
+
   const onRefresh = () => {
     fetchData(true);
+  };
+
+  // Navigation functions for View All buttons
+  const handleViewAllSupervisors = () => {
+    if (orgId) {
+      router.push({
+        pathname: "/profile/manageOrganisation/viewAll",
+        params: { role: "supervisor", orgId },
+      });
+    }
+  };
+
+  const handleViewAllPromoters = () => {
+    if (orgId) {
+      router.push({
+        pathname: "/profile/manageOrganisation/viewAll",
+        params: { role: "promoter", orgId },
+      });
+    }
+  };
+
+  const handleViewAllLabours = () => {
+    if (orgId) {
+      router.push({
+        pathname: "/profile/manageOrganisation/viewAll",
+        params: { role: "labour", orgId },
+      });
+    }
+  };
+
+  const handleViewAllVendors = () => {
+    if (orgId) {
+      router.push({
+        pathname: "/profile/manageOrganisation/viewAll",
+        params: { role: "vendor", orgId },
+      });
+    }
   };
 
   // Map API entities to ProfilesRow structure
@@ -202,7 +272,7 @@ export default function ManageOrganization() {
           <ProfilesRow
             rowTitle="Owners"
             profiles={ownerProfiles}
-            onViewAll={() => {}}
+            onViewAll={handleViewAllPromoters}
             onAddNew={() => {}}
             showDivider={true}
           />
@@ -210,15 +280,15 @@ export default function ManageOrganization() {
           <ProfilesRow
             rowTitle="Supervisors"
             profiles={supervisorProfiles}
-            onViewAll={() => {}}
-            onAddNew={() => {}}
+            onViewAll={handleViewAllSupervisors}
+            onAddNew={() => setShowAddSupervisorPopup(true)}
             showDivider={true}
           />
 
           <ProfilesRow
             rowTitle="Labours"
             profiles={labourProfiles}
-            onViewAll={() => {}}
+            onViewAll={handleViewAllLabours}
             onAddNew={() => {}}
             showDivider={true}
           />
@@ -226,12 +296,30 @@ export default function ManageOrganization() {
           <ProfilesRow
             rowTitle="Vendors"
             profiles={vendorProfiles}
-            onViewAll={() => {}}
+            onViewAll={handleViewAllVendors}
             onAddNew={() => {}}
             showDivider={false} // No divider after the last row
           />
         </View>
       </ScrollView>
+
+      {/* Add Supervisor Popup */}
+      <Modal
+        visible={showAddSupervisorPopup}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowAddSupervisorPopup(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <AddSupervisorPopup
+            onClose={() => setShowAddSupervisorPopup(false)}
+            onSuccess={() => {
+              setShowAddSupervisorPopup(false);
+              fetchData(); // Refresh the data
+            }}
+          />
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -263,5 +351,11 @@ const styles = StyleSheet.create({
   profilesSection: {
     flex: 1,
     paddingTop: 8,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

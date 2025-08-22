@@ -8,16 +8,23 @@ const storage = multer.diskStorage({
     // Build absolute path to /public/temp
     const uploadPath = path.join(process.cwd(), "src", "public", "temp");
 
+    console.log("📁 Multer destination path:", uploadPath);
+
     // ✅ Create folder if not exists
     if (!fs.existsSync(uploadPath)) {
+      console.log("📁 Creating temp directory:", uploadPath);
       fs.mkdirSync(uploadPath, { recursive: true });
+    } else {
+      console.log("📁 Temp directory already exists:", uploadPath);
     }
 
     cb(null, uploadPath);
   },
   filename: function (req, file, cb) {
     // Store file with timestamp + original name
-    cb(null, Date.now() + "-" + file.originalname);
+    const filename = Date.now() + "-" + file.originalname;
+    console.log("📁 Generated filename:", filename);
+    cb(null, filename);
   },
 });
 

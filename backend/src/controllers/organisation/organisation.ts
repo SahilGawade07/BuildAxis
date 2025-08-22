@@ -362,16 +362,29 @@ export const createSupervisor = async (req: Request, res: Response) => {
       "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"; // fallback
 
     if (req.file) {
+      console.log("📁 File received:", {
+        originalname: req.file.originalname,
+        filename: req.file.filename,
+        path: req.file.path,
+        size: req.file.size,
+        mimetype: req.file.mimetype,
+      });
+
       try {
         const uploadResult = await uploadOnCloudinary(req.file.path);
 
         if (uploadResult?.url) {
           profilePicUrl = uploadResult.url;
+          console.log("✅ Profile pic uploaded to Cloudinary:", profilePicUrl);
+        } else {
+          console.log("⚠️ Cloudinary upload failed, using fallback URL");
         }
       } catch (uploadError) {
-        console.error("File upload error:", uploadError);
+        console.error("❌ File upload error:", uploadError);
         // Continue with default profile pic
       }
+    } else {
+      console.log("📁 No file received in request");
     }
 
     // Create new supervisor
