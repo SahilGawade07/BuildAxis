@@ -16,6 +16,7 @@ import Upload_img from "@/components/ui/uploadImages";
 import { CompanyBar } from "@/components/ui/orgNameBar";
 import TextInputs from "@/components/ui/inputField";
 import { useTheme } from "@/context/ThemeContext";
+import HeaderBar from "@/components/ui/headerBar";
 
 export default function CreateTaskScreen() {
   const { theme } = useTheme();
@@ -33,10 +34,7 @@ export default function CreateTaskScreen() {
       <Safe_area />
 
       {/* Top Bar with Logo & Name */}
-      <CompanyBar />
-
-      {/* Back Button + Title */}
-      <Back_Text_Butt path="" text="Create Task" />
+      <HeaderBar title="Create a task" />
 
       <ScrollView style={styles.form} showsVerticalScrollIndicator={false}>
         {/* Task Name Input */}
