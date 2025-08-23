@@ -806,15 +806,63 @@ export async function editVendorRequest(
   data?: any;
 }> {
   try {
-    const response = await api.put(`/api/common/vendors/${vendorId}`, vendorData);
+    const response = await api.put(
+      `/api/common/vendors/${vendorId}`,
+      vendorData
+    );
     return response.data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
       return (
         error.response?.data || {
           success: false,
-          message:
-            error.response?.statusText || "Failed to update vendor",
+          message: error.response?.statusText || "Failed to update vendor",
+        }
+      );
+    }
+    throw error;
+  }
+}
+
+// Delete Vendor API Call
+export async function deleteVendorRequest(vendorId: string): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  try {
+    const response = await api.delete(`/api/common/vendors/${vendorId}`);
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message: error.response?.statusText || "Failed to delete vendor",
+        }
+      );
+    }
+    throw error;
+  }
+}
+
+// Delete Supervisor API Call
+export async function deleteSupervisorRequest(supervisorId: string): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  try {
+    const response = await api.delete(
+      `/api/common/supervisors/${supervisorId}`
+    );
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message: error.response?.statusText || "Failed to delete supervisor",
         }
       );
     }

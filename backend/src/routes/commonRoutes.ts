@@ -26,6 +26,7 @@ import {
   getLabourProfileDetails,
   getSupervisorProfileDetails,
   getVendorProfileDetails,
+  deleteSupervisor,
 } from "../controllers/common/manageOrganisation";
 
 const router = Router();
@@ -56,6 +57,7 @@ router.get("/manage-org-page-data/:orgId", manageOrgPageData);
 
 router.get("/labour/:labourId", getLabourProfileDetails);
 router.get("/supervisor/:supervisorId", getSupervisorProfileDetails);
+router.delete("/supervisors/:supervisorId", deleteSupervisor);
 router.get("/vendor/:vendorId", getVendorProfileDetails);
 
 // router.post("/create-task", createTask);

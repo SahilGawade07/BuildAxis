@@ -15,7 +15,7 @@ import HeaderBar from "@/components/ui/headerBar";
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import PrimaryBtn from "@/components/ui/primaryBtn";
-import { getVendorById } from "@/lib/api";
+import { getVendorById, deleteVendorRequest } from "@/lib/api";
 
 interface VendorData {
   _id: string;
@@ -120,7 +120,7 @@ export default function VendorDetails() {
     });
   };
 
-  const handleDeleteVendor = () => {
+  const handleDeleteVendor = async () => {
     Alert.alert(
       "Delete Vendor",
       "Are you sure you want to delete this vendor? This action cannot be undone.",
@@ -129,10 +129,19 @@ export default function VendorDetails() {
         {
           text: "Delete",
           style: "destructive",
-          onPress: () => {
-            // Handle delete logic here
-            Alert.alert("Success", "Vendor deleted successfully");
-            router.back();
+          onPress: async () => {
+            try {
+              const response = await deleteVendorRequest(vendorId);
+              if (response.success) {
+                Alert.alert("Success", "Vendor deleted successfully");
+                router.back();
+              } else {
+                Alert.alert("Error", response.message || "Failed to delete vendor");
+              }
+            } catch (error) {
+              console.error("Error deleting vendor:", error);
+              Alert.alert("Error", "Failed to delete vendor due to network error");
+            }
           },
         },
       ]

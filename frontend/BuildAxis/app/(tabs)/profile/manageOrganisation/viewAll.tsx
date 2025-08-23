@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
   Alert,
   StatusBar,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../../../context/ThemeContext";
 import { PersonListItem } from "../../../../components/Profile/ManageOrganisation/PersonListItem";
@@ -109,11 +109,13 @@ export default function ViewAllScreen() {
     }
   };
 
-  useEffect(() => {
-    if (orgId && role) {
-      fetchPeople(1);
-    }
-  }, [orgId, role]);
+  useFocusEffect(
+    React.useCallback(() => {
+      if (orgId && role) {
+        fetchPeople(1);
+      }
+    }, [orgId, role])
+  );
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -126,9 +128,59 @@ export default function ViewAllScreen() {
     }
   };
 
+  /**
+   * Navigate to the appropriate profile details page when a person is tapped
+   * Routes to different pages based on person type (supervisor, promoter, labour, vendor)
+   */
   const handlePersonPress = (person: Person) => {
-    // TODO: Navigate to person details page
-    console.log("Person pressed:", person);
+    // Navigate to person details page based on type
+    switch (person.type) {
+      case "user":
+        if (person.role === "supervisor") {
+          router.push({
+            pathname:
+              "/profile/manageOrganisation/supervisorDetails/[supervisorId]",
+            params: {
+              supervisorId: person._id,
+              name: `${person.fName} ${person.lName}`,
+              profilePicUrl: person.profilePic,
+            },
+          });
+        } else if (person.role === "promoter") {
+          router.push({
+            pathname: "/profile/manageOrganisation/ownerDetails/[ownerId]",
+            params: {
+              ownerId: person._id,
+              name: `${person.fName} ${person.lName}`,
+              profilePicUrl: person.profilePic,
+            },
+          });
+        }
+        break;
+      case "labour":
+        router.push({
+          pathname: "/profile/manageOrganisation/labourDetails/[labourId]",
+          params: {
+            labourId: person._id,
+            name: `${person.fName} ${person.lName}`,
+            profilePicUrl: person.profilePic,
+            work: person.work || "General Labour",
+          },
+        });
+        break;
+      case "vendor":
+        router.push({
+          pathname: "/profile/manageOrganisation/vendorDetails/[vendorId]",
+          params: {
+            vendorId: person._id,
+            name: person.vendorName || "Vendor",
+            profilePicUrl: person.profilePic,
+          },
+        });
+        break;
+      default:
+        console.log("Unknown person type:", person.type);
+    }
   };
 
   const renderPersonItem = ({ item }: { item: Person }) => (

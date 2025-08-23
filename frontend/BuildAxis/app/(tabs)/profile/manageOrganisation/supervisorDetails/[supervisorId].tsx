@@ -15,7 +15,7 @@ import HeaderBar from "@/components/ui/headerBar";
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import PrimaryBtn from "@/components/ui/primaryBtn";
-import { getSupervisorById } from "@/lib/api";
+import { getSupervisorById, deleteSupervisorRequest } from "@/lib/api";
 
 interface SupervisorData {
   _id: string;
@@ -112,7 +112,7 @@ export default function SupervisorDetails() {
     });
   };
 
-  const handleDeleteSupervisor = () => {
+  const handleDeleteSupervisor = async () => {
     Alert.alert(
       "Delete Supervisor",
       "Are you sure you want to delete this supervisor? This action cannot be undone.",
@@ -121,10 +121,32 @@ export default function SupervisorDetails() {
         {
           text: "Delete",
           style: "destructive",
-          onPress: () => {
-            // Handle delete logic here
-            Alert.alert("Success", "Supervisor deleted successfully");
-            router.back();
+          onPress: async () => {
+            try {
+              const response = await deleteSupervisorRequest(supervisorId);
+
+              if (response.success) {
+                Alert.alert("Success", "Supervisor deleted successfully", [
+                  {
+                    text: "OK",
+                    onPress: () => {
+                      router.back();
+                    },
+                  },
+                ]);
+              } else {
+                Alert.alert(
+                  "Error",
+                  response.message || "Failed to delete supervisor"
+                );
+              }
+            } catch (error) {
+              console.error("Error deleting supervisor:", error);
+              Alert.alert(
+                "Error",
+                "Failed to delete supervisor. Please try again."
+              );
+            }
           },
         },
       ]

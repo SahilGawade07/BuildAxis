@@ -436,3 +436,62 @@ export const getVendorProfileDetails = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const deleteSupervisor = async (req: Request, res: Response) => {
+  try {
+    const { supervisorId } = req.params;
+    const user = (req as any).dbUser;
+
+    if (!supervisorId) {
+      return res.status(400).json({
+        success: false,
+        message: "Supervisor ID is required",
+      });
+    }
+
+    // Find the supervisor by ID
+    const supervisor = await User.findById(supervisorId).select("orgId role");
+
+    if (!supervisor) {
+      return res.status(404).json({
+        success: false,
+        message: "Supervisor not found",
+      });
+    }
+
+    // Check if the user is actually a supervisor
+    if (supervisor.role !== "supervisor") {
+      return res.status(400).json({
+        success: false,
+        message: "User is not a supervisor",
+      });
+    }
+
+    // Check if user has access to this supervisor (same organisation)
+    if (String(supervisor.orgId) !== String(user.orgId)) {
+      return res.status(403).json({
+        success: false,
+        message: "You don't have access to this supervisor",
+      });
+    }
+
+    // Remove supervisor from organisation's supervisorsId array
+    await Organisation.findByIdAndUpdate(supervisor.orgId, {
+      $pull: { supervisorsId: supervisorId },
+    });
+
+    // Delete the supervisor user
+    await User.findByIdAndDelete(supervisorId);
+
+    return res.json({
+      success: true,
+      message: "Supervisor deleted successfully",
+    });
+  } catch (error: any) {
+    console.error("Error deleting supervisor:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
+  }
+};
