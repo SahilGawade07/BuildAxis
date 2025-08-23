@@ -22,8 +22,8 @@ import { manageOrgPageData } from "../controllers/common/manageOrganisation";
 import { getsites } from "../controllers/common/sites";
 
 const router = Router();
-// router.use(authenticateJWT);
-// router.use(isAuthenticated);
+router.use(authenticateJWT);
+router.use(isAuthenticated);
 
 router.get("/my-profile", getMyProfile);
 router.put("/my-profile", updateMyProfile);
