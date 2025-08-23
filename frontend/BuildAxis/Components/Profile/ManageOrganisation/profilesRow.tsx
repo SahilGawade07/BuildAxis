@@ -84,9 +84,9 @@ const ProfilesRow: React.FC<ProfilesRowProps> = ({
     return name ? name.charAt(0).toUpperCase() : "U";
   };
 
-  // Show first 6 profiles + add button, or all profiles if less than 7
+  // Show first 6 profiles + add button, or all profiles if less than 6
   const displayProfiles = profiles.slice(0, 6);
-  const showAddButton = profiles.length < 7;
+  const showAddButton = true; // Always show add button
   const remainingCount = profiles.length - 6;
 
   const renderProfile = (profile: Profile, index: number) => (
