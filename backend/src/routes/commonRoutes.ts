@@ -13,7 +13,10 @@ import {
 } from "../controllers/common/vendor";
 import { createTask } from "../controllers/common/task";
 import { addExpense, getSiteExpenses } from "../controllers/common/expenses";
-import { addService } from "../controllers/common/vendorServices";
+import {
+  addService,
+  getAllServices,
+} from "../controllers/common/vendorServices";
 import { authenticateJWT } from "../middlewares/authenticateJWT";
 import { addInventory } from "../controllers/common/inventory";
 import { updateTask } from "../controllers/common/task";
@@ -35,6 +38,7 @@ router.put("/vendors/:vendorId", updateVendor);
 router.delete("/vendors/:vendorId", deleteVendor);
 
 router.post("/add-service", addService);
+router.get("/services", getAllServices);
 
 router.post("/add-expenses", addExpense);
 router.get("/view-expenses/:siteId", getSiteExpenses);

@@ -573,3 +573,65 @@ export async function addLabourToOrganisation(labourPhone: string): Promise<{
 
   return response.json();
 }
+
+// Create Vendor API Call
+export async function createVendorRequest(vendorData: {
+  vendorName: string;
+  contactPerson: string;
+  phoneNo: string;
+  address: string;
+  services?: string[];
+  gstNumber?: string;
+}): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  const response = await apiRequest("/api/common/vendors", {
+    method: "POST",
+    body: JSON.stringify(vendorData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create vendor");
+  }
+
+  return response.json();
+}
+
+// Get Services API Call
+export async function getServicesRequest(): Promise<{
+  success: boolean;
+  message: string;
+  data?: any[];
+}> {
+  const response = await apiRequest("/api/common/services", {
+    method: "GET",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch services");
+  }
+
+  return response.json();
+}
+
+// Add Service API Call
+export async function addServiceRequest(serviceData: {
+  serviceName: string;
+}): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  const response = await apiRequest("/api/common/add-service", {
+    method: "POST",
+    body: JSON.stringify(serviceData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to add service");
+  }
+
+  return response.json();
+}

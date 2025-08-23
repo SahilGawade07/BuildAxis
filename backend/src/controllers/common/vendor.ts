@@ -1,49 +1,24 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { Vendor } from "../../models/Vendor";
 import { Organisation } from "../../models/Organisation";
 import { Types } from "mongoose";
-
-// Additional middleware for organization access control
-export const checkOrgAccess = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const user = (req as any).dbUser;
-    const orgId = req.body.orgId || req.query.orgId;
-
-    if (!orgId) {
-      return res.status(400).json({
-        success: false,
-        message: "Organisation ID is required",
-      });
-    }
-
-    if (String(user.orgId) !== String(orgId)) {
-      return res.status(403).json({
-        success: false,
-        message: "You do not have access to this organisation",
-      });
-    }
-
-    (req as any).orgId = orgId;
-    next();
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
-  }
-};
 
 export const createVendor = async (req: Request, res: Response) => {
   try {
     const { vendorName, contactPerson, phoneNo, address, services, gstNumber } =
       req.body;
 
-    const orgId = (req as any).orgId;
+    // Get orgId from authenticated user's profile
+    const user = (req as any).dbUser;
+    if (!user || !user.orgId) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "User organisation not found. Please ensure you are part of an organisation.",
+      });
+    }
+
+    const orgId = user.orgId;
 
     if (!vendorName || !contactPerson || !phoneNo || !address) {
       return res.status(400).json({
@@ -134,7 +109,17 @@ export const getVendor = async (req: Request, res: Response) => {
 
 export const getAllVendors = async (req: Request, res: Response) => {
   try {
-    const orgId = (req as any).orgId;
+    // Get orgId from authenticated user's profile
+    const user = (req as any).dbUser;
+    if (!user || !user.orgId) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "User organisation not found. Please ensure you are part of an organisation.",
+      });
+    }
+
+    const orgId = user.orgId;
 
     const organisation = await Organisation.findById(orgId);
     if (!organisation) {

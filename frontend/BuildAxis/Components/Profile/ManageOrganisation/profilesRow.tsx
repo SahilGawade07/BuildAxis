@@ -14,6 +14,7 @@ import { useTheme } from "@/context/ThemeContext";
 interface Profile {
   name: string;
   imgUrl?: string;
+  data?: any; // Optional data property to hold the full object
 }
 
 interface ProfilesRowProps {

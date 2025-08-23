@@ -188,12 +188,80 @@ export default function ManageOrganization() {
     setShowAddLabourPopup(true);
   };
 
+  // Function for adding new vendor
+  const handleAddNewVendor = () => {
+    router.push("/profile/manageOrganisation/createVendor");
+  };
+
+  // Function for handling supervisor profile press
+  const handleSupervisorPress = (profile: any, index: number) => {
+    const supervisor = profile.data;
+    const supervisorName =
+      [supervisor.fName, supervisor.lName].filter(Boolean).join(" ") ||
+      "Supervisor";
+    router.push({
+      pathname: "/profile/manageOrganisation/supervisorDetails/[supervisorId]",
+      params: {
+        supervisorId: supervisor._id,
+        name: supervisorName,
+        profilePicUrl: supervisor.profilePic || "",
+      },
+    });
+  };
+
+  // Function for handling labour profile press
+  const handleLabourPress = (profile: any, index: number) => {
+    const labour = profile.data;
+    const labourName =
+      [labour.fName, labour.lName].filter(Boolean).join(" ") ||
+      labour.work ||
+      "Labour";
+    router.push({
+      pathname: "/profile/manageOrganisation/labourDetails/[labourId]",
+      params: {
+        labourId: labour._id,
+        name: labourName,
+        profilePicUrl: labour.profilePic || "",
+        work: labour.work || "",
+      },
+    });
+  };
+
+  // Function for handling vendor profile press
+  const handleVendorPress = (profile: any, index: number) => {
+    const vendor = profile.data;
+    router.push({
+      pathname: "/profile/manageOrganisation/vendorDetails/[vendorId]",
+      params: {
+        vendorId: vendor._id,
+        name: vendor.vendorName || "Vendor",
+        profilePicUrl: vendor.profilePic || "",
+      },
+    });
+  };
+
+  // Function for handling owner profile press
+  const handleOwnerPress = (profile: any, index: number) => {
+    const owner = profile.data;
+    const ownerName =
+      [owner.fName, owner.lName].filter(Boolean).join(" ") || "Owner";
+    router.push({
+      pathname: "/profile/manageOrganisation/ownerDetails/[ownerId]",
+      params: {
+        ownerId: owner._id,
+        name: ownerName,
+        profilePicUrl: owner.profilePic || "",
+      },
+    });
+  };
+
   // Map API entities to ProfilesRow structure
   const ownerProfiles = useMemo(
     () =>
       promoters.map((p: any) => ({
         name: [p?.fName, p?.lName].filter(Boolean).join(" ") || "Owner",
         imgUrl: p?.profilePic || undefined,
+        data: p, // Pass the full data object
       })),
     [promoters]
   );
@@ -203,6 +271,7 @@ export default function ManageOrganization() {
       supervisors.map((s: any) => ({
         name: [s?.fName, s?.lName].filter(Boolean).join(" ") || "Supervisor",
         imgUrl: s?.profilePic || undefined,
+        data: s, // Pass the full data object
       })),
     [supervisors]
   );
@@ -213,6 +282,7 @@ export default function ManageOrganization() {
         name:
           [l?.fName, l?.lName].filter(Boolean).join(" ") || l?.work || "Labour",
         imgUrl: l?.profilePic || undefined,
+        data: l, // Pass the full data object
       })),
     [labours]
   );
@@ -221,6 +291,7 @@ export default function ManageOrganization() {
     () =>
       vendors.map((v: any) => ({
         name: v?.vendorName || "Vendor",
+        data: v, // Pass the full data object
       })),
     [vendors]
   );
@@ -281,6 +352,7 @@ export default function ManageOrganization() {
             profiles={ownerProfiles}
             onViewAll={handleViewAllPromoters}
             onAddNew={() => {}}
+            onProfilePress={handleOwnerPress}
             showDivider={true}
           />
 
@@ -289,6 +361,7 @@ export default function ManageOrganization() {
             profiles={supervisorProfiles}
             onViewAll={handleViewAllSupervisors}
             onAddNew={() => setShowAddSupervisorPopup(true)}
+            onProfilePress={handleSupervisorPress}
             showDivider={true}
           />
 
@@ -297,6 +370,7 @@ export default function ManageOrganization() {
             profiles={labourProfiles}
             onViewAll={handleViewAllLabours}
             onAddNew={handleAddNewLabour}
+            onProfilePress={handleLabourPress}
             showDivider={true}
           />
 
@@ -304,7 +378,8 @@ export default function ManageOrganization() {
             rowTitle="Vendors"
             profiles={vendorProfiles}
             onViewAll={handleViewAllVendors}
-            onAddNew={() => {}}
+            onAddNew={handleAddNewVendor}
+            onProfilePress={handleVendorPress}
             showDivider={false} // No divider after the last row
           />
         </View>

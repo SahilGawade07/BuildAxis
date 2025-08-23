@@ -40,3 +40,21 @@ export const addService = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getAllServices = async (req: Request, res: Response) => {
+  try {
+    const services = await Service.find({}).sort({ serviceName: 1 });
+
+    return res.status(200).json({
+      success: true,
+      message: "Services retrieved successfully.",
+      data: services,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error while retrieving services.",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
