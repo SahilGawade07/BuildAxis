@@ -1,5 +1,6 @@
 // ... imports remain same
 import React, { useState } from "react";
+import {orgData} from "@/data/orginationData"
 import {
   View,
   Text,
@@ -45,8 +46,27 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [storageData, setStorageData] = useState<Record<string, string>>({});
+// Check if organizationInfo exists
+if (storageData.organizationInfo) {
+  // Convert JSON string to object
+  const orgInfo = JSON.parse(storageData.organizationInfo);
 
-  // Fetch user + storage data every time screen comes into focus
+// Convert JSON string to JavaScript object
+
+
+
+
+  const orgName = orgInfo.orgName || "N/A";
+  const fetchedAt = orgInfo.fetchedAt || "N/A";
+
+  console.log("Organization Name:", orgName);
+  console.log("Fetched At:", fetchedAt);
+
+} else {
+  console.log("organizationInfo not available yet");
+}
+
+
   useFocusEffect(
     React.useCallback(() => {
       const fetchUser = async () => {

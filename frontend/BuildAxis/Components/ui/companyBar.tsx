@@ -1,52 +1,71 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
-  View,Text,Image,StyleSheet,TouchableOpacity,StatusBar,
+  View,
+  Text,
+  Image,
+  StyleSheet,
 } from "react-native";
 import { Colors } from "@/Thems/color";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
-//This is top company Bar
 export function CompanyBar() {
-    return(
-         <>
-              <View style={styles.header}>
-                <Image
-                  source={require("@/assets/images/logo.jpg")}
-                  style={styles.logo}
-                />
-                <Text style={styles.headerText}>JMD Constructions</Text>
-              </View>
+  const [user, setUser] = useState<{ name: string; logoUrl: string } | null>(null);
+  const [loading, setLoading] = useState(true);
 
-         </>
-    )
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        setLoading(true);
+
+        const storedData = await AsyncStorage.getItem("userInfo");
+        if (storedData) {
+          const parsedData = JSON.parse(storedData);
+          setUser(parsedData.org);
+
+          // console.log("Org Name:", parsedData.org.name);
+          // console.log("Org Logo:", parsedData.org.logoUrl);
+        }
+      } catch (err) {
+        console.error("Error loading user info:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  
+  if (loading || !user) return null;
+
+  return (
+    <View style={styles.header}>
+      
+        <Image source={{ uri: user.logoUrl }} style={styles.logo} />
+      
+      <Text style={styles.headerText}>{user.name}</Text>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-
   header: {
     backgroundColor: Colors.primary,
     flexDirection: "row",
     alignItems: "center",
     padding: 12,
-
-    justifyContent: "space-between",
+   
   },
   logo: {
-    width: 40,
-    height: 40,
-    borderRadius:5,
-    
+    width: 30,
+    height: 30,
+    borderRadius: 5,
+    marginRight: 8,
   },
   headerText: {
-    color: "#fff",
-    fontSize: 25,
-    fontWeight: "500",
-    flex: 1,
-    marginLeft: 12,
-    //fontFamily:"Roboto-Regular"
-    fontFamily:"Roboto-Black"
+    fontSize: 22,
+    fontWeight: "600",
+    color: "#ffffff"
   },
-
-
- 
 });
