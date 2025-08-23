@@ -5,7 +5,7 @@ import  TextInputs  from "@/components/ui/inputField";
 import { useTheme } from "@/context/ThemeContext";
 import Submit_bbutt from "@/components/ui/SubmitBtn";
 
-export default function Addtools({ fun }: any) {
+export default function Addtools({ fun,header,buttontxt }: any) {
   const [itemName, setItemName] = useState("");
   const [quantity, setQuantity] = useState("");
   const [category, setCategory] = useState("");
@@ -16,7 +16,7 @@ export default function Addtools({ fun }: any) {
   return (
     <View style={[styles.modal, { backgroundColor: theme.listItemFill }]}>
       {/* Header */}
-      <Topbar text="Add Tools" funs={fun} />
+      <Topbar text={header} funs={fun} />
 
       {/* Input Fields */}
       <TextInputs
@@ -50,7 +50,7 @@ export default function Addtools({ fun }: any) {
       />
 
       {/* Button */}
- <Submit_bbutt text="Add Tools" />
+ <Submit_bbutt text={buttontxt}/>
     </View>
   );
 }
