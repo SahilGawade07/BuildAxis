@@ -18,6 +18,7 @@ import { useTheme } from "../../../../../context/ThemeContext";
 import { FloatingButtons } from "@/components/ui/floatingbutton";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { Addbuttonspage } from "@/components/ui/addbuttonforpage";
+import PeopleList from "@/app/labourui"
 const data = [
   { id: "1", name: "Shraddha Sawant" },
   { id: "2", name: "Shraddha Sawant" },
@@ -40,22 +41,25 @@ export default function Labour_list() {
 
 
 
-
+<PeopleList/>
       {/* Labour List */}
-      <FlatList
+      {/* <FlatList
         data={data}
         renderItem={({ item }) => <LabourList item={item} />}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
 
-      />
+      /> */}
 
-            <Addbuttonspage
-                iconname={
-                    <FontAwesome6 name="add" size={20} color="white" />
-                }
-                path="/(tabs)/sites/[siteId]/tabs/labourDetails"
-            />
+
+
+
+      <Addbuttonspage
+        iconname={
+          <FontAwesome6 name="add" size={20} color="white" />
+        }
+        path="/(tabs)/sites/[siteId]/tabs/labourDetails"
+      />
 
     </SafeAreaView>
   );
@@ -63,7 +67,7 @@ export default function Labour_list() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+ 
     flex: 1,
   },
   date: {

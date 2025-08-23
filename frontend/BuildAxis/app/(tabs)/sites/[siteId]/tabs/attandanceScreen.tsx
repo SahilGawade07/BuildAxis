@@ -15,6 +15,7 @@ import { BlurView } from "expo-blur";
 import AttendanceModal from "@/components/Sites/popupScreens/attandancePopup";
 import { useTheme } from "../../../../../context/ThemeContext";
 import { FloatingButtons } from "@/components/ui/floatingbutton";
+import DateSelector from "@/components/ui/dateSelector"
 const data = [
   { id: "1", name: "Shraddha Sawant" },
   { id: "2", name: "Shraddha Sawant" },
@@ -32,11 +33,11 @@ export default function AttendanceSummary() {
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.background }]}
+      style={[styles.container, { backgroundColor: theme.card }]}
     >
       {/* Date */}
-      <Text style={[styles.date, { color: theme.text }]}>Wed 31 Jul</Text>
-
+      
+<DateSelector/>
       {/* Title */}
       <Text style={[styles.title, { color: theme.text }]}>
         Attendance Summary
@@ -143,6 +144,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 12,
+     
   },
   cardContainer: {
     flexDirection: "row",

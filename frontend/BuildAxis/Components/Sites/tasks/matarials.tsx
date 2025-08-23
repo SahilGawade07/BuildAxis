@@ -4,6 +4,8 @@ import Addmaterial from "@/components/Sites/tasks/common/addmaterial";
 import { BlurView } from "expo-blur";
 import Addtools from "@/components/Sites/popupScreens/addToolsPopup";
 import { useTheme } from "@/context/ThemeContext";
+import { Addbuttons } from "@/components/ui/addbutton";
+import { FontAwesome6 } from "@expo/vector-icons";
 
 // Define type for each item
 type MaterialItem = {
@@ -51,12 +53,7 @@ export default function ItemTable() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      {/* Header */}
-      <Addmaterial
-        text="Material"
-        text2="Add materials"
-        funcations={activepopup}
-      />
+  
 
       {/* List */}
       <FlatList
@@ -86,6 +83,12 @@ export default function ItemTable() {
           <Addtools fun={activepopup} />
         </View>
       </Modal>
+
+
+                <Addbuttons
+        iconname={<FontAwesome6 name="add" size={20} color="white" />}
+        functions={activepopup}
+      />
     </View>
   );
 }

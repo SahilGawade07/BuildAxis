@@ -28,9 +28,9 @@ const TextInputs: React.FC<TextInputsProps> = ({
         style={[
           styles.input,
           {
-            borderColor: theme.listItemBorder || "#ccc",
-            color: theme.text,
-            backgroundColor: theme.listItemFill || theme.background,
+            borderColor: theme.inputbordercolor,
+            color: theme.inputcolor,
+            backgroundColor: theme.inputbackgroundcolor,
           },
         ]}
         value={value}
@@ -45,18 +45,27 @@ const TextInputs: React.FC<TextInputsProps> = ({
 
 const styles = StyleSheet.create({
   input: {
-    borderWidth: 1,
-    padding: 15,
+    // borderWidth: 1,
+
+    // borderRadius: 10,
+    // marginVertical: 1,
+    // height: 50,
+
+   
     borderRadius: 10,
-    marginVertical: 1,
-    height: 50,
-    fontSize: 16,
+    padding: 12,
+    borderWidth: 1,
+    fontSize: 15,
+    marginBottom: 18,
+ 
+
+
   },
   name: {
-    fontSize: 16,
-    marginBottom: 3,
-    marginTop: 16,
-    fontWeight: "600",
+    fontSize: 15,
+    fontWeight: "500",
+    color: "#222",
+    marginBottom: 6,
   },
 });
 

@@ -37,11 +37,12 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 10,
+        marginBottom: 20,
     },
     headerText: {
-        fontSize: 20,
-        fontWeight: "bold",
+    fontSize: 22,
+    fontWeight: "600",
+    color: "#111", // dark for contrast
     },
     close: {
         fontSize: 20,

@@ -33,8 +33,8 @@ export default function Main_Sites({ dropped }: any) {
       ? layout.height - (layout.height - 300 - insets.top-insets.bottom-insets.bottom)
       :layout.height - (layout.height - 68 - insets.top-insets.bottom-insets.bottom)
 // console.log(insets.bottom)
-console.log("height asas ",layout.height-68-insets.top)
-console.log("statausbar ",insets.top)
+// console.log("height asas ",layout.height-68-insets.top)
+// console.log("statausbar ",insets.top)
 
     switch (route.key) {
       case "task": return <View style={[styles.tabContent, { paddingBottom }]}><Assigntask /></View>;

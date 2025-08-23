@@ -76,7 +76,7 @@ export default function CreateTaskScreen() {
         </View>
 
         {/* Upload Blueprint Section */}
-        <Upload_img />
+        <Upload_img text="Upload site Banner"/>
 
         {/* Add Labour */}
         <Add_items path="add-labour" text="Add Labour" />
@@ -101,13 +101,14 @@ const styles = StyleSheet.create({
 
   form: {
     paddingHorizontal: 15,
+    paddingTop:15
   },
 
   label: {
     fontSize: 16,
     marginBottom: 3,
-    marginTop: 16,
-    fontWeight: "600",
+   
+    fontWeight: "500",
   },
 
   pickerContainer: {

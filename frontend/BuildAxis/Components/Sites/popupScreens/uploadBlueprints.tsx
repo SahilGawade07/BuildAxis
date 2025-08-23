@@ -6,12 +6,13 @@ import {
   StyleSheet,
 } from "react-native";
 import Topbar from "@/components/Sites/popupScreens/common/topBar";
-import  TextInputs  from "@/components/ui/inputField";
+import TextInputs from "@/components/ui/inputField";
 import { useTheme } from "@/context/ThemeContext";
+import Submit_bbutt from "@/components/ui/SubmitBtn";
 
 export default function Uploadblueprints({ fun }: any) {
   const [email, setemail] = useState("");
-  const [correct, setcorrect] = useState(true);
+  const [correct, setcorrect] = useState(false);
 
   const { theme } = useTheme();
 
@@ -28,24 +29,11 @@ export default function Uploadblueprints({ fun }: any) {
       {correct && (
         <View>
           {/* File Button */}
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: theme.secondary }]}
-            onPress={() => setcorrect(!correct)}
-          >
-            <Text style={[styles.buttonText, { color: theme.text }]}>
-              Choose from file
-            </Text>
-          </TouchableOpacity>
-
+          <Submit_bbutt text="Uploaad from File " />
           {/* Camera Button */}
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: theme.secondary }]}
-            onPress={() => setcorrect(!correct)}
-          >
-            <Text style={[styles.buttonText, { color: theme.text }]}>
-              Click From Camera
-            </Text>
-          </TouchableOpacity>
+          <Submit_bbutt text="Upload from camara" />
+
+
         </View>
       )}
 
@@ -65,13 +53,9 @@ export default function Uploadblueprints({ fun }: any) {
             keyboardType="email-address"
             textname="Item Name"
           />
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: theme.secondary }]}
-          >
-            <Text style={[styles.buttonText, { color: theme.text }]}>
-              Upload Attachment
-            </Text>
-          </TouchableOpacity>
+
+          <Submit_bbutt text="Upload Attachment" />
+
         </View>
       )}
     </View>

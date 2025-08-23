@@ -1,4 +1,4 @@
-import { AntDesign, Entypo } from "@expo/vector-icons";
+import { AntDesign, Entypo, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
@@ -6,10 +6,11 @@ import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 export default function Upload_img({ path, text }: any) {
   return (
     <>
-      <Text style={styles.label}>{text}</Text>
-      <TouchableOpacity style={styles.uploadBox}>
-        <AntDesign name="plus" size={32} color="#3D7BF7" />
-      </TouchableOpacity></>
+          <Text style={styles.label}>{text}</Text>
+          <TouchableOpacity style={styles.uploadBox}>
+            <Ionicons name="add" size={28} color="#007bff" />
+          </TouchableOpacity>
+          </>
   )
 
 }
@@ -17,23 +18,21 @@ export default function Upload_img({ path, text }: any) {
 
 const styles = StyleSheet.create({
 
-  label: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 3,
-    marginTop: 16,
-    fontWeight: "600"
+    label: {
+    fontSize: 15,
+    fontWeight: "500",
+    color: "#222",
+    marginBottom: 6,
   },
     uploadBox: {
-    width: 80,
-    height: 80,
+    height: 100,
+    width: 100,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#bbb",
     borderStyle: "dashed",
-    borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 20,
+    backgroundColor: "#fff",
   },
-
 });

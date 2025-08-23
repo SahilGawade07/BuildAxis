@@ -13,11 +13,13 @@ import * as ImagePicker from "expo-image-picker";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 // Reusable Components
-import  TextInputs  from "../../../../../components/ui/inputField";
+import TextInputs from "../../../../../components/ui/inputField";
 import { ContinueBtn } from "../../../../../components/ui/ContinueBtn";
 import { useTheme } from "../../../../../context/ThemeContext";
 import Back_Text_Butt from "@/components/ui/backBtn";
 import HeaderBar from "@/components/ui/headerBar";
+import Upload_img from "@/components/ui/uploadImages";
+import Submit_bbutt from "@/components/ui/SubmitBtn";
 
 export default function LabourDetailsScreen() {
   const router = useRouter();
@@ -62,7 +64,7 @@ export default function LabourDetailsScreen() {
       {/* Header */}
 
 
-<HeaderBar title="Add Labours" />
+      <HeaderBar title="Add Labours" />
 
 
       {/* Form */}
@@ -93,32 +95,19 @@ export default function LabourDetailsScreen() {
           textname="Role"
         />
 
-        {/* Upload Photo */}
-        <Text style={[styles.label, { color: theme.text }]}>Upload Photo</Text>
-        <TouchableOpacity
-          style={[
-            styles.uploadBox,
-            { borderColor: theme.listItemBorder, backgroundColor: theme.listItemFill },
-          ]}
-          onPress={handlePickImage}
-        >
-          {photo ? (
-            <Image source={{ uri: photo }} style={styles.uploadedImage} />
-          ) : (
-            <Text style={[styles.plus, { color: theme.secondary }]}>+</Text>
-          )}
-        </TouchableOpacity>
-
-        {/* Error */}
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+               <Upload_img text="Image" />
+       
 
         {/* Submit */}
-        <ContinueBtn
+        {/* <ContinueBtn
           text="Add To Company"
           touchable={true}
           onPresss={handleAddToCompany}
           style={{ backgroundColor: theme.secondary }}
-        />
+        /> */}
+
+                <Submit_bbutt text="Add to the Company" />
+
       </View>
     </SafeAreaView>
   );

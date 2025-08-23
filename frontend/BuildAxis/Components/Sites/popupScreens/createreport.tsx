@@ -10,6 +10,7 @@ import {
 import Topbar from "@/components/Sites/popupScreens/common/topBar";
 import { useTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
+import Submit_bbutt from "@/components/ui/SubmitBtn";
 
 export default function Reportui({ fun }: any) {
   const { theme } = useTheme();
@@ -183,12 +184,8 @@ export default function Reportui({ fun }: any) {
           </View>
         </View>
 
-        <TouchableOpacity
-          style={styles.generateButton}
-          onPress={handleGenerateReport}
-        >
-          <Text style={styles.generateButtonText}>Generate Report</Text>
-        </TouchableOpacity>
+                <Submit_bbutt text="Generate Report " />
+
       </View>
 
       {showCalendar && <Calendar />}
@@ -197,8 +194,8 @@ export default function Reportui({ fun }: any) {
 }
 
 const styles = StyleSheet.create({
-  modal: { borderRadius: 10, padding: 10, width: "95%", alignSelf: "center" },
-  formContainer: { padding: 20 },
+  modal: { borderRadius: 10, padding: 10, width: "95%", alignSelf: "center",paddingVertical:20 },
+  formContainer: { paddingHorizontal: 10 },
   inputGroup: { marginBottom: 20 },
   label: { fontSize: 14, fontWeight: "500", marginBottom: 6, color: "#333" },
   textInput: {

@@ -27,14 +27,14 @@ const projects = [
     name: "Sky Towers",
     progress: "Paid By",
     date: "01/10/2024",
-    status: "Paid",
+    status: "UnPaid",
   },
   {
     id: "4",
     name: "Blue Ocean",
     progress: "Paid By",
     date: "20/08/2025",
-    status: "Active",
+    status: "Unpaid",
   },
 ];
 

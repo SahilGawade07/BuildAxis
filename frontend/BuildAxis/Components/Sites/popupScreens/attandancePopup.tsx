@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import Topbar from "@/components/Sites/popupScreens/common/topBar";
 import { useTheme } from "../../../context/ThemeContext"; // adjust path
+import Submit_bbutt from "@/components/ui/SubmitBtn";
 
 export default function AttendanceModal({ fun }: any) {
   const { theme } = useTheme(); // <-- use theme here
@@ -51,7 +52,7 @@ export default function AttendanceModal({ fun }: any) {
                 styles.row,
                 {
                   backgroundColor: isChecked
-                    ? theme.primary
+                    ? theme.boxes02[1]
                     : theme.backgroundgrey,
                 },
               ]}
@@ -83,13 +84,8 @@ export default function AttendanceModal({ fun }: any) {
       />
 
       {/* Button */}
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: theme.primary }]}
-      >
-        <Text style={[styles.buttonText, { color: theme.background }]}>
-          Update Attendance
-        </Text>
-      </TouchableOpacity>
+                <Submit_bbutt text="Submit Attandance" />
+
     </View>
   );
 }

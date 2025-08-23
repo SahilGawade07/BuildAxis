@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Topbar from "@/components/Sites/popupScreens/common/topBar";
 import  TextInputs  from "@/components/ui/inputField";
 import { useTheme } from "@/context/ThemeContext";
+import Submit_bbutt from "@/components/ui/SubmitBtn";
 
 export default function Addtools({ fun }: any) {
   const [itemName, setItemName] = useState("");
@@ -49,13 +50,7 @@ export default function Addtools({ fun }: any) {
       />
 
       {/* Button */}
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: theme.secondary }]}
-      >
-        <Text style={[styles.buttonText, { color: theme.text }]}>
-          Add Tools
-        </Text>
-      </TouchableOpacity>
+ <Submit_bbutt text="Add Tools" />
     </View>
   );
 }

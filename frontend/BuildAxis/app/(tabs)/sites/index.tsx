@@ -27,7 +27,7 @@ export default function Site() {
   ];
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.backgroundgrey }]}>
       <StatusBar backgroundColor={theme.primary} barStyle={theme.isDark ? "light-content" : "dark-content"} />
       <CompanyBar />
 
@@ -39,8 +39,8 @@ export default function Site() {
           {
             // backgroundColor: theme.listItemFill,
             // borderColor: theme.listItemBorder,
-            backgroundColor:"#f0f0f0",
-             borderColor: "#f0f0f0",
+            backgroundColor:theme.listItemFill,
+             borderColor: theme.listItemBorder,
           },
         ]}
       >

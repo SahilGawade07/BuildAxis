@@ -21,8 +21,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 14,
     alignItems: "center",
-    marginTop: 25,
-    marginBottom: 30,
+    // marginTop: 25,
+    // marginBottom: 30,
+    marginTop: 15,
+
   },
   assignBtnText: { color: "#fff", fontSize: 16, fontWeight: "600" },
 
