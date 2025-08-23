@@ -24,6 +24,7 @@ interface ProfilesRowProps {
   onAddNew?: () => void;
   onProfilePress?: (profile: Profile, index: number) => void;
   showDivider?: boolean;
+  fallbackIconType?: "user" | "business" | "building"; // Add fallback icon type
 }
 
 // Lazy Loading Image Component
@@ -31,7 +32,8 @@ const LazyImage: React.FC<{
   source: { uri: string };
   style: any;
   resizeMode: "cover" | "contain" | "stretch" | "repeat" | "center";
-}> = ({ source, style, resizeMode }) => {
+  fallbackIconType?: "user" | "business" | "building";
+}> = ({ source, style, resizeMode, fallbackIconType = "user" }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -44,10 +46,23 @@ const LazyImage: React.FC<{
     setError(true);
   };
 
+  // Get the appropriate icon name based on fallbackIconType
+  const getFallbackIcon = (): string => {
+    switch (fallbackIconType) {
+      case "business":
+        return "briefcase";
+      case "building":
+        return "home";
+      case "user":
+      default:
+        return "user";
+    }
+  };
+
   if (error) {
     return (
       <View style={[style, styles.fallbackAvatar]}>
-        <Icon name="user" size={32} color="#6b7280" />
+        <Icon name={getFallbackIcon()} size={32} color="#6b7280" />
       </View>
     );
   }
@@ -77,12 +92,26 @@ const ProfilesRow: React.FC<ProfilesRowProps> = ({
   onAddNew,
   onProfilePress,
   showDivider = true,
+  fallbackIconType = "user", // Default to user icon
 }) => {
   const { theme } = useTheme();
 
   // Get first letter of name for fallback avatar
   const getInitial = (name: string): string => {
     return name ? name.charAt(0).toUpperCase() : "U";
+  };
+
+  // Get the appropriate icon name based on fallbackIconType
+  const getFallbackIcon = (): string => {
+    switch (fallbackIconType) {
+      case "business":
+        return "briefcase";
+      case "building":
+        return "home";
+      case "user":
+      default:
+        return "user";
+    }
   };
 
   // Show first 6 profiles + add button, or all profiles if less than 6
@@ -111,6 +140,7 @@ const ProfilesRow: React.FC<ProfilesRowProps> = ({
             source={{ uri: profile.imgUrl }}
             style={styles.avatar}
             resizeMode="cover"
+            fallbackIconType={fallbackIconType}
           />
         ) : (
           <View
@@ -119,7 +149,7 @@ const ProfilesRow: React.FC<ProfilesRowProps> = ({
               { backgroundColor: theme.listItemFill },
             ]}
           >
-            <Icon name="user" size={32} color={theme.icons} />
+            <Icon name={getFallbackIcon()} size={32} color={theme.icons} />
           </View>
         )}
       </View>

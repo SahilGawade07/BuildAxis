@@ -432,6 +432,7 @@ export default function ManageOrganization() {
             onAddNew={handleAddNewVendor}
             onProfilePress={handleVendorPress}
             showDivider={false} // No divider after the last row
+            fallbackIconType="business" // Use business icon for vendors
           />
         </View>
       </ScrollView>
