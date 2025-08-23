@@ -18,6 +18,7 @@ import { authenticateJWT } from "../middlewares/authenticateJWT";
 import { addInventory } from "../controllers/common/inventory";
 import { updateTask } from "../controllers/common/task";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
+import { manageOrgPageData } from "../controllers/common/manageOrganisation";
 
 const router = Router();
 router.use(authenticateJWT);
@@ -41,6 +42,8 @@ router.get("/view-expenses/:siteId", getSiteExpenses);
 router.post("/add-inventory", addInventory);
 
 router.patch("/update-task/:taskId", updateTask);
+
+router.get("/manage-org-page-data/:orgId", manageOrgPageData);
 
 // router.post("/create-task", createTask);
 

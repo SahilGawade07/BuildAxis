@@ -1,6 +1,7 @@
 import { TouchableOpacity, View, Text, StyleSheet, Alert } from "react-native";
 import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { logout } from "@/lib/api";
 import { useRouter } from "expo-router";
 
 const LogoutButton: React.FC = () => {
@@ -8,8 +9,7 @@ const LogoutButton: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.multiRemove(["userToken", "userInfo"]);
-
+      await logout();
       Alert.alert("Success", "Logged out successfully", [
         {
           text: "OK",

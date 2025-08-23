@@ -53,7 +53,9 @@ export default function LabourDetailsScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background }]}
+    >
       <StatusBar
         barStyle={theme.isDark ? "light-content" : "dark-content"}
         backgroundColor={theme.primary}
@@ -98,7 +100,10 @@ export default function LabourDetailsScreen() {
         <TouchableOpacity
           style={[
             styles.uploadBox,
-            { borderColor: theme.listItemBorder, backgroundColor: theme.listItemFill },
+            {
+              borderColor: theme.listItemBorder,
+              backgroundColor: theme.listItemFill,
+            },
           ]}
           onPress={handlePickImage}
         >
@@ -116,7 +121,7 @@ export default function LabourDetailsScreen() {
         <ContinueBtn
           text="Add To Company"
           touchable={true}
-          onPresss={handleAddToCompany}
+          onPress={handleAddToCompany}
           style={{ backgroundColor: theme.secondary }}
         />
       </View>

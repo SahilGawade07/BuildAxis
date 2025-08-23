@@ -72,6 +72,23 @@ export default function LoginScreen() {
       }
       if (result.data) {
         await AsyncStorage.setItem("userInfo", JSON.stringify(result.data));
+
+        const org = (result.data as any)?.org;
+        if (org && (org.id || org._id)) {
+          const orgInfoToStore = {
+            orgId: org.id || org._id,
+            orgName: org.name || "",
+            address: org.address || "",
+            logoUrl: org.logoUrl || "",
+            fetchedAt: new Date().toISOString(),
+          };
+          await AsyncStorage.setItem(
+            "organizationInfo",
+            JSON.stringify(orgInfoToStore)
+          );
+        } else {
+          await AsyncStorage.removeItem("organizationInfo");
+        }
       }
 
       router.replace("/(tabs)/home");
