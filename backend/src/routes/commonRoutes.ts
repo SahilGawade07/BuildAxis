@@ -19,10 +19,11 @@ import { addInventory } from "../controllers/common/inventory";
 import { updateTask } from "../controllers/common/task";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
 import { manageOrgPageData } from "../controllers/common/manageOrganisation";
+import { getsites } from "../controllers/common/sites";
 
 const router = Router();
-router.use(authenticateJWT);
-router.use(isAuthenticated);
+// router.use(authenticateJWT);
+// router.use(isAuthenticated);
 
 router.get("/my-profile", getMyProfile);
 router.put("/my-profile", updateMyProfile);
@@ -44,6 +45,8 @@ router.post("/add-inventory", addInventory);
 router.patch("/update-task/:taskId", updateTask);
 
 router.get("/manage-org-page-data/:orgId", manageOrgPageData);
+router.get("/siteslist/:orgId", getsites);
+
 
 // router.post("/create-task", createTask);
 
