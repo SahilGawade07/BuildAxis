@@ -40,6 +40,7 @@ export default function Home() {
           icon={<Ionicons name="people" size={40} color={theme.boxes01[2]} />}
         />
 
+
         <Overview
           variant="boxes02"
           Text1="Daily Expenses"

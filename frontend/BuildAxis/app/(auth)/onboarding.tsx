@@ -21,14 +21,14 @@ const slides = [
   },
   {
     id: 2,
-    image: require("@/assets/images/construction3.png"),
+    image: require("@/assets/images/construction2.png"),
     title: "Monitor Workforce & Resources",
     subtitle:
       "Assign tasks, track workers, and manage materials to avoid delays and overspending.",
   },
   {
     id: 3,
-    image: require("@/assets/images/construction2.png"),
+    image: require("@/assets/images/construction3.png"),
     title: "Simplify Reporting & Communication",
     subtitle:
       "Generate reports, share progress, and communicate seamlessly with your team.",

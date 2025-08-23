@@ -3,6 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { Overview } from "../../../../../components/ui/summaryBoxes";
 import { useTheme } from "../../../../../context/ThemeContext"; // ✅ import theme
 import { FontAwesome, FontAwesome5, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { FontAwesome, FontAwesome5, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 export const Inventory = ({ item }: any) => {
   const { theme } = useTheme(); // ✅ get active theme

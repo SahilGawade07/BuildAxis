@@ -248,10 +248,11 @@ export default function EditProfileScreen() {
               />
 
               {/* Save Button */}
+
               <ContinueBtn
                 text={loading ? "Saving..." : "Save Changes"}
                 touchable={!loading}
-                onPresss={handleUpdate}
+                onPress={handleUpdate}
               />
             </View>
           </View>

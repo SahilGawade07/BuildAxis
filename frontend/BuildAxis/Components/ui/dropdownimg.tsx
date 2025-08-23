@@ -39,7 +39,7 @@ export default function DropImageExample({ onDropChange }: any) {
   });
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.primary, paddingBottom: dropped ? 20 : 0 }]}>
+    <View style={[styles.container, { backgroundColor: theme.primary, paddingBottom: dropped ? 10 : 0 }]}>
       <View style={styles.row}>
         <Back_Text_Butt text="Site Name" />
         <TouchableOpacity onPress={toggleDrop} style={styles.button}>

@@ -17,9 +17,6 @@ import TextInputs from "../../../../../components/ui/inputField";
 import { ContinueBtn } from "../../../../../components/ui/ContinueBtn";
 import { useTheme } from "../../../../../context/ThemeContext";
 import Back_Text_Butt from "@/components/ui/backBtn";
-import HeaderBar from "@/components/ui/headerBar";
-import Upload_img from "@/components/ui/uploadImages";
-import Submit_bbutt from "@/components/ui/SubmitBtn";
 
 export default function LabourDetailsScreen() {
   const router = useRouter();
@@ -55,7 +52,9 @@ export default function LabourDetailsScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background }]}
+    >
       <StatusBar
         barStyle={theme.isDark ? "light-content" : "dark-content"}
         backgroundColor={theme.primary}
@@ -64,8 +63,9 @@ export default function LabourDetailsScreen() {
       {/* Header */}
 
 
-      <HeaderBar title="Add Labours" />
-
+      <View style={[styles.header, { backgroundColor: theme.primary }]}>    
+              <Back_Text_Butt path="/tabs/Sites/Site" text="Labour Details" />
+      </View>
 
       {/* Form */}
       <View style={styles.form}>
@@ -95,14 +95,30 @@ export default function LabourDetailsScreen() {
           textname="Role"
         />
 
-               <Upload_img text="Image" />
-       
+        {/* Upload Photo */}
+        <Text style={[styles.label, { color: theme.text }]}>Upload Photo</Text>
+        <TouchableOpacity
+          style={[
+            styles.uploadBox,
+            { borderColor: theme.listItemBorder, backgroundColor: theme.listItemFill },
+          ]}
+          onPress={handlePickImage}
+        >
+          {photo ? (
+            <Image source={{ uri: photo }} style={styles.uploadedImage} />
+          ) : (
+            <Text style={[styles.plus, { color: theme.secondary }]}>+</Text>
+          )}
+        </TouchableOpacity>
+
+        {/* Error */}
+        {error ? <Text style={styles.error}>{error}</Text> : null}
 
         {/* Submit */}
         {/* <ContinueBtn
           text="Add To Company"
           touchable={true}
-          onPresss={handleAddToCompany}
+          onPress={handleAddToCompany}
           style={{ backgroundColor: theme.secondary }}
         /> */}
 

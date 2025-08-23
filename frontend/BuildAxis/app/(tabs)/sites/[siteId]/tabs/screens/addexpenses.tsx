@@ -12,6 +12,7 @@ import Upload_img from "@/components/ui/uploadImages";
 import TextInputs from "@/components/ui/inputField";
 import { useTheme } from "@/context/ThemeContext";
 import HeaderBar from "@/components/ui/headerBar";
+import HeaderBar from "@/components/ui/headerBar";
 
 export default function CreatePaymentScreen() {
   const { theme } = useTheme();

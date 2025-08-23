@@ -9,12 +9,15 @@ import ItemTable from "@/app/(tabs)/sites/[siteId]/tabs/itemScreen";
 import Labour_list from "@/app/(tabs)/sites/[siteId]/tabs/labourScreen";
 import Report from "@/app/(tabs)/sites/[siteId]/tabs/report";
 import { Assigntask } from "./assigntask";
+import { Assigntask } from "./assigntask";
 import { useTheme } from "@/context/ThemeContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Main_Sites({ dropped }: any) {
   const { theme } = useTheme();
   const layout = useWindowDimensions();
+  const insets = useSafeAreaInsets(); // ✅ get safe area
   const insets = useSafeAreaInsets(); // ✅ get safe area
 
   const [index, setIndex] = React.useState(0);
@@ -45,13 +48,23 @@ export default function Main_Sites({ dropped }: any) {
       case "material": return <View style={[styles.tabContent, { paddingBottom }]}><ItemTable /></View>;
       case "expencess": return <View style={[styles.tabContent, { paddingBottom }]}><ExpencessScreen /></View>;
       default: return null;
+      case "task": return <View style={[styles.tabContent, { paddingBottom }]}><Assigntask /></View>;
+      case "report": return <View style={[styles.tabContent, { paddingBottom }]}><Report /></View>;
+      case "attendance": return <View style={[styles.tabContent, { paddingBottom }]}><AttendanceSummary /></View>;
+      case "labour": return <View style={[styles.tabContent, { paddingBottom }]}><Labour_list /></View>;
+      case "inventory": return <View style={[styles.tabContent, { paddingBottom }]}><Inventory /></View>;
+      case "material": return <View style={[styles.tabContent, { paddingBottom }]}><ItemTable /></View>;
+      case "expencess": return <View style={[styles.tabContent, { paddingBottom }]}><ExpencessScreen /></View>;
+      default: return null;
     }
   };
 
   return (
     <View style={{ flex: 1, minHeight: layout.height }}>
+    <View style={{ flex: 1, minHeight: layout.height }}>
       <TabView
         navigationState={{ index, routes }}
+        renderScene={renderScene}
         renderScene={renderScene}
         onIndexChange={setIndex}
         initialLayout={{ width: layout.width }}
@@ -62,6 +75,7 @@ export default function Main_Sites({ dropped }: any) {
             {...props}
             scrollEnabled
             indicatorStyle={{ backgroundColor: theme.secondary }}
+            style={{ backgroundColor: theme.listItemFill, marginBottom: 10 }}
             style={{ backgroundColor: theme.listItemFill, marginBottom: 10 }}
             labelStyle={{ fontWeight: "600" }}
             activeColor={theme.secondary}
