@@ -145,14 +145,22 @@
 //   },
 // });
 
-
 import React, { useState } from "react";
-import { View, Text, StyleSheet, FlatList, Modal } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Modal,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { BlurView } from "expo-blur";
 import { useTheme } from "../../../../../context/ThemeContext";
 import { Addbuttons } from "@/components/ui/addbutton";
 import { FontAwesome6 } from "@expo/vector-icons";
 import Addtools from "../../../../../components/Sites/popupScreens/addToolsPopup";
+import { Swipeable } from "react-native-gesture-handler";
 
 type MaterialItem = {
   id: string;
@@ -175,48 +183,80 @@ export default function ItemTable() {
 
   const activePopup = () => setPopup(!popup);
 
-  const renderItem = ({ item }: { item: MaterialItem }) => (
-    <View
-      style={[
-        styles.itemCard,
-        {
-          backgroundColor: theme.card,
-          borderColor: theme.listItemBorder,
-          shadowColor: theme.shadow,
-        },
-      ]}
-    >
-      {/* Left - Material Name */}
-      <View style={styles.itemLeft}>
-        <View style={styles.srNoBox}>
-          <Text style={[styles.srNoText, { color: theme.primary }]}>
-            {item.srNo}
-          </Text>
-        </View>
-        <View style={styles.itemInfo}>
-          <Text style={[styles.itemName, { color: theme.text }]}>
-            {item.name}
-          </Text>
-          <Text style={[styles.subText, { color: theme.muted }]}>Material</Text>
-        </View>
-      </View>
+  // --- Swipe Actions (Right Side) ---
+  const renderRightActions = (item: MaterialItem) => (
+    <View style={styles.rightActionContainer}>
+      <TouchableOpacity
+        style={[styles.actionBtn, { backgroundColor: theme.primary }]}
+ onPress={() => activePopup()}
+      >
+        <Text style={styles.actionText}>Edit</Text>
+      </TouchableOpacity>
 
-      {/* Right - Quantity */}
-      <View style={styles.itemRight}>
-        <Text style={[styles.quantity, { color: theme.accent }]}>
-          {item.qty}
-        </Text>
-        <Text style={[styles.unit, { color: theme.muted }]}>{item.unit}</Text>
-      </View>
+      <TouchableOpacity
+        style={[styles.actionBtn, { backgroundColor: theme.error || "red" }]}
+        onPress={() =>
+    Alert.alert(
+      "Confirm Delete",
+      `Are you sure you want to delete "${item.name}"?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => console.log("Deleted:", item),
+        },
+      ]
+    )
+  }
+      >
+        <Text style={styles.actionText}>Delete</Text>
+      </TouchableOpacity>
     </View>
+  );
+
+  const renderItem = ({ item }: { item: MaterialItem }) => (
+    <Swipeable renderRightActions={() => renderRightActions(item)}>
+      <View
+        style={[
+          styles.itemCard,
+          {
+            backgroundColor: theme.card,
+            borderColor: theme.listItemBorder,
+            shadowColor: theme.shadow,
+          },
+        ]}
+      >
+        {/* Left - Material Name */}
+        <View style={styles.itemLeft}>
+          <View style={styles.srNoBox}>
+            <Text style={[styles.srNoText, { color: theme.primary }]}>
+              {item.srNo}
+            </Text>
+          </View>
+          <View style={styles.itemInfo}>
+            <Text style={[styles.itemName, { color: theme.text }]}>
+              {item.name}
+            </Text>
+            <Text style={[styles.subText, { color: theme.muted }]}>
+              Material
+            </Text>
+          </View>
+        </View>
+
+        {/* Right - Quantity */}
+        <View style={styles.itemRight}>
+          <Text style={[styles.quantity, { color: theme.accent }]}>
+            {item.qty}
+          </Text>
+          <Text style={[styles.unit, { color: theme.muted }]}>{item.unit}</Text>
+        </View>
+      </View>
+    </Swipeable>
   );
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      {/* Title */}
-
-
-      {/* List */}
       <FlatList
         data={data}
         renderItem={renderItem}
@@ -256,11 +296,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    marginBottom: 16,
   },
   itemCard: {
     flexDirection: "row",
@@ -319,5 +354,23 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-});
 
+  // --- Swipe Action Styles ---
+  rightActionContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 4,
+  },
+  actionBtn: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: 80,
+    height: "85%",
+    marginHorizontal: 4,
+    borderRadius: 12,
+  },
+  actionText: {
+    color: "white",
+    fontWeight: "600",
+  },
+});

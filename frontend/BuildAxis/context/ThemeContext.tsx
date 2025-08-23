@@ -71,7 +71,7 @@ export const Colors = {
   icons: "#6B7280",
   muted: "#6B7280", 
   textforboxex: "#6D6D6D",      
-
+ accent: "#3B82F6",
   listItemFill: "#FFFFFF",
   listItemBorder: "#E5E7EB",
 
