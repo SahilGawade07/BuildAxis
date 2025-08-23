@@ -5,6 +5,7 @@ import { Site } from "../../models/Site";
 import { Labour } from "../../models/Labour";
 import { Types } from "mongoose";
 import { uploadOnCloudinary } from "../../utils/cloudinary";
+import fs from "fs";
 
 // Middleware for organization access control (from params or body)
 export const checkOrgAccessFromParams = async (
@@ -499,7 +500,10 @@ export const addLabour = async (req: Request, res: Response) => {
 
 export const createLabour = async (req: Request, res: Response) => {
   try {
-    const { fName, lName, phone, profilePic, documentsUrl, work } = req.body;
+    const { fName, lName, phone, work } = req.body;
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    const profilePic = files?.profilePic?.[0]; // Get profile pic file
+    const documents = files?.documentsUrl || []; // Get document files
     const user = (req as any).dbUser;
 
     // Get orgId from the authenticated user's context
@@ -512,14 +516,71 @@ export const createLabour = async (req: Request, res: Response) => {
       });
     }
 
-    if (!fName || !lName || !phone || !profilePic || !documentsUrl || !work) {
+    if (!fName) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required",
+        message: "First name is required",
       });
     }
 
-    const existingLabour = await Labour.findOne({ phone });
+    if (!lName) {
+      return res.status(400).json({
+        success: false,
+        message: "Last name is required",
+      });
+    }
+
+    if (!phone) {
+      return res.status(400).json({
+        success: false,
+        message: "Phone number is required",
+      });
+    }
+
+    // Validate phone number format
+    const phoneNumber = parseInt(phone);
+    if (isNaN(phoneNumber) || phoneNumber <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid phone number format",
+      });
+    }
+
+    if (!profilePic) {
+      return res.status(400).json({
+        success: false,
+        message: "Profile picture is required",
+      });
+    }
+
+    // Upload profile picture to Cloudinary
+    let profilePicUrl: string =
+      "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"; // fallback
+
+    try {
+      const uploadResult = await uploadOnCloudinary(profilePic.path);
+      if (uploadResult?.url) {
+        profilePicUrl = uploadResult.url;
+      }
+    } catch (uploadError) {
+      // Continue with default profile pic
+    }
+
+    // documentsUrl is optional, so we don't need to validate it
+    // if (!documentsUrl) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Documents URL is required",
+    //   });
+    // }
+
+    if (!work) {
+      return res.status(400).json({
+        success: false,
+        message: "Work details are required",
+      });
+    }
+    const existingLabour = await Labour.findOne({ phone: phoneNumber });
 
     if (existingLabour) {
       return res.status(400).json({
@@ -528,16 +589,29 @@ export const createLabour = async (req: Request, res: Response) => {
       });
     }
 
+    // Upload documents to Cloudinary
+    const documentsUrl: string[] = [];
+    if (documents.length > 0) {
+      for (const doc of documents) {
+        try {
+          const uploadResult = await uploadOnCloudinary(doc.path);
+          if (uploadResult?.url) {
+            documentsUrl.push(uploadResult.url);
+          }
+        } catch (uploadError) {
+          // Continue with other documents
+        }
+      }
+    }
+
     const newLabour = await Labour.create({
       fName,
       lName,
-      phone,
-      profilePic:
-        profilePic ||
-        "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png",
+      phone: phoneNumber, // Use validated phone number
+      profilePic: profilePicUrl,
       orgId: orgId as Types.ObjectId,
       work,
-      documentsUrl,
+      documentsUrl: documentsUrl,
     });
 
     const organisation = await Organisation.findById(orgId);
@@ -550,6 +624,23 @@ export const createLabour = async (req: Request, res: Response) => {
 
     organisation.labourId.push(newLabour._id as Types.ObjectId);
     await organisation.save();
+
+    // Clean up temporary local files
+    try {
+      if (profilePic && profilePic.path) {
+        fs.unlinkSync(profilePic.path);
+      }
+
+      documents.forEach((doc) => {
+        try {
+          fs.unlinkSync(doc.path);
+        } catch (cleanupError) {
+          // Continue with cleanup
+        }
+      });
+    } catch (cleanupError) {
+      // Continue with response
+    }
 
     return res.status(201).json({
       success: true,

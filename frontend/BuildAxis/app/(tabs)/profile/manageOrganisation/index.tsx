@@ -15,6 +15,7 @@ import HeaderBar from "@/components/ui/headerBar";
 import { CompanyInfoCard } from "@/components/Profile/ManageOrganisation/companyInfo";
 import ProfilesRow from "@/components/Profile/ManageOrganisation/profilesRow";
 import AddSupervisorPopup from "@/components/Profile/ManageOrganisation/addSupervisorPopup";
+import AddLabourPopup from "@/components/Profile/ManageOrganisation/addLabourPopup";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getManageOrgPageData, getUserProfile } from "@/lib/api";
 import { router } from "expo-router";
@@ -33,6 +34,7 @@ export default function ManageOrganization() {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [showAddSupervisorPopup, setShowAddSupervisorPopup] =
     useState<boolean>(false);
+  const [showAddLabourPopup, setShowAddLabourPopup] = useState<boolean>(false);
   const [hasShownSupervisorAlert, setHasShownSupervisorAlert] =
     useState<boolean>(false);
   const [orgId, setOrgId] = useState<string>("");
@@ -181,6 +183,11 @@ export default function ManageOrganization() {
     }
   };
 
+  // Function for adding new labour
+  const handleAddNewLabour = () => {
+    setShowAddLabourPopup(true);
+  };
+
   // Map API entities to ProfilesRow structure
   const ownerProfiles = useMemo(
     () =>
@@ -289,7 +296,7 @@ export default function ManageOrganization() {
             rowTitle="Labours"
             profiles={labourProfiles}
             onViewAll={handleViewAllLabours}
-            onAddNew={() => {}}
+            onAddNew={handleAddNewLabour}
             showDivider={true}
           />
 
@@ -315,6 +322,24 @@ export default function ManageOrganization() {
             onClose={() => setShowAddSupervisorPopup(false)}
             onSuccess={() => {
               setShowAddSupervisorPopup(false);
+              fetchData(); // Refresh the data
+            }}
+          />
+        </View>
+      </Modal>
+
+      {/* Add Labour Popup */}
+      <Modal
+        visible={showAddLabourPopup}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowAddLabourPopup(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <AddLabourPopup
+            onClose={() => setShowAddLabourPopup(false)}
+            onSuccess={() => {
+              setShowAddLabourPopup(false);
               fetchData(); // Refresh the data
             }}
           />

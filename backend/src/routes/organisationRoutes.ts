@@ -13,12 +13,11 @@ import { authenticateJWT } from "../middlewares/authenticateJWT";
 import { isPromoter } from "../middlewares/isPromoter";
 import { upload } from "../middlewares/multer";
 
-
 const router = Router();
 
 router.use(authenticateJWT);
 
-router.post("/",isPromoter, createOrganisation);
+router.post("/", isPromoter, createOrganisation);
 router.get("/:orgId", getOrganisation);
 router.put("/:orgId", updateOrganisation);
 router.delete("/:orgId", deleteOrganisation);
@@ -30,6 +29,13 @@ router.post(
   createSupervisor
 );
 router.post("/add-labour", addLabour);
-router.post("/create-labour", createLabour);
+router.post(
+  "/create-labour",
+  upload.fields([
+    { name: "profilePic", maxCount: 1 },
+    { name: "documentsUrl", maxCount: 10 },
+  ]),
+  createLabour
+);
 
 export default router;

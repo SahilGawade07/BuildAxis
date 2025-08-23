@@ -481,3 +481,95 @@ export async function createSupervisorRequest(supervisorData: {
 
   return payload as any;
 }
+
+// Create Labour API Call
+export async function createLabourRequest(labourData: {
+  fName: string;
+  lName: string;
+  phone: string;
+  profilePic?: { uri: string; name: string; type: string };
+  documentsUrl?: string[];
+  work: string;
+}): Promise<{
+  success: boolean;
+  message: string;
+  action?: string;
+  data?: any;
+}> {
+  const formData = new FormData();
+  formData.append("fName", labourData.fName);
+  formData.append("lName", labourData.lName);
+  formData.append("phone", labourData.phone);
+  formData.append("work", labourData.work);
+
+  if (labourData.profilePic) {
+    formData.append("profilePic", labourData.profilePic as unknown as any);
+  }
+
+  if (labourData.documentsUrl && labourData.documentsUrl.length > 0) {
+    labourData.documentsUrl.forEach((url, index) => {
+      // Convert URI to file object for FormData
+      const filename = url.split("/").pop() || `document_${index}.jpg`;
+      const file = {
+        uri: url,
+        name: filename,
+        type: "image/jpeg", // Default type, could be made dynamic
+      } as any;
+      formData.append(`documentsUrl`, file);
+    });
+  }
+
+  const token = await AsyncStorage.getItem("userToken");
+  if (!token) {
+    throw new Error("No authentication token found");
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/organisations/create-labour`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    }
+  );
+
+  // Try to parse JSON regardless of status to surface server message
+  let payload: any = null;
+  try {
+    payload = await response.json();
+  } catch {
+    payload = null;
+  }
+
+  if (!response.ok) {
+    return (
+      payload || {
+        success: false,
+        message: response.statusText || "Failed to create labour",
+      }
+    );
+  }
+
+  return payload as any;
+}
+
+// Add Labour to Organisation API Call
+export async function addLabourToOrganisation(labourPhone: string): Promise<{
+  success: boolean;
+  message: string;
+  action?: string;
+  data?: any;
+}> {
+  const response = await apiRequest("/api/organisations/add-labour", {
+    method: "POST",
+    body: JSON.stringify({ labourPhone }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to add labour to organisation");
+  }
+
+  return response.json();
+}
