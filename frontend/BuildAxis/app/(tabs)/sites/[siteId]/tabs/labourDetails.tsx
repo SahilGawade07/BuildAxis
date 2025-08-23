@@ -13,11 +13,12 @@ import * as ImagePicker from "expo-image-picker";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 // Reusable Components
-import  TextInputs  from "../../../../../components/ui/inputField";
+import TextInputs from "../../../../../components/ui/inputField";
 import { ContinueBtn } from "../../../../../components/ui/ContinueBtn";
 import { useTheme } from "../../../../../context/ThemeContext";
 import Back_Text_Butt from "@/components/ui/backBtn";
-
+import Submit_bbutt from "@/components/ui/SubmitBtn";
+import HeaderBar from "@/components/ui/headerBar";
 export default function LabourDetailsScreen() {
   const router = useRouter();
   const { theme } = useTheme();
@@ -61,11 +62,9 @@ export default function LabourDetailsScreen() {
       />
 
       {/* Header */}
+<HeaderBar title="Add labour"/>
 
 
-      <View style={[styles.header, { backgroundColor: theme.primary }]}>    
-              <Back_Text_Butt path="/tabs/Sites/Site" text="Labour Details" />
-      </View>
 
       {/* Form */}
       <View style={styles.form}>
@@ -100,10 +99,7 @@ export default function LabourDetailsScreen() {
         <TouchableOpacity
           style={[
             styles.uploadBox,
-            {
-              borderColor: theme.listItemBorder,
-              backgroundColor: theme.listItemFill,
-            },
+            { borderColor: theme.listItemBorder, backgroundColor: theme.listItemFill },
           ]}
           onPress={handlePickImage}
         >
@@ -118,12 +114,15 @@ export default function LabourDetailsScreen() {
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
         {/* Submit */}
-        <ContinueBtn
+        {/* <ContinueBtn
           text="Add To Company"
           touchable={true}
           onPress={handleAddToCompany}
           style={{ backgroundColor: theme.secondary }}
-        />
+        /> */}
+
+                <Submit_bbutt text="Add to the Company" />
+
       </View>
     </SafeAreaView>
   );

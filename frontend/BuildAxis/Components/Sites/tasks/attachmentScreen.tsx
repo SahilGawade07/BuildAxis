@@ -7,13 +7,14 @@ import {
   TouchableOpacity,
   Modal,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 
 import Addmaterial from "@/components/Sites/tasks/common/addmaterial";
 import Addtools from "../popupScreens/addToolsPopup";
 import Uploadblueprints from "@/components/Sites/popupScreens/uploadBlueprints";
 import { useTheme } from "@/context/ThemeContext";
+import { Addbuttons } from "@/components/ui/addbutton";
 
 export default function MaterialsScreen() {
   const data = [
@@ -45,11 +46,7 @@ export default function MaterialsScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
-      {/* <Addmaterial
-        text="Attachment"
-        text2="Add attachments"
-        funcations={activepopup}
-      /> */}
+
 
       {/* Grid */}
       <FlatList
@@ -71,21 +68,26 @@ export default function MaterialsScreen() {
         <BlurView
           style={[
             StyleSheet.absoluteFill,
-            { backgroundColor: theme.isDark ? "rgba(0,0,0,0.7)" : "rgba(65,65,65,0.3)" },
+            { backgroundColor: theme.isDark ? "rgba(0, 0, 0, 0.87)" : "rgba(65,65,65,0.3)" },
           ]}
           tint={theme.isDark ? "dark" : "light"}
           intensity={30}
         />
-        <View style={styles.overlay}>
-          <Uploadblueprints fun={activepopup} />
-        </View>
+  <View style={styles.modalBottomContainer}>
+    <Uploadblueprints fun={activepopup} />
+  </View>
+  
       </Modal>
+          <Addbuttons
+        iconname={<FontAwesome6 name="add" size={20} color="white" />}
+        functions={activepopup}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 15 },
+  container: { flex: 1, padding: 15 ,},
   item: { alignItems: "center", marginBottom: 20 },
   imageBox: {
     width: 110,
@@ -100,5 +102,10 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     justifyContent: "center",
+  },
+    modalBottomContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+    // optional padding
   },
 });

@@ -5,13 +5,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 // Reusable components
 import Add_items from "@/components/ui/add_item";
-import Back_Text_Butt from "@/components/ui/backBtn";
 import { Safe_area } from "@/components/ui/safeArea";
 import Submit_bbutt from "@/components/ui/SubmitBtn";
 import Upload_img from "@/components/ui/uploadImages";
-import { CompanyBar } from "@/components/ui/orgNameBar";
 import TextInputs from "@/components/ui/inputField";
 import { useTheme } from "@/context/ThemeContext";
+import HeaderBar from "@/components/ui/headerBar";
 
 export default function CreateTaskScreen() {
   const { theme } = useTheme();
@@ -28,19 +27,19 @@ export default function CreateTaskScreen() {
       {/* Custom Safe Area Styling */}
       <Safe_area />
 
- 
-
       {/* Back Button + Title */}
-      <Back_Text_Butt path="/(tabs)/sites" text="Create New Site" />
+      <HeaderBar title="Create a New Site" />
+    
 
       <View style={styles.form} >
         {/* Task Name Input */}
         <TextInputs
           value={taskName}
           onChangeText={setTaskName}
-          placeholder="Task Name"
+          placeholder="Site Name"
+  
           keyboardType="default"
-          textname="Task Name"
+          textname="Site Name"
         />
 
         {/* Description Input */}
@@ -54,9 +53,7 @@ export default function CreateTaskScreen() {
 
         {/* Assign Supervisor Dropdown */}
         <Text style={[styles.label, { color: theme.text }]}>Add Patners</Text>
-        <View
-          style={[
-            styles.pickerContainer,
+        <View style={[styles.pickerContainer,
             { borderColor: theme.listItemBorder, backgroundColor: theme.listItemFill },
           ]}
         >
@@ -75,18 +72,12 @@ export default function CreateTaskScreen() {
         {/* Upload Blueprint Section */}
         <Upload_img text="Site Banner" />
 
-       
-
         {/* Assign Supervisor Again (if multiple supervisors) */}
         <Add_items path="assign-supervisor" text="Assign Supervisor" />
 
-       
         {/* Submit Button */}
+        <Submit_bbutt text="Create Site" />
         
-           <Submit_bbutt text="Create Site" />
-
-        
-       
       </View>
     </SafeAreaView>
   );
@@ -99,13 +90,13 @@ const styles = StyleSheet.create({
 
   form: {
     paddingHorizontal: 15,
+    paddingVertical:15
   },
 
   label: {
-    fontSize: 16,
+    fontSize: 15,
     marginBottom: 3,
-    marginTop: 16,
-    fontWeight: "600",
+    fontWeight: "500",
   },
 
   pickerContainer: {

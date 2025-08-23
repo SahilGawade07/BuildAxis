@@ -27,7 +27,7 @@ export default function Site() {
   ];
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.backgroundgrey }]}>
       <StatusBar backgroundColor={theme.primary} barStyle={theme.isDark ? "light-content" : "dark-content"} />
       <CompanyBar />
 
@@ -37,8 +37,10 @@ export default function Site() {
         style={[
           styles.searchContainer,
           {
-            backgroundColor: theme.listItemFill,
-            borderColor: theme.listItemBorder,
+            // backgroundColor: theme.listItemFill,
+            // borderColor: theme.listItemBorder,
+            backgroundColor:theme.listItemFill,
+             borderColor: theme.listItemBorder,
           },
         ]}
       >
@@ -90,6 +92,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 27,
     borderWidth: 1,
+    paddingVertical:2
   },
   searchInput: {
     flex: 1,

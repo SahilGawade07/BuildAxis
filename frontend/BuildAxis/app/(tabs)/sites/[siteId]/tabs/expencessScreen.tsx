@@ -4,10 +4,9 @@ import { Expencess } from "@/components/ui/expencesseBox";
 import { useTheme } from "../../../../../context/ThemeContext"; 
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { Addbuttons } from "@/components/ui/addbutton";
-import {  useRouter } from "expo-router";
+import { useRouter } from "expo-router";
+import { Addbuttonspage } from "@/components/ui/addbuttonforpage";
 
-
-const router = useRouter();
 const projects = [
   {
     id: "1",
@@ -28,19 +27,21 @@ const projects = [
     name: "Sky Towers",
     progress: "Paid By",
     date: "01/10/2024",
-    status: "Paid",
+    status: "UnPaid",
   },
   {
     id: "4",
     name: "Blue Ocean",
     progress: "Paid By",
     date: "20/08/2025",
-    status: "Active",
+    status: "Unpaid",
   },
 ];
 
 export const ExpencessScreen = () => {
   const { theme } = useTheme(); 
+  const router = useRouter(); 
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <FlatList
@@ -49,20 +50,15 @@ export const ExpencessScreen = () => {
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingTop: 10 }}
       />
-
-      {/* Floating Add Button */}
-      <Addbuttons
-        iconname={
-          <FontAwesome6 name="add" size={20} color="white" />
-        }
-        // onPress to open popup
-        onPress={() => router.push("/(tabs)/sites/[siteId]/tabs/screens/addexpenses")}
-      />
+       <Addbuttonspage
+                iconname={
+                    <FontAwesome6 name="add" size={20} color="white" />
+                }
+                path={"/(tabs)/sites/[siteId]/tabs/screens/addexpenses"}
+            />
     </View>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   container: {

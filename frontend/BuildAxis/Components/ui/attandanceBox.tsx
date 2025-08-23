@@ -28,6 +28,12 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     marginHorizontal: 4,
     borderRadius: 12,
+        // Modern shadows
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
   },
   iconCircle: {
     height: 50,

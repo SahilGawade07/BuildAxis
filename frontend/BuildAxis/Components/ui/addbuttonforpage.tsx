@@ -13,7 +13,9 @@ export const Addbuttonspage = ({ iconname ,path }: any) => {
   return (
     <TouchableOpacity
       style={[styles.fab, { backgroundColor: theme.secondary }]}
-    onPress={()=>{router.push("/sideanimation")}}
+      onPress={() => {
+        router.push(path);
+      }}
     >
       {iconname}   {/* render the passed icon here */}
     </TouchableOpacity>

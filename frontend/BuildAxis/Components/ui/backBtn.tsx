@@ -4,7 +4,7 @@ import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { useTheme } from "../../context/ThemeContext"; // adjust path
 
-export default function Back_Text_Butt({path,text}:any) {
+export default function Back_Text_Butt({text}:any) {
     const { theme } = useTheme();
   
     return (
@@ -12,7 +12,7 @@ export default function Back_Text_Butt({path,text}:any) {
         <View style={[styles.header,{backgroundColor: theme.primary}]}>
             <TouchableOpacity onPress={()=>router.back()} >
 
-                <Entypo name="chevron-left" size={30} color="white" />
+                <Entypo name="chevron-left" size={25} color="white" />
             </TouchableOpacity >
             <View style={{ width: 6 }} /> {/* Placeholder for spacing */}
             <Text style={styles.headerText}>{text}</Text>
@@ -25,13 +25,14 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    
     paddingHorizontal: 10,
-   
+     paddingVertical: 10,
+
+
   },
   headerText: {
     fontSize: 25,
-    fontWeight: "bold",
+    fontWeight: "600",
     color:"white"
   },
 });

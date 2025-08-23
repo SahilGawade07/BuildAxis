@@ -1,75 +1,85 @@
-import React from "react";
+// ✅ summaryBoxes.tsx (Overview)
+import React, { ReactNode } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@/context/ThemeContext";
 
+
+
 interface OverviewProps {
-  variant: "boxes01" | "boxes02" | "boxes03" | "boxes04"; // ✅ choose which color set to use
-  Ionicons_name: React.ComponentProps<typeof Ionicons>["name"];
+  variant: "boxes01" | "boxes02" | "boxes03" | "boxes04"; // choose color set
   Text1: string;
   text2?: string;
   text3?: string;
+  icon?: ReactNode; // ✅ allow passing custom icon component
 }
 
 export function Overview({
   variant,
-  Ionicons_name,
+
   Text1,
   text2,
   text3,
+  icon
 }: OverviewProps) {
   const { theme } = useTheme();
-
-  // pick colors from the variant (boxes01, boxes02…)
   const [cardBg, circleBg, iconColor] = theme[variant];
 
   return (
     <View style={[styles.card, { backgroundColor: cardBg }]}>
       {/* Circle with Icon */}
       <View style={[styles.circle, { backgroundColor: circleBg }]}>
-        <Ionicons name={Ionicons_name} size={60} color={iconColor} />
+        {/* <Ionicons name={Ionicons_name} size={60} color={iconColor} /> */}
+        {icon} 
       </View>
 
-      {/* Texts */}
-      <Text style={[styles.cardTitle, { color: theme.text }]}>{Text1}</Text>
-      {text2 ? (
-        <Text style={[styles.cardText, { color: theme.text }]}>{text2}</Text>
-      ) : null}
-      {text3 ? (
-        <Text style={[styles.cardText, { color: theme.text }]}>{text3}</Text>
-      ) : null}
+      {/* Text Content */}
+      <Text style={[styles.cardTitle, { color: theme.textforboxex }]}>{Text1}</Text>
+      {text2 && (
+        <Text style={[styles.cardSubtitle, { color: theme.textforboxex }]}>{text2}</Text>
+      )}
+      {text3 && (
+        <Text style={[styles.cardSubtitle, { color: theme.textforboxex }]}>{text3}</Text>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    width: "47%",
-    height: 200,
-    padding: 15,
-    marginBottom: 25,
-    borderRadius: 12,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    flexBasis: "48%",
+    marginBottom: 20,
+    borderRadius: 16,
+    paddingVertical: 18,
+    paddingHorizontal: 12,
     alignItems: "center",
-  },
-  cardTitle: {
-    fontWeight: "bold",
-    fontSize: 20,
-    marginVertical: 8,
-    textAlign: "center",
-  },
-  cardText: {
-    fontSize: 14,
-    textAlign: "center",
+
+    // Modern shadows
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
   },
   circle: {
-    width: 80,
-    height: 80,
-    borderRadius: 50,
+    width: 60,
+    height: 60,
+    borderRadius: 45,
     justifyContent: "center",
     alignItems: "center",
+    marginBottom: 14,
+  },
+  cardTitle: {
+    fontSize: 17,
+    fontWeight: "700",
+    marginBottom: 6,
+    textAlign: "center",
+  },
+  cardSubtitle: {
+    fontSize: 14,
+    fontWeight: "500",
+    textAlign: "center",
+    
+    marginBottom: 2,
   },
 });

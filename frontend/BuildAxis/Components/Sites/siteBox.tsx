@@ -13,7 +13,9 @@ export const SiteBox = ({ item }: any) => {
         styles.sitecard,
         {
           backgroundColor: theme.listItemFill,
-          borderColor: theme.listItemBorder,
+          // borderColor: theme.listItemBorder,
+          borderColor: "#ffffff",
+          
         },
       ]}
 onPress={() => router.push(`/sites/${item.id}`)}    >
