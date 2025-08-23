@@ -37,7 +37,7 @@ export default function Home() {
           Text1="Attendance"
           text2="Supervisor: 20"
           text3="Labours: 100"
-          icon={<Ionicons name="people" size={40} color={theme.boxes01[2]} />}
+          icon={<Ionicons name="people" size={40} color={theme.boxes01[2]} />} 
         />
 
 

@@ -4,11 +4,10 @@ import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@/context/ThemeContext";
 
-import { ReactNode } from "react";
+
 
 interface OverviewProps {
   variant: "boxes01" | "boxes02" | "boxes03" | "boxes04"; // choose color set
-  Ionicons_name: React.ComponentProps<typeof Ionicons>["name"]; // icon name
   Text1: string;
   text2?: string;
   text3?: string;
@@ -17,7 +16,7 @@ interface OverviewProps {
 
 export function Overview({
   variant,
-  Ionicons_name,
+
   Text1,
   text2,
   text3,

@@ -11,7 +11,6 @@ import Upload_img from "@/components/ui/uploadImages";
 import TextInputs from "@/components/ui/inputField";
 import { useTheme } from "@/context/ThemeContext";
 import HeaderBar from "@/components/ui/headerBar";
-import HeaderBar from "@/components/ui/headerBar";
 
 export default function CreateTaskScreen() {
   const { theme } = useTheme();
@@ -30,7 +29,7 @@ export default function CreateTaskScreen() {
 
       {/* Back Button + Title */}
       <HeaderBar title="Create a New Site" />
-      <HeaderBar title="Create a New Site" />
+    
 
       <View style={styles.form} >
         {/* Task Name Input */}
@@ -38,9 +37,8 @@ export default function CreateTaskScreen() {
           value={taskName}
           onChangeText={setTaskName}
           placeholder="Site Name"
-          placeholder="Site Name"
+  
           keyboardType="default"
-          textname="Site Name"
           textname="Site Name"
         />
 

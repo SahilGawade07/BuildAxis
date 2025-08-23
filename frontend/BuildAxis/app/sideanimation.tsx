@@ -1,30 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { useWindowDimensions, StyleSheet, View } from "react-native";
 import { TabView, TabBar } from "react-native-tab-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import AttendanceSummary from "@/app/(tabs)/sites/[siteId]/tabs/attandanceScreen";
 import { Inventory } from "@/app/(tabs)/sites/[siteId]/tabs/InventoryScreen";
-import { TaskBox } from "@/components/Sites/taskBox";
 import { ExpencessScreen } from "@/app/(tabs)/sites/[siteId]/tabs/expencessScreen";
 import ItemTable from "@/app/(tabs)/sites/[siteId]/tabs/itemScreen";
 import Labour_list from "@/app/(tabs)/sites/[siteId]/tabs/labourScreen";
 import Report from "@/app/(tabs)/sites/[siteId]/tabs/report";
-import React from "react";
-import { StyleSheet ,View} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@/context/ThemeContext";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Assigntask } from "./(tabs)/sites/[siteId]/tabs/assigntask";
+import { Assigntask } from "@/app/(tabs)/sites/[siteId]/tabs/assigntask";
 import DropImageExample from "@/components/ui/dropdownimg";
-import Main_Sites from "@/app/(tabs)/sites/[siteId]/tabs/index";
+import { useTheme } from "@/context/ThemeContext";
 
-export default function Main_Sites({ dropped }: any) {
-export default function Main_Site() {
+export default function Main_Sites() {
   const { theme } = useTheme();
   const layout = useWindowDimensions();
-  const insets = useSafeAreaInsets(); // ✅ get safe area
 
-  const [index, setIndex] = React.useState(0);
-  const [routes] = React.useState([
+  const [dropped, setDropped] = useState(false);
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
     { key: "task", title: "Assign Task" },
     { key: "report", title: "Report" },
     { key: "attendance", title: "Attendance" },
@@ -35,9 +29,7 @@ export default function Main_Site() {
   ]);
 
   const renderScene = ({ route }: any) => {
-    const paddingBottom = dropped
-      ? 390
-      :170
+    const paddingBottom = dropped ? 390 : 170;
 
     switch (route.key) {
       case "task": return <View style={[styles.tabContent, { paddingBottom }]}><Assigntask /></View>;
@@ -50,48 +42,40 @@ export default function Main_Site() {
       default: return null;
     }
   };
-  const [dropped, setDropped] = React.useState(false);
 
   return (
-    <View style={{ flex: 1, minHeight: layout.height }}>
-      <TabView
-        navigationState={{ index, routes }}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        initialLayout={{ width: layout.width }}
-        swipeEnabled
-        animationEnabled
-        renderTabBar={(props) => (
-          <TabBar
-            {...props}
-            scrollEnabled
-            indicatorStyle={{ backgroundColor: theme.secondary }}
-            style={{ backgroundColor: theme.listItemFill, marginBottom: 10 }}
-            labelStyle={{ fontWeight: "600" }}
-            activeColor={theme.secondary}
-            inactiveColor={theme.text}
-          />
-        )}
-        springConfig={{ damping: 25, stiffness: 180, mass: 1 }}
-      />
-    </View>
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Drop header */}
       <DropImageExample onDropChange={(value: boolean) => setDropped(value)} />
-      {/* Main Tabs */}
 
-      
-      <Main_Sites dropped={dropped} />
-    
+      {/* Main Tabs */}
+      <View style={{ flex: 1 }}>
+        <TabView
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{ width: layout.width }}
+          swipeEnabled
+          animationEnabled
+          renderTabBar={(props) => (
+            <TabBar
+              {...props}
+              scrollEnabled
+              indicatorStyle={{ backgroundColor: theme.secondary }}
+              style={{ backgroundColor: theme.listItemFill, marginBottom: 10 }}
+              labelStyle={{ fontWeight: "600" }}
+              activeColor={theme.secondary}
+              inactiveColor={theme.text}
+            />
+          )}
+          springConfig={{ damping: 25, stiffness: 180, mass: 1 }}
+        />
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  tabContent: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
+  tabContent: { flex: 1 },
 });
