@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   View,
   Modal,
+  Text,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@/context/ThemeContext";
@@ -19,6 +20,7 @@ import AddLabourPopup from "@/components/Profile/ManageOrganisation/addLabourPop
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getManageOrgPageData, getUserProfile } from "@/lib/api";
 import { router } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function ManageOrganization() {
   const { theme } = useTheme();
@@ -38,9 +40,20 @@ export default function ManageOrganization() {
   const [hasShownSupervisorAlert, setHasShownSupervisorAlert] =
     useState<boolean>(false);
   const [orgId, setOrgId] = useState<string>("");
+  const [lastFetchTime, setLastFetchTime] = useState<number>(0);
 
-  const fetchData = async (showRefreshIndicator = false) => {
+  const fetchData = async (
+    showRefreshIndicator = false,
+    forceRefresh = false
+  ) => {
     try {
+      // Skip fetch if data is fresh (less than 30 seconds old) and not forced
+      const now = Date.now();
+      if (!forceRefresh && now - lastFetchTime < 30000) {
+        console.log("📱 Data is fresh, skipping fetch");
+        return;
+      }
+
       if (showRefreshIndicator) {
         setRefreshing(true);
       } else {
@@ -112,6 +125,7 @@ export default function ManageOrganization() {
     } finally {
       setLoading(false);
       setRefreshing(false);
+      setLastFetchTime(Date.now()); // Update last fetch time
     }
   };
 
@@ -119,6 +133,31 @@ export default function ManageOrganization() {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Refresh data when page comes into focus (e.g., returning from edit page)
+  useFocusEffect(
+    React.useCallback(() => {
+      // Force refresh when returning to ensure we have the latest data
+      fetchData(false, true);
+    }, [])
+  );
+
+  // Show brief loading when refreshing on focus
+  const [refreshingOnFocus, setRefreshingOnFocus] = useState(false);
+
+  // Enhanced fetchData with focus refresh handling
+  const fetchDataOnFocus = async () => {
+    setRefreshingOnFocus(true);
+    await fetchData(false, true);
+    setRefreshingOnFocus(false);
+  };
+
+  // Update useFocusEffect to use the enhanced function
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchDataOnFocus();
+    }, [])
+  );
 
   // If no supervisors are found, prompt user to create one and navigate on OK
   useEffect(() => {
@@ -333,10 +372,22 @@ export default function ManageOrganization() {
         <View
           style={[styles.headerSection, { backgroundColor: theme.background }]}
         >
+          {refreshingOnFocus && (
+            <View
+              style={[
+                styles.refreshIndicator,
+                { backgroundColor: theme.primary },
+              ]}
+            >
+              <ActivityIndicator size="small" color="#fff" />
+              <Text style={styles.refreshText}>Updating...</Text>
+            </View>
+          )}
           <CompanyInfoCard
             organizationName={orgName || "Organisation"}
             address={orgAddress || ""}
             imageUrl={logoUrl || ""}
+            orgId={orgId}
           />
         </View>
 
@@ -457,5 +508,19 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  refreshIndicator: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  refreshText: {
+    color: "#fff",
+    marginLeft: 8,
+    fontSize: 14,
   },
 });

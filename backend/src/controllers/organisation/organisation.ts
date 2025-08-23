@@ -4,7 +4,10 @@ import { User } from "../../models/User";
 import { Site } from "../../models/Site";
 import { Labour } from "../../models/Labour";
 import { Types } from "mongoose";
-import { uploadOnCloudinary } from "../../utils/cloudinary";
+import {
+  uploadOnCloudinary,
+  deleteFromCloudinary,
+} from "../../utils/cloudinary";
 import fs from "fs";
 
 // Middleware for organization access control (from params or body)
@@ -193,8 +196,102 @@ export const getOrganisation = async (req: Request, res: Response) => {
 export const updateOrganisation = async (req: Request, res: Response) => {
   try {
     const { orgId } = req.params;
-    const { name, email, phone, logoUrl } = req.body;
+    const { name, email, phone, address, logoUrl: logoUrlFromBody } = req.body;
     const organisation = (req as any).organisation;
+
+    // Handle logo file upload if present
+    let logoUrl = organisation.logoUrl; // Keep existing logo by default
+
+    // Check if logo should be removed (explicitly set to null/empty)
+    if (logoUrlFromBody === null || logoUrlFromBody === "") {
+      if (
+        organisation.logoUrl &&
+        organisation.logoUrl.includes("cloudinary.com")
+      ) {
+        console.log(
+          "🗑️ Removing logo as requested, deleting from Cloudinary:",
+          organisation.logoUrl
+        );
+        const deleteResult = await deleteFromCloudinary(organisation.logoUrl);
+        if (deleteResult) {
+          console.log("✅ Logo deleted successfully from Cloudinary");
+        } else {
+          console.log(
+            "⚠️ Failed to delete logo from Cloudinary, but continuing"
+          );
+        }
+      }
+      logoUrl = ""; // Set logo to empty string
+    } else if (logoUrlFromBody && logoUrlFromBody !== organisation.logoUrl) {
+      // New logo URL provided in body (not as file upload)
+      if (
+        organisation.logoUrl &&
+        organisation.logoUrl.includes("cloudinary.com")
+      ) {
+        console.log(
+          "🗑️ Updating logo URL, deleting old logo from Cloudinary:",
+          organisation.logoUrl
+        );
+        const deleteResult = await deleteFromCloudinary(organisation.logoUrl);
+        if (deleteResult) {
+          console.log("✅ Old logo deleted successfully from Cloudinary");
+        } else {
+          console.log(
+            "⚠️ Failed to delete old logo from Cloudinary, but continuing"
+          );
+        }
+      }
+      logoUrl = logoUrlFromBody;
+    } else if (req.file) {
+      try {
+        // Delete previous logo from Cloudinary if it exists
+        if (
+          organisation.logoUrl &&
+          organisation.logoUrl.includes("cloudinary.com")
+        ) {
+          console.log(
+            "🗑️ Deleting previous logo from Cloudinary:",
+            organisation.logoUrl
+          );
+          const deleteResult = await deleteFromCloudinary(organisation.logoUrl);
+          if (deleteResult) {
+            console.log("✅ Previous logo deleted successfully");
+          } else {
+            console.log(
+              "⚠️ Failed to delete previous logo, but continuing with upload"
+            );
+          }
+        } else if (organisation.logoUrl) {
+          console.log(
+            "ℹ️ Previous logo is not from Cloudinary, skipping deletion:",
+            organisation.logoUrl
+          );
+        }
+
+        // Upload new logo to Cloudinary
+        console.log("📤 Uploading new logo to Cloudinary");
+        const cloudinaryResponse = await uploadOnCloudinary(req.file.path);
+        if (cloudinaryResponse) {
+          logoUrl = cloudinaryResponse.secure_url;
+          console.log("✅ New logo uploaded successfully:", logoUrl);
+        } else {
+          return res.status(500).json({
+            success: false,
+            message: "Failed to upload logo",
+          });
+        }
+      } catch (uploadError) {
+        console.error("❌ Logo upload/delete error:", uploadError);
+        return res.status(500).json({
+          success: false,
+          message: "Logo upload failed",
+          error:
+            uploadError instanceof Error
+              ? uploadError.message
+              : "Unknown upload error",
+        });
+      }
+    }
 
     const updatedOrganisation = await Organisation.findByIdAndUpdate(
       orgId,
@@ -202,7 +299,8 @@ export const updateOrganisation = async (req: Request, res: Response) => {
         name: name || organisation.name,
         email: email || organisation.email,
         phone: phone || organisation.phone,
-        logoUrl: logoUrl || organisation.logoUrl,
+        address: address || organisation.address,
+        logoUrl: logoUrl,
       },
       { new: true }
     );

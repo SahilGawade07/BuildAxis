@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import PasswordField from "@/components/ui/passwordField";
 import PrimaryBtn from "@/components/ui/primaryBtn";
 import { updatePasswordRequest } from "@/lib/api";
+import { useTheme } from "@/context/ThemeContext";
 
 // Simple password strength checker
 const getPasswordStrength = (password: string) => {
@@ -15,6 +16,7 @@ const getPasswordStrength = (password: string) => {
 };
 
 export default function ChangePasswordPage() {
+  const { theme } = useTheme();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -65,21 +67,35 @@ export default function ChangePasswordPage() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView
+      style={[styles.safeArea, { backgroundColor: theme.background }]}
+    >
       <HeaderBar title="Change Password" />
 
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.header}>
-          <View style={styles.iconContainer}>
+          <View
+            style={[
+              styles.iconContainer,
+              { backgroundColor: theme.isDark ? theme.card : "#e8f2ff" },
+            ]}
+          >
             <Text style={styles.icon}>🔐</Text>
           </View>
-          <Text style={styles.title}>Update Your Password</Text>
-          <Text style={styles.subtitle}>
+          <Text style={[styles.title, { color: theme.text }]}>
+            Update Your Password
+          </Text>
+          <Text style={[styles.subtitle, { color: theme.muted }]}>
             Keep your account secure by updating your password regularly.
           </Text>
         </View>
 
-        <View style={styles.card}>
+        <View
+          style={[
+            styles.card,
+            { backgroundColor: theme.card, shadowColor: theme.shadow },
+          ]}
+        >
           {/* Current Password */}
           <PasswordField
             value={currentPassword}
@@ -108,13 +124,15 @@ export default function ChangePasswordPage() {
                           backgroundColor:
                             level <= passwordStrength.strength
                               ? passwordStrength.color
+                              : theme.isDark
+                              ? "#374151"
                               : "#e0e0e0",
                         },
                       ]}
                     />
                   ))}
                 </View>
-                <Text style={styles.strengthText}>
+                <Text style={[styles.strengthText, { color: theme.muted }]}>
                   {passwordStrength.strength === 1 && "Weak"}
                   {passwordStrength.strength === 2 && "Good"}
                   {passwordStrength.strength === 3 && "Strong"}
@@ -133,24 +151,37 @@ export default function ChangePasswordPage() {
             />
 
             {confirmPassword.length > 0 && newPassword !== confirmPassword && (
-              <Text style={styles.errorText}>❌ Passwords do not match</Text>
+              <Text style={[styles.errorText, { color: theme.error }]}>
+                ❌ Passwords do not match
+              </Text>
             )}
             {confirmPassword.length > 0 &&
               newPassword === confirmPassword &&
               newPassword.length > 0 && (
-                <Text style={styles.successText}>✅ Passwords match</Text>
+                <Text style={[styles.successText, { color: theme.success }]}>
+                  ✅ Passwords match
+                </Text>
               )}
           </View>
 
           {/* Message */}
           {passwordMessage && (
-            <View style={styles.messageContainer}>
+            <View
+              style={[
+                styles.messageContainer,
+                {
+                  backgroundColor: theme.isDark
+                    ? theme.listItemFill
+                    : "#f8f9fa",
+                },
+              ]}
+            >
               <Text
                 style={[
                   styles.passwordMessage,
                   passwordMessage.includes("✅")
-                    ? styles.successMessage
-                    : styles.errorMessage,
+                    ? [styles.successMessage, { color: theme.success }]
+                    : [styles.errorMessage, { color: theme.error }],
                 ]}
               >
                 {passwordMessage}
@@ -165,11 +196,26 @@ export default function ChangePasswordPage() {
           />
 
           {/* Tips */}
-          <View style={styles.tipsContainer}>
-            <Text style={styles.tipsTitle}>💡 Password Tips:</Text>
-            <Text style={styles.tipText}>• Use at least 8 characters</Text>
-            <Text style={styles.tipText}>• Mix letters, numbers & symbols</Text>
-            <Text style={styles.tipText}>• Avoid personal information</Text>
+          <View
+            style={[
+              styles.tipsContainer,
+              {
+                backgroundColor: theme.isDark ? theme.listItemFill : "#f8f9fa",
+              },
+            ]}
+          >
+            <Text style={[styles.tipsTitle, { color: theme.text }]}>
+              💡 Password Tips:
+            </Text>
+            <Text style={[styles.tipText, { color: theme.muted }]}>
+              • Use at least 8 characters
+            </Text>
+            <Text style={[styles.tipText, { color: theme.muted }]}>
+              • Mix letters, numbers & symbols
+            </Text>
+            <Text style={[styles.tipText, { color: theme.muted }]}>
+              • Avoid personal information
+            </Text>
           </View>
         </View>
       </ScrollView>
@@ -180,7 +226,6 @@ export default function ChangePasswordPage() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f5f7fa",
   },
   container: {
     flexGrow: 1,
@@ -194,7 +239,6 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: "#e8f2ff",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 16,
@@ -205,22 +249,18 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#1a1a1a",
     marginBottom: 8,
     textAlign: "center",
   },
   subtitle: {
     fontSize: 16,
-    color: "#666",
     textAlign: "center",
     lineHeight: 22,
   },
   card: {
-    backgroundColor: "#fff",
     borderRadius: 20,
     padding: 24,
     elevation: 3,
-    shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 12,
@@ -244,25 +284,21 @@ const styles = StyleSheet.create({
   strengthText: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#666",
   },
   confirmSection: {
     marginBottom: 8,
   },
   errorText: {
     fontSize: 12,
-    color: "#ff4757",
     marginTop: 6,
     fontWeight: "500",
   },
   successText: {
     fontSize: 12,
-    color: "#2ed573",
     marginTop: 6,
     fontWeight: "500",
   },
   messageContainer: {
-    backgroundColor: "#f8f9fa",
     padding: 12,
     borderRadius: 12,
     marginBottom: 8,
@@ -273,13 +309,12 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   errorMessage: {
-    color: "#ff4757",
+    // Color applied inline
   },
   successMessage: {
-    color: "#2ed573",
+    // Color applied inline
   },
   tipsContainer: {
-    backgroundColor: "#f8f9fa",
     padding: 16,
     borderRadius: 12,
     marginTop: 16,
@@ -287,12 +322,10 @@ const styles = StyleSheet.create({
   tipsTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#333",
     marginBottom: 8,
   },
   tipText: {
     fontSize: 13,
-    color: "#666",
     marginBottom: 4,
     lineHeight: 18,
   },

@@ -52,20 +52,20 @@ export default function LabourDetails() {
       // In a real app, you'd fetch from API using labourId
       const mockLabour: LabourData = {
         _id: labourId,
-        fName: labourName?.split(' ')[0] || 'Labour',
-        lName: labourName?.split(' ').slice(1).join(' ') || '',
-        phone: '+1234567890', // This would come from API
-        work: work || 'General Labour',
+        fName: labourName?.split(" ")[0] || "Labour",
+        lName: labourName?.split(" ").slice(1).join(" ") || "",
+        phone: "+1234567890", // This would come from API
+        work: work || "General Labour",
         profilePic: profilePicUrl,
-        orgId: 'org123',
+        orgId: "org123",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-      
+
       setLabour(mockLabour);
     } catch (error) {
-      console.error('Error fetching labour details:', error);
-      Alert.alert('Error', 'Failed to load labour details');
+      console.error("Error fetching labour details:", error);
+      Alert.alert("Error", "Failed to load labour details");
     } finally {
       setLoading(false);
     }
@@ -74,26 +74,26 @@ export default function LabourDetails() {
   const handleEditLabour = () => {
     // Navigate to edit labour page
     router.push({
-      pathname: "/profile/manageOrganisation/editLabour",
-      params: { labourId, name: labourName, profilePicUrl, work }
+      pathname: "/profile/manageOrganisation/createLabour",
+      params: { labourId, name: labourName, profilePicUrl, work },
     });
   };
 
   const handleDeleteLabour = () => {
     Alert.alert(
-      'Delete Labour',
-      'Are you sure you want to delete this labour? This action cannot be undone.',
+      "Delete Labour",
+      "Are you sure you want to delete this labour? This action cannot be undone.",
       [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Delete', 
-          style: 'destructive',
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
           onPress: () => {
             // Handle delete logic here
-            Alert.alert('Success', 'Labour deleted successfully');
+            Alert.alert("Success", "Labour deleted successfully");
             router.back();
-          }
-        }
+          },
+        },
       ]
     );
   };
@@ -104,7 +104,9 @@ export default function LabourDetails() {
 
   if (loading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.background }]}
+      >
         <HeaderBar title="Labour Details" />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.primary} />
@@ -115,7 +117,9 @@ export default function LabourDetails() {
 
   if (!labour) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.background }]}
+      >
         <HeaderBar title="Labour Details" />
         <View style={styles.errorContainer}>
           <Text style={[styles.errorText, { color: theme.text }]}>
@@ -127,25 +131,34 @@ export default function LabourDetails() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background }]}
+    >
       <HeaderBar title="Labour Details" />
 
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         {/* Profile Header */}
-        <View style={[styles.profileHeader, { backgroundColor: theme.secondary }]}>
+        <View
+          style={[styles.profileHeader, { backgroundColor: theme.secondary }]}
+        >
           <View style={styles.profileImageContainer}>
             {labour.profilePic ? (
-              <Image 
-                source={{ uri: labour.profilePic }} 
+              <Image
+                source={{ uri: labour.profilePic }}
                 style={styles.profileImage}
                 resizeMode="cover"
               />
             ) : (
-              <View style={[styles.defaultProfileImage, { backgroundColor: theme.primary }]}>
+              <View
+                style={[
+                  styles.defaultProfileImage,
+                  { backgroundColor: theme.primary },
+                ]}
+              >
                 <Ionicons name="person" size={60} color={theme.text} />
               </View>
             )}
@@ -164,10 +177,14 @@ export default function LabourDetails() {
             Personal Information
           </Text>
 
-          <View style={[styles.detailCard, { backgroundColor: theme.listItemFill }]}>
+          <View
+            style={[styles.detailCard, { backgroundColor: theme.listItemFill }]}
+          >
             <View style={styles.detailRow}>
               <Ionicons name="person-outline" size={20} color={theme.icons} />
-              <Text style={[styles.detailLabel, { color: theme.text }]}>Full Name</Text>
+              <Text style={[styles.detailLabel, { color: theme.text }]}>
+                Full Name
+              </Text>
               <Text style={[styles.detailValue, { color: theme.text }]}>
                 {labour.fName} {labour.lName}
               </Text>
@@ -176,7 +193,9 @@ export default function LabourDetails() {
             <View style={styles.detailRow}>
               <View style={styles.detailRow}>
                 <Ionicons name="call-outline" size={20} color={theme.icons} />
-                <Text style={[styles.detailLabel, { color: theme.text }]}>Phone</Text>
+                <Text style={[styles.detailLabel, { color: theme.text }]}>
+                  Phone
+                </Text>
                 <Text style={[styles.detailValue, { color: theme.text }]}>
                   {labour.phone}
                 </Text>
@@ -184,8 +203,14 @@ export default function LabourDetails() {
             </View>
 
             <View style={styles.detailRow}>
-              <Ionicons name="construct-outline" size={20} color={theme.icons} />
-              <Text style={[styles.detailLabel, { color: theme.text }]}>Work Type</Text>
+              <Ionicons
+                name="construct-outline"
+                size={20}
+                color={theme.icons}
+              />
+              <Text style={[styles.detailLabel, { color: theme.text }]}>
+                Work Type
+              </Text>
               <Text style={[styles.detailValue, { color: theme.text }]}>
                 {labour.work}
               </Text>
@@ -193,7 +218,9 @@ export default function LabourDetails() {
 
             <View style={styles.detailRow}>
               <Ionicons name="calendar-outline" size={20} color={theme.icons} />
-              <Text style={[styles.detailLabel, { color: theme.text }]}>Joined</Text>
+              <Text style={[styles.detailLabel, { color: theme.text }]}>
+                Joined
+              </Text>
               <Text style={[styles.detailValue, { color: theme.text }]}>
                 {new Date(labour.createdAt).toLocaleDateString()}
               </Text>
@@ -219,10 +246,13 @@ export default function LabourDetails() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: theme.secondary }]}
+              style={[
+                styles.actionButton,
+                { backgroundColor: theme.secondary },
+              ]}
               onPress={() => {
                 // Handle view tasks/assignments
-                Alert.alert('Info', 'View tasks functionality coming soon');
+                Alert.alert("Info", "View tasks functionality coming soon");
               }}
             >
               <Ionicons name="list-outline" size={20} color={theme.text} />
@@ -232,11 +262,11 @@ export default function LabourDetails() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: '#ef4444' }]}
+              style={[styles.actionButton, { backgroundColor: "#ef4444" }]}
               onPress={handleDeleteLabour}
             >
               <Ionicons name="trash-outline" size={20} color="white" />
-              <Text style={[styles.actionButtonText, { color: 'white' }]}>
+              <Text style={[styles.actionButtonText, { color: "white" }]}>
                 Delete Labour
               </Text>
             </TouchableOpacity>
@@ -245,10 +275,7 @@ export default function LabourDetails() {
 
         {/* Back Button */}
         <View style={styles.backButtonContainer}>
-          <PrimaryBtn
-            text="Back to Manage Organisation"
-            onPress={handleBack}
-          />
+          <PrimaryBtn text="Back to Manage Organisation" onPress={handleBack} />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -267,20 +294,20 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   errorContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   errorText: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   profileHeader: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 30,
     paddingHorizontal: 20,
     marginBottom: 20,
@@ -297,12 +324,12 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   labourName: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
   },
   labourRole: {
@@ -315,13 +342,13 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 15,
   },
   detailCard: {
     borderRadius: 12,
     padding: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -331,22 +358,22 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.1)',
+    borderBottomColor: "rgba(0,0,0,0.1)",
   },
   detailLabel: {
     flex: 1,
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginLeft: 15,
   },
   detailValue: {
     flex: 1,
     fontSize: 16,
-    textAlign: 'right',
+    textAlign: "right",
   },
   actionsSection: {
     paddingHorizontal: 20,
@@ -356,9 +383,9 @@ const styles = StyleSheet.create({
     gap: 15,
   },
   actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -366,7 +393,7 @@ const styles = StyleSheet.create({
   },
   actionButtonText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   backButtonContainer: {
     paddingHorizontal: 20,

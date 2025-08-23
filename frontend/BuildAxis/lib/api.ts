@@ -400,6 +400,68 @@ export async function getOrganisationById(orgId: string): Promise<{
   return response.json();
 }
 
+// Update Organisation API Call
+export async function updateOrganisationRequest(
+  orgId: string,
+  orgData: {
+    name?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+    logo?: { uri: string; name: string; type: string } | null;
+  }
+): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  const formData = new FormData();
+
+  if (orgData.name) formData.append("name", orgData.name);
+  if (orgData.email) formData.append("email", orgData.email);
+  if (orgData.phone) formData.append("phone", orgData.phone);
+  if (orgData.address) formData.append("address", orgData.address);
+
+  // Handle logo: if null/undefined, remove logo; if object, upload new logo
+  if (orgData.logo === null || orgData.logo === undefined) {
+    formData.append("logoUrl", ""); // Remove logo
+  } else if (orgData.logo) {
+    formData.append("logo", orgData.logo as unknown as any);
+  }
+
+  const token = await AsyncStorage.getItem("userToken");
+  if (!token) {
+    throw new Error("No authentication token found");
+  }
+
+  const response = await fetch(`${API_BASE_URL}/api/organisations/${orgId}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  // Try to parse JSON regardless of status to surface server message
+  let payload: any = null;
+  try {
+    payload = await response.json();
+  } catch {
+    payload = null;
+  }
+
+  if (!response.ok) {
+    return (
+      payload || {
+        success: false,
+        message: response.statusText || "Failed to update organisation",
+      }
+    );
+  }
+
+  return payload as any;
+}
+
 // Add Supervisor to Organisation API Call
 export async function addSupervisorToOrganisation(
   supervisorPhone: string

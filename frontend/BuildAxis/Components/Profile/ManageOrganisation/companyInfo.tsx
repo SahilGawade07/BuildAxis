@@ -9,12 +9,14 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import { useTheme } from "../../../context/ThemeContext";
+import { useRouter } from "expo-router";
 
 interface CompanyInfoCardProps {
   imageUrl?: string;
   organizationName: string;
   address: string;
   onEdit?: () => void;
+  orgId?: string;
 }
 
 // Lazy Loading Image Component for Company Logo
@@ -74,12 +76,26 @@ export const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
   organizationName,
   address,
   onEdit,
+  orgId,
 }) => {
   const { theme } = useTheme();
+  const router = useRouter();
 
   // Function to get first letter of organization name for fallback
   const getInitial = (name: string): string => {
     return name ? name.charAt(0).toUpperCase() : "O";
+  };
+
+  const handleEditPress = () => {
+    if (onEdit) {
+      onEdit();
+    } else if (orgId) {
+      // Navigate to edit organisation page
+      router.push({
+        pathname: "/profile/manageOrganisation/editOrganisation",
+        params: { orgId },
+      });
+    }
   };
 
   return (
@@ -143,7 +159,7 @@ export const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({
         {/* Right side with edit button */}
         <TouchableOpacity
           style={[styles.editButton, { backgroundColor: theme.listItemFill }]}
-          onPress={onEdit}
+          onPress={handleEditPress}
           activeOpacity={0.7}
         >
           <Icon name="edit-2" size={24} color={theme.activeTabIcon} />

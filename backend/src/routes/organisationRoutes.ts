@@ -8,6 +8,8 @@ import {
   createSupervisor,
   addLabour,
   createLabour,
+  checkOrgAccessFromParams,
+  checkPromoterAccess,
 } from "../controllers/organisation/organisation";
 import { authenticateJWT } from "../middlewares/authenticateJWT";
 import { isPromoter } from "../middlewares/isPromoter";
@@ -18,9 +20,20 @@ const router = Router();
 router.use(authenticateJWT);
 
 router.post("/", isPromoter, createOrganisation);
-router.get("/:orgId", getOrganisation);
-router.put("/:orgId", updateOrganisation);
-router.delete("/:orgId", deleteOrganisation);
+router.get("/:orgId", checkOrgAccessFromParams, getOrganisation);
+router.put(
+  "/:orgId",
+  checkOrgAccessFromParams,
+  checkPromoterAccess,
+  upload.single("logo"),
+  updateOrganisation
+);
+router.delete(
+  "/:orgId",
+  checkOrgAccessFromParams,
+  checkPromoterAccess,
+  deleteOrganisation
+);
 router.post("/add-supervisor", addSupervisor);
 // router.post("/create-supervisor", createSupervisor);
 router.post(
