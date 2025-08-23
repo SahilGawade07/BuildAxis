@@ -3,6 +3,7 @@ import { Organisation } from "../../models/Organisation";
 import { User } from "../../models/User";
 import { Labour } from "../../models/Labour";
 import { Vendor } from "../../models/Vendor";
+import { Service } from "../../models/Services";
 
 export const manageOrgPageData = async (req: Request, res: Response) => {
   try {
@@ -222,6 +223,216 @@ export const manageOrgPageData = async (req: Request, res: Response) => {
     return res.status(500).json({
       success: false,
       message: error.message,
+    });
+  }
+};
+
+export const getLabourProfileDetails = async (req: Request, res: Response) => {
+  try {
+    const { labourId } = req.params;
+    const user = (req as any).dbUser;
+
+    if (!labourId) {
+      return res.status(400).json({
+        success: false,
+        message: "Labour ID is required",
+      });
+    }
+
+    // Find the labour by ID
+    const labour = await Labour.findById(labourId).select(
+      "fName lName phone work profilePic orgId createdAt updatedAt"
+    );
+
+    if (!labour) {
+      return res.status(404).json({
+        success: false,
+        message: "Labour not found",
+      });
+    }
+
+    // Check if user has access to this labour (same organisation)
+    if (String(labour.orgId) !== String(user.orgId)) {
+      return res.status(403).json({
+        success: false,
+        message: "You don't have access to this labour",
+      });
+    }
+
+    // Get additional organization context if needed
+    const org = await Organisation.findById(labour.orgId).select("name");
+
+    return res.json({
+      success: true,
+      data: {
+        _id: labour._id,
+        fName: labour.fName,
+        lName: labour.lName,
+        phone: labour.phone,
+        work: labour.work,
+        profilePic: labour.profilePic,
+        orgId: labour.orgId,
+        orgName: org?.name || "Unknown Organization",
+        createdAt: labour.createdAt,
+        updatedAt: labour.updatedAt,
+      },
+    });
+  } catch (error: any) {
+    console.error("Error fetching labour profile details:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
+  }
+};
+
+export const getSupervisorProfileDetails = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { supervisorId } = req.params;
+    const user = (req as any).dbUser;
+
+    if (!supervisorId) {
+      return res.status(400).json({
+        success: false,
+        message: "Supervisor ID is required",
+      });
+    }
+
+    // Find the supervisor by ID
+    const supervisor = await User.findById(supervisorId).select(
+      "fName lName email phone profilePic orgId role createdAt updatedAt"
+    );
+
+    if (!supervisor) {
+      return res.status(404).json({
+        success: false,
+        message: "Supervisor not found",
+      });
+    }
+
+    // Check if the user is actually a supervisor
+    if (supervisor.role !== "supervisor") {
+      return res.status(400).json({
+        success: false,
+        message: "User is not a supervisor",
+      });
+    }
+
+    // Check if user has access to this supervisor (same organisation)
+    if (String(supervisor.orgId) !== String(user.orgId)) {
+      return res.status(403).json({
+        success: false,
+        message: "You don't have access to this supervisor",
+      });
+    }
+
+    // Get additional organization context if needed
+    const org = await Organisation.findById(supervisor.orgId).select("name");
+
+    return res.json({
+      success: true,
+      data: {
+        _id: supervisor._id,
+        fName: supervisor.fName,
+        lName: supervisor.lName,
+        email: supervisor.email,
+        phone: supervisor.phone,
+        profilePic: supervisor.profilePic,
+        role: supervisor.role,
+        orgId: supervisor.orgId,
+        orgName: org?.name || "Unknown Organization",
+        createdAt: supervisor.createdAt,
+        updatedAt: supervisor.updatedAt,
+      },
+    });
+  } catch (error: any) {
+    console.error("Error fetching supervisor profile details:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
+  }
+};
+
+export const getVendorProfileDetails = async (req: Request, res: Response) => {
+  try {
+    const { vendorId } = req.params;
+    const user = (req as any).dbUser;
+
+    if (!vendorId) {
+      return res.status(400).json({
+        success: false,
+        message: "Vendor ID is required",
+      });
+    }
+
+    // Find the vendor by ID and populate services
+    const vendor = await Vendor.findById(vendorId)
+      .populate("services", "serviceName")
+      .select(
+        "vendorName contactPerson phoneNo address services gstNumber createdAt updatedAt"
+      );
+
+    if (!vendor) {
+      return res.status(404).json({
+        success: false,
+        message: "Vendor not found",
+      });
+    }
+
+    // Get the organization to check access and get org name
+    const org = await Organisation.findOne({ vendor: vendorId }).select("name");
+
+    if (!org) {
+      return res.status(404).json({
+        success: false,
+        message: "Vendor not associated with any organization",
+      });
+    }
+
+    // Check if user has access to this vendor (same organisation)
+    if (String(org._id) !== String(user.orgId)) {
+      return res.status(403).json({
+        success: false,
+        message: "You don't have access to this vendor",
+      });
+    }
+
+    // Debug: Log the vendor data to see what services look like
+    console.log("Vendor data:", JSON.stringify(vendor, null, 2));
+    console.log("Services:", vendor.services);
+
+    // Prepare the response data
+    const responseData = {
+      _id: vendor._id,
+      vendorName: vendor.vendorName,
+      contactPerson: vendor.contactPerson,
+      phoneNo: vendor.phoneNo,
+      address: vendor.address,
+      services:
+        vendor.services?.map((service: any) => service.serviceName) || [],
+      gstNumber: vendor.gstNumber,
+      orgId: org._id,
+      orgName: org.name,
+      createdAt: vendor.createdAt,
+      updatedAt: vendor.updatedAt,
+    };
+
+    console.log("Response data:", JSON.stringify(responseData, null, 2));
+    console.log("Services in response:", responseData.services);
+
+    return res.json({
+      success: true,
+      data: responseData,
+    });
+  } catch (error: any) {
+    console.error("Error fetching vendor profile details:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
     });
   }
 };

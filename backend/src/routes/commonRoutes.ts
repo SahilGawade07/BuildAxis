@@ -21,7 +21,12 @@ import { authenticateJWT } from "../middlewares/authenticateJWT";
 import { addInventory } from "../controllers/common/inventory";
 import { updateTask } from "../controllers/common/task";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
-import { manageOrgPageData } from "../controllers/common/manageOrganisation";
+import {
+  manageOrgPageData,
+  getLabourProfileDetails,
+  getSupervisorProfileDetails,
+  getVendorProfileDetails,
+} from "../controllers/common/manageOrganisation";
 
 const router = Router();
 router.use(authenticateJWT);
@@ -48,6 +53,10 @@ router.post("/add-inventory", addInventory);
 router.patch("/update-task/:taskId", updateTask);
 
 router.get("/manage-org-page-data/:orgId", manageOrgPageData);
+
+router.get("/labour/:labourId", getLabourProfileDetails);
+router.get("/supervisor/:supervisorId", getSupervisorProfileDetails);
+router.get("/vendor/:vendorId", getVendorProfileDetails);
 
 // router.post("/create-task", createTask);
 

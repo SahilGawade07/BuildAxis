@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 
 // ✅ Extract host (IPv4) from Metro URL
 function getLocalIpFromExpoUrl(): string | null {
@@ -27,6 +28,64 @@ export const API_BASE_URL =
 // export const API_BASE_URL =
 //   process.env.EXPO_PUBLIC_API_URL || "http://10.243.117.112:8000";
 
+// Create axios instance with default config
+const api: AxiosInstance = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// Add request interceptor to add auth token
+api.interceptors.request.use(
+  async (config) => {
+    const token = await AsyncStorage.getItem("userToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor to handle token refresh
+api.interceptors.response.use(
+  (response) => {
+    // If backend refreshed the token on-the-fly, capture and persist it
+    const newAccessToken = response.headers["x-new-access-token"];
+    if (newAccessToken) {
+      AsyncStorage.setItem("userToken", newAccessToken);
+    }
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+
+    // If token expired and we haven't already tried to refresh
+    if (error.response?.status === 403 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const newToken = await attemptTokenRefresh();
+        if (newToken) {
+          // Retry the request with new token
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          return api(originalRequest);
+        }
+      } catch (refreshError) {
+        // Refresh failed, clear tokens
+        await AsyncStorage.multiRemove(["userToken", "refreshToken"]);
+        throw new Error("Authentication expired. Please login again.");
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 type SignInResponse = {
   success: boolean;
   message: string;
@@ -49,118 +108,73 @@ export async function signInRequest(
   email: string,
   password: string
 ): Promise<SignInResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/auth/signin`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ email, password }),
-  });
-
-  let payload: SignInResponse;
   try {
-    payload = (await response.json()) as SignInResponse;
-  } catch {
-    payload = { success: false, message: "Invalid server response" };
-  }
+    const response: AxiosResponse<SignInResponse> = await api.post(
+      "/api/auth/signin",
+      {
+        email,
+        password,
+      }
+    );
 
-  if (!response.ok || !payload.success) {
-    throw new Error(payload.message || "Login failed");
-  }
+    const payload = response.data;
+    if (!payload.success) {
+      throw new Error(payload.message || "Login failed");
+    }
 
-  return payload;
+    return payload;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      const message =
+        error.response?.data?.message || error.message || "Login failed";
+      throw new Error(message);
+    }
+    throw error;
+  }
 }
 
 // Generic API request function with automatic token refresh
 export async function apiRequest(
   endpoint: string,
-  options: RequestInit = {},
+  options: AxiosRequestConfig = {},
   requireAuth: boolean = true
-): Promise<Response> {
-  let token: string | null = null;
-  let refreshToken: string | null = null;
-
-  if (requireAuth) {
-    token = await AsyncStorage.getItem("userToken");
-    refreshToken = await AsyncStorage.getItem("refreshToken");
-    if (!token) {
-      throw new Error("No authentication token found");
-    }
-  }
-
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
-
-  // Add custom headers if provided
-  if (options.headers) {
-    if (
-      typeof options.headers === "object" &&
-      !Array.isArray(options.headers)
-    ) {
-      Object.entries(options.headers).forEach(([key, value]) => {
-        if (typeof value === "string") {
-          headers[key] = value;
-        }
+): Promise<AxiosResponse> {
+  try {
+    if (!requireAuth) {
+      // For non-auth requests, create a new axios instance without interceptors
+      const noAuthApi = axios.create({
+        baseURL: API_BASE_URL,
+        timeout: 10000,
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
-    }
-  }
-
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-  if (refreshToken) {
-    headers["x-refresh-token"] = refreshToken;
-  }
-
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers,
-  });
-
-  // If backend refreshed the token on-the-fly, capture and persist it
-  const newAccessToken = response.headers.get("X-New-Access-Token");
-  if (newAccessToken) {
-    await AsyncStorage.setItem("userToken", newAccessToken);
-  }
-
-  // Check if token expired and try to refresh
-  if (response.status === 403 && requireAuth) {
-    const newToken = await attemptTokenRefresh();
-    if (newToken) {
-      // Retry the request with new token
-      headers["Authorization"] = `Bearer ${newToken}`;
-      // Also re-send refresh token header if available
-      const latestRefreshToken = await AsyncStorage.getItem("refreshToken");
-      if (latestRefreshToken) {
-        headers["x-refresh-token"] = latestRefreshToken;
-      }
-      return fetch(`${API_BASE_URL}${endpoint}`, {
+      return noAuthApi.request({
+        url: endpoint,
         ...options,
-        headers,
       });
-    } else {
-      // Refresh failed, clear tokens and throw error
-      await AsyncStorage.multiRemove(["userToken", "refreshToken"]);
-      throw new Error("Authentication expired. Please login again.");
-    }
-  }
-
-  // Handle other error status codes
-  if (!response.ok) {
-    let errorMessage = "Request failed";
-    try {
-      const errorData = await response.json();
-      errorMessage = errorData.message || errorMessage;
-    } catch {
-      // If response is not JSON, use status text
-      errorMessage = response.statusText || errorMessage;
     }
 
-    throw new Error(`${errorMessage} (${response.status})`);
+    return api.request({
+      url: endpoint,
+      ...options,
+    });
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      let errorMessage = "Request failed";
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.statusText) {
+        errorMessage = error.response.statusText;
+      } else {
+        errorMessage = error.message;
+      }
+      throw new Error(
+        `${errorMessage} (${error.response?.status || "Unknown"})`
+      );
+    }
+    throw error;
   }
-
-  return response;
 }
 
 // Attempt to refresh the access token
@@ -171,29 +185,29 @@ async function attemptTokenRefresh(): Promise<string | null> {
       return null;
     }
 
-    const response = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-refresh-token": refreshToken,
-      },
-    });
+    const response = await axios.post(
+      `${API_BASE_URL}/api/auth/refresh`,
+      null,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "x-refresh-token": refreshToken,
+        },
+      }
+    );
 
-    if (response.ok) {
-      const result = await response.json();
-      if (result.success) {
-        // Check if new token is in response headers (backend sets this)
-        const newAccessToken = response.headers.get("X-New-Access-Token");
-        if (newAccessToken) {
-          await AsyncStorage.setItem("userToken", newAccessToken);
-          return newAccessToken;
-        }
+    if (response.data.success) {
+      // Check if new token is in response headers (backend sets this)
+      const newAccessToken = response.headers["x-new-access-token"];
+      if (newAccessToken) {
+        await AsyncStorage.setItem("userToken", newAccessToken);
+        return newAccessToken;
+      }
 
-        // Fallback: if no header, check if token is in response body
-        if (result.accessToken) {
-          await AsyncStorage.setItem("userToken", result.accessToken);
-          return result.accessToken;
-        }
+      // Fallback: if no header, check if token is in response body
+      if (response.data.accessToken) {
+        await AsyncStorage.setItem("userToken", response.data.accessToken);
+        return response.data.accessToken;
       }
     }
 
@@ -211,22 +225,16 @@ async function attemptTokenRefresh(): Promise<string | null> {
 // Helper function to get user profile
 export async function getUserProfile(): Promise<any> {
   const response = await apiRequest("/api/common/my-profile");
-  if (!response.ok) {
-    throw new Error("Failed to fetch profile");
-  }
-  return response.json();
+  return response.data;
 }
 
 // Helper function to update user profile
 export async function updateUserProfile(profileData: any): Promise<any> {
   const response = await apiRequest("/api/common/my-profile", {
     method: "PUT",
-    body: JSON.stringify(profileData),
+    data: profileData,
   });
-  if (!response.ok) {
-    throw new Error("Failed to update profile");
-  }
-  return response.json();
+  return response.data;
 }
 
 // Helper function to update user password
@@ -237,9 +245,9 @@ export async function updatePasswordRequest(params: {
 }): Promise<any> {
   const response = await apiRequest("/api/common/my-profile", {
     method: "PATCH",
-    body: JSON.stringify(params),
+    data: params,
   });
-  return response.json();
+  return response.data;
 }
 
 // Manage Organisation page data
@@ -254,12 +262,9 @@ export async function getManageOrgPageData(orgId: string): Promise<{
   message?: string;
 }> {
   const response = await apiRequest(
-    `/api/common/manage-org-page-data/${orgId}`,
-    {
-      method: "GET",
-    }
+    `/api/common/manage-org-page-data/${orgId}`
   );
-  return response.json();
+  return response.data;
 }
 
 // Get all people with pagination for view all page
@@ -291,12 +296,9 @@ export async function getViewAllPeople(
   }
 
   const response = await apiRequest(
-    `/api/common/manage-org-page-data/${orgId}?${params.toString()}`,
-    {
-      method: "GET",
-    }
+    `/api/common/manage-org-page-data/${orgId}?${params.toString()}`
   );
-  return response.json();
+  return response.data;
 }
 
 // Utility function to logout and clear all tokens
@@ -305,13 +307,7 @@ export async function logout(): Promise<void> {
     // Call backend logout endpoint if token exists
     const token = await AsyncStorage.getItem("userToken");
     if (token) {
-      await fetch(`${API_BASE_URL}/api/auth/logout`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await api.post("/api/auth/logout");
     }
   } catch (error) {
     console.error("Logout API call failed:", error);
@@ -344,26 +340,26 @@ export async function signupRequest(userData: {
   password: string;
   role: "promoter" | "supervisor";
 }): Promise<SignUpResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(userData),
-  });
-
-  let payload: SignUpResponse;
   try {
-    payload = (await response.json()) as SignUpResponse;
-  } catch {
-    payload = { success: false, message: "Invalid server response" };
-  }
+    const response: AxiosResponse<SignUpResponse> = await api.post(
+      "/api/auth/signup",
+      userData
+    );
 
-  if (!response.ok || !payload.success) {
-    throw new Error(payload.message || "Signup failed");
-  }
+    const payload = response.data;
+    if (!payload.success) {
+      throw new Error(payload.message || "Signup failed");
+    }
 
-  return payload;
+    return payload;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      const message =
+        error.response?.data?.message || error.message || "Signup failed";
+      throw new Error(message);
+    }
+    throw error;
+  }
 }
 
 // Create Organization API Call
@@ -380,14 +376,9 @@ export async function createOrganizationRequest(orgData: {
 }> {
   const response = await apiRequest("/api/organisations", {
     method: "POST",
-    body: JSON.stringify(orgData),
+    data: orgData,
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to create organization");
-  }
-
-  return response.json();
+  return response.data;
 }
 
 // Organisation helpers
@@ -397,7 +388,7 @@ export async function getOrganisationById(orgId: string): Promise<{
   data?: any;
 }> {
   const response = await apiRequest(`/api/organisations/${orgId}`);
-  return response.json();
+  return response.data;
 }
 
 // Update Organisation API Call
@@ -429,37 +420,25 @@ export async function updateOrganisationRequest(
     formData.append("logo", orgData.logo as unknown as any);
   }
 
-  const token = await AsyncStorage.getItem("userToken");
-  if (!token) {
-    throw new Error("No authentication token found");
-  }
-
-  const response = await fetch(`${API_BASE_URL}/api/organisations/${orgId}`, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  });
-
-  // Try to parse JSON regardless of status to surface server message
-  let payload: any = null;
   try {
-    payload = await response.json();
-  } catch {
-    payload = null;
+    const response = await api.put(`/api/organisations/${orgId}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message:
+            error.response?.statusText || "Failed to update organisation",
+        }
+      );
+    }
+    throw error;
   }
-
-  if (!response.ok) {
-    return (
-      payload || {
-        success: false,
-        message: response.statusText || "Failed to update organisation",
-      }
-    );
-  }
-
-  return payload as any;
 }
 
 // Add Supervisor to Organisation API Call
@@ -473,14 +452,9 @@ export async function addSupervisorToOrganisation(
 }> {
   const response = await apiRequest("/api/organisations/add-supervisor", {
     method: "POST",
-    body: JSON.stringify({ supervisorPhone }),
+    data: { supervisorPhone },
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to add supervisor to organisation");
-  }
-
-  return response.json();
+  return response.data;
 }
 
 // Create Supervisor API Call
@@ -508,40 +482,28 @@ export async function createSupervisorRequest(supervisorData: {
     formData.append("profilePic", supervisorData.profilePic as unknown as any);
   }
 
-  const token = await AsyncStorage.getItem("userToken");
-  if (!token) {
-    throw new Error("No authentication token found");
-  }
-
-  const response = await fetch(
-    `${API_BASE_URL}/api/organisations/create-supervisor`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    }
-  );
-
-  // Try to parse JSON regardless of status to surface server message
-  let payload: any = null;
   try {
-    payload = await response.json();
-  } catch {
-    payload = null;
-  }
-
-  if (!response.ok) {
-    return (
-      payload || {
-        success: false,
-        message: response.statusText || "Failed to create supervisor",
+    const response = await api.post(
+      "/api/organisations/create-supervisor",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       }
     );
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message: error.response?.statusText || "Failed to create supervisor",
+        }
+      );
+    }
+    throw error;
   }
-
-  return payload as any;
 }
 
 // Create Labour API Call
@@ -581,40 +543,28 @@ export async function createLabourRequest(labourData: {
     });
   }
 
-  const token = await AsyncStorage.getItem("userToken");
-  if (!token) {
-    throw new Error("No authentication token found");
-  }
-
-  const response = await fetch(
-    `${API_BASE_URL}/api/organisations/create-labour`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    }
-  );
-
-  // Try to parse JSON regardless of status to surface server message
-  let payload: any = null;
   try {
-    payload = await response.json();
-  } catch {
-    payload = null;
-  }
-
-  if (!response.ok) {
-    return (
-      payload || {
-        success: false,
-        message: response.statusText || "Failed to create labour",
+    const response = await api.post(
+      "/api/organisations/create-labour",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       }
     );
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message: error.response?.statusText || "Failed to create labour",
+        }
+      );
+    }
+    throw error;
   }
-
-  return payload as any;
 }
 
 // Add Labour to Organisation API Call
@@ -626,14 +576,9 @@ export async function addLabourToOrganisation(labourPhone: string): Promise<{
 }> {
   const response = await apiRequest("/api/organisations/add-labour", {
     method: "POST",
-    body: JSON.stringify({ labourPhone }),
+    data: { labourPhone },
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to add labour to organisation");
-  }
-
-  return response.json();
+  return response.data;
 }
 
 // Create Vendor API Call
@@ -651,14 +596,9 @@ export async function createVendorRequest(vendorData: {
 }> {
   const response = await apiRequest("/api/common/vendors", {
     method: "POST",
-    body: JSON.stringify(vendorData),
+    data: vendorData,
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to create vendor");
-  }
-
-  return response.json();
+  return response.data;
 }
 
 // Get Services API Call
@@ -667,15 +607,8 @@ export async function getServicesRequest(): Promise<{
   message: string;
   data?: any[];
 }> {
-  const response = await apiRequest("/api/common/services", {
-    method: "GET",
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch services");
-  }
-
-  return response.json();
+  const response = await apiRequest("/api/common/services");
+  return response.data;
 }
 
 // Add Service API Call
@@ -688,12 +621,203 @@ export async function addServiceRequest(serviceData: {
 }> {
   const response = await apiRequest("/api/common/add-service", {
     method: "POST",
-    body: JSON.stringify(serviceData),
+    data: serviceData,
   });
+  return response.data;
+}
 
-  if (!response.ok) {
-    throw new Error("Failed to add service");
+// Edit Labour API Call
+export async function editLabourRequest(
+  labourId: string,
+  labourData: {
+    fName: string;
+    lName: string;
+    phone: string;
+    work: string;
+    profilePic?: { uri: string; name: string; type: string } | null;
+    documentsUrl?: { uri: string; name: string; type: string }[] | null;
+  }
+): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  const formData = new FormData();
+  formData.append("fName", labourData.fName);
+  formData.append("lName", labourData.lName);
+  formData.append("phone", labourData.phone);
+  formData.append("work", labourData.work);
+
+  // Handle profile picture: if null, remove; if object, upload new; if undefined, keep existing
+  if (labourData.profilePic === null) {
+    // Remove profile picture (send empty string to indicate removal)
+    formData.append("profilePic", "");
+  } else if (labourData.profilePic) {
+    formData.append("profilePic", labourData.profilePic as unknown as any);
   }
 
-  return response.json();
+  // Handle documents: if null, remove all; if array, upload new; if undefined, keep existing
+  if (labourData.documentsUrl === null) {
+    // Remove all documents (send empty string to indicate removal)
+    formData.append("documentsUrl", "");
+  } else if (labourData.documentsUrl && labourData.documentsUrl.length > 0) {
+    labourData.documentsUrl.forEach((doc, index) => {
+      const filename = doc.name || `document_${index}.jpg`;
+      const file = {
+        uri: doc.uri,
+        name: filename,
+        type: doc.type || "image/jpeg",
+      } as any;
+      formData.append("documentsUrl", file);
+    });
+  }
+
+  try {
+    const response = await api.put(
+      `/api/organisations/edit-labour/${labourId}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message: error.response?.statusText || "Failed to edit labour",
+        }
+      );
+    }
+    throw error;
+  }
+}
+
+// Get Labour by ID API Call
+export async function getLabourById(labourId: string): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  try {
+    const response = await api.get(`/api/common/labour/${labourId}`);
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message:
+            error.response?.statusText || "Failed to fetch labour details",
+        }
+      );
+    }
+    throw error;
+  }
+}
+
+// Delete Labour API Call
+export async function deleteLabourRequest(labourId: string): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  try {
+    const response = await api.delete(
+      `/api/organisations/delete-labour/${labourId}`
+    );
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message: error.response?.statusText || "Failed to delete labour",
+        }
+      );
+    }
+    throw error;
+  }
+}
+
+// Get Supervisor by ID API Call
+export async function getSupervisorById(supervisorId: string): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  try {
+    const response = await api.get(`/api/common/supervisor/${supervisorId}`);
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message:
+            error.response?.statusText || "Failed to fetch supervisor details",
+        }
+      );
+    }
+    throw error;
+  }
+}
+
+// Get Vendor by ID API Call
+export async function getVendorById(vendorId: string): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  try {
+    const response = await api.get(`/api/common/vendor/${vendorId}`);
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message:
+            error.response?.statusText || "Failed to fetch vendor details",
+        }
+      );
+    }
+    throw error;
+  }
+}
+
+// Edit Vendor API Call
+export async function editVendorRequest(
+  vendorId: string,
+  vendorData: {
+    vendorName: string;
+    contactPerson: string;
+    phoneNo: string;
+    address: string;
+    services?: string[];
+    gstNumber?: string;
+  }
+): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  try {
+    const response = await api.put(`/api/common/vendors/${vendorId}`, vendorData);
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message:
+            error.response?.statusText || "Failed to update vendor",
+        }
+      );
+    }
+    throw error;
+  }
 }

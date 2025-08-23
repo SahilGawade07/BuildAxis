@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -12,9 +12,14 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@/context/ThemeContext";
 import HeaderBar from "@/components/ui/headerBar";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import PrimaryBtn from "@/components/ui/primaryBtn";
+import {
+  editLabourRequest,
+  getLabourById,
+  deleteLabourRequest,
+} from "@/lib/api";
 
 interface LabourData {
   _id: string;
@@ -24,6 +29,7 @@ interface LabourData {
   work: string;
   profilePic?: string;
   orgId: string;
+  orgName?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -39,47 +45,83 @@ export default function LabourDetails() {
   const [labour, setLabour] = useState<LabourData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (labourId) {
-      fetchLabourDetails();
-    }
-  }, [labourId]);
+  useFocusEffect(
+    React.useCallback(() => {
+      if (labourId) {
+        fetchLabourDetails();
+      }
+    }, [labourId])
+  );
 
   const fetchLabourDetails = async () => {
     try {
       setLoading(true);
-      // For now, we'll use the data passed via params
-      // In a real app, you'd fetch from API using labourId
-      const mockLabour: LabourData = {
+
+      // Fetch real labour data from API
+      const response = await getLabourById(labourId);
+
+      if (response.success && response.data) {
+        setLabour(response.data);
+      } else {
+        // Fallback to params data if API fails
+        const fallbackLabour: LabourData = {
+          _id: labourId,
+          fName: labourName?.split(" ")[0] || "Labour",
+          lName: labourName?.split(" ").slice(1).join(" ") || "",
+          phone: "+1234567890", // This would come from API
+          work: work || "General Labour",
+          profilePic: profilePicUrl,
+          orgId: "org123",
+          orgName: "Unknown Organization",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        setLabour(fallbackLabour);
+
+        if (!response.success) {
+          console.warn("API returned error:", response.message);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching labour details:", error);
+
+      // Fallback to params data on error
+      const fallbackLabour: LabourData = {
         _id: labourId,
         fName: labourName?.split(" ")[0] || "Labour",
         lName: labourName?.split(" ").slice(1).join(" ") || "",
-        phone: "+1234567890", // This would come from API
+        phone: "+1234567890",
         work: work || "General Labour",
         profilePic: profilePicUrl,
         orgId: "org123",
+        orgName: "Unknown Organization",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
+      setLabour(fallbackLabour);
 
-      setLabour(mockLabour);
-    } catch (error) {
-      console.error("Error fetching labour details:", error);
-      Alert.alert("Error", "Failed to load labour details");
+      Alert.alert("Warning", "Using cached data due to network error");
     } finally {
       setLoading(false);
     }
   };
 
   const handleEditLabour = () => {
-    // Navigate to edit labour page
+    // Navigate to edit labour page with current labour data
     router.push({
-      pathname: "/profile/manageOrganisation/createLabour",
-      params: { labourId, name: labourName, profilePicUrl, work },
+      pathname: "/profile/manageOrganisation/editLabour",
+      params: {
+        labourId,
+        fName: labour?.fName || labourName?.split(" ")[0] || "Labour",
+        lName: labour?.lName || labourName?.split(" ").slice(1).join(" ") || "",
+        phone: labour?.phone || "+1234567890",
+        work: labour?.work || work || "General Labour",
+        profilePicUrl: labour?.profilePic || profilePicUrl,
+      },
     });
   };
 
-  const handleDeleteLabour = () => {
+  const handleDeleteLabour = async () => {
     Alert.alert(
       "Delete Labour",
       "Are you sure you want to delete this labour? This action cannot be undone.",
@@ -88,10 +130,32 @@ export default function LabourDetails() {
         {
           text: "Delete",
           style: "destructive",
-          onPress: () => {
-            // Handle delete logic here
-            Alert.alert("Success", "Labour deleted successfully");
-            router.back();
+          onPress: async () => {
+            try {
+              const response = await deleteLabourRequest(labourId);
+
+              if (response.success) {
+                Alert.alert("Success", "Labour deleted successfully", [
+                  {
+                    text: "OK",
+                    onPress: () => {
+                      router.back();
+                    },
+                  },
+                ]);
+              } else {
+                Alert.alert(
+                  "Error",
+                  response.message || "Failed to delete labour"
+                );
+              }
+            } catch (error) {
+              console.error("Error deleting labour:", error);
+              Alert.alert(
+                "Error",
+                "Failed to delete labour. Please try again."
+              );
+            }
           },
         },
       ]
@@ -223,6 +287,16 @@ export default function LabourDetails() {
               </Text>
               <Text style={[styles.detailValue, { color: theme.text }]}>
                 {new Date(labour.createdAt).toLocaleDateString()}
+              </Text>
+            </View>
+
+            <View style={styles.detailRow}>
+              <Ionicons name="business-outline" size={20} color={theme.icons} />
+              <Text style={[styles.detailLabel, { color: theme.text }]}>
+                Organization
+              </Text>
+              <Text style={[styles.detailValue, { color: theme.text }]}>
+                {labour.orgName || "Unknown"}
               </Text>
             </View>
           </View>

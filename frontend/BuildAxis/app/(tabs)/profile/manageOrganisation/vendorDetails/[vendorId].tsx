@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -12,9 +12,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@/context/ThemeContext";
 import HeaderBar from "@/components/ui/headerBar";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import PrimaryBtn from "@/components/ui/primaryBtn";
+import { getVendorById } from "@/lib/api";
 
 interface VendorData {
   _id: string;
@@ -25,6 +26,7 @@ interface VendorData {
   services: string[];
   gstNumber?: string;
   orgId: string;
+  orgName?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -39,44 +41,82 @@ export default function VendorDetails() {
   const [vendor, setVendor] = useState<VendorData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (vendorId) {
-      fetchVendorDetails();
-    }
-  }, [vendorId]);
+  useFocusEffect(
+    React.useCallback(() => {
+      if (vendorId) {
+        fetchVendorDetails();
+      }
+    }, [vendorId])
+  );
 
   const fetchVendorDetails = async () => {
     try {
       setLoading(true);
-      // For now, we'll use the data passed via params
-      // In a real app, you'd fetch from API using vendorId
-      const mockVendor: VendorData = {
+
+      // Fetch real vendor data from API
+      const response = await getVendorById(vendorId);
+
+      if (response.success && response.data) {
+        setVendor(response.data);
+      } else {
+        // Fallback to params data if API fails
+        const fallbackVendor: VendorData = {
+          _id: vendorId,
+          vendorName: vendorName || "Vendor",
+          contactPerson: "Contact Person", // This would come from API
+          phoneNo: "+1234567890", // This would come from API
+          address: "Vendor Address", // This would come from API
+          services: ["Service 1", "Service 2"], // This would come from API
+          gstNumber: "GST123456789", // This would come from API
+          orgId: "org123",
+          orgName: "Unknown Organization",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        setVendor(fallbackVendor);
+
+        if (!response.success) {
+          console.warn("API returned error:", response.message);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching vendor details:", error);
+
+      // Fallback to params data on error
+      const fallbackVendor: VendorData = {
         _id: vendorId,
         vendorName: vendorName || "Vendor",
-        contactPerson: "Contact Person", // This would come from API
-        phoneNo: "+1234567890", // This would come from API
-        address: "Vendor Address", // This would come from API
-        services: ["Service 1", "Service 2"], // This would come from API
-        gstNumber: "GST123456789", // This would come from API
+        contactPerson: "Contact Person",
+        phoneNo: "+1234567890",
+        address: "Vendor Address",
+        services: ["Service 1", "Service 2"],
+        gstNumber: "GST123456789",
         orgId: "org123",
+        orgName: "Unknown Organization",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
+      setVendor(fallbackVendor);
 
-      setVendor(mockVendor);
-    } catch (error) {
-      console.error("Error fetching vendor details:", error);
-      Alert.alert("Error", "Failed to load vendor details");
+      Alert.alert("Warning", "Using cached data due to network error");
     } finally {
       setLoading(false);
     }
   };
 
   const handleEditVendor = () => {
-    // Navigate to edit vendor page
+    // Navigate to edit vendor page with current vendor data
     router.push({
       pathname: "/profile/manageOrganisation/editVendor",
-      params: { vendorId, name: vendorName, profilePicUrl },
+      params: {
+        vendorId,
+        name: vendor?.vendorName || vendorName,
+        contactPerson: vendor?.contactPerson || "",
+        phoneNo: vendor?.phoneNo || "",
+        address: vendor?.address || "",
+        services: vendor?.services?.join(",") || "",
+        gstNumber: vendor?.gstNumber || "",
+      },
     });
   };
 
@@ -242,6 +282,16 @@ export default function VendorDetails() {
               </Text>
               <Text style={[styles.detailValue, { color: theme.text }]}>
                 {new Date(vendor.createdAt).toLocaleDateString()}
+              </Text>
+            </View>
+
+            <View style={styles.detailRow}>
+              <Ionicons name="business-outline" size={20} color={theme.icons} />
+              <Text style={[styles.detailLabel, { color: theme.text }]}>
+                Organization
+              </Text>
+              <Text style={[styles.detailValue, { color: theme.text }]}>
+                {vendor.orgName || "Unknown"}
               </Text>
             </View>
           </View>

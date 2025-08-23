@@ -3,7 +3,7 @@ import { Schema, model, Document, Types } from "mongoose";
 export interface IVendor extends Document {
   vendorName: string;
   contactPerson: string;
-  phoneNo: number;
+  phoneNo: string;
   address: string;
   services: Types.ObjectId[];
   gstNumber: string;
@@ -24,7 +24,7 @@ const vendorSchema = new Schema<IVendor>(
       trim: true,
     },
     phoneNo: {
-      type: Number,
+      type: String,
       required: true,
       unique: true,
     },
@@ -35,6 +35,7 @@ const vendorSchema = new Schema<IVendor>(
     services: [
       {
         type: Schema.Types.ObjectId,
+        ref: "Service",
       },
     ],
     gstNumber: {

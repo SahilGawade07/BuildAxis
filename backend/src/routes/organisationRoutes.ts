@@ -8,6 +8,8 @@ import {
   createSupervisor,
   addLabour,
   createLabour,
+  editLabour,
+  deleteLabour,
   checkOrgAccessFromParams,
   checkPromoterAccess,
 } from "../controllers/organisation/organisation";
@@ -50,5 +52,14 @@ router.post(
   ]),
   createLabour
 );
+router.put(
+  "/edit-labour/:labourId",
+  upload.fields([
+    { name: "profilePic", maxCount: 1 },
+    { name: "documentsUrl", maxCount: 10 },
+  ]),
+  editLabour
+);
+router.delete("/delete-labour/:labourId", deleteLabour);
 
 export default router;

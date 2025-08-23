@@ -758,3 +758,351 @@ export const createLabour = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const editLabour = async (req: Request, res: Response) => {
+  try {
+    const { labourId } = req.params;
+    const { fName, lName, phone, work } = req.body;
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    const profilePic = files?.profilePic?.[0]; // Get profile pic file
+    const documents = files?.documentsUrl || []; // Get document files
+    const user = (req as any).dbUser;
+
+    // Get orgId from the authenticated user's context
+    const orgId = user.orgId;
+
+    if (!orgId) {
+      return res.status(400).json({
+        success: false,
+        message: "User is not associated with any organisation",
+      });
+    }
+
+    if (!labourId) {
+      return res.status(400).json({
+        success: false,
+        message: "Labour ID is required",
+      });
+    }
+
+    // Find the labour and verify it belongs to the user's organisation
+    const existingLabour = await Labour.findOne({
+      _id: labourId,
+      orgId: orgId,
+    });
+
+    if (!existingLabour) {
+      return res.status(404).json({
+        success: false,
+        message:
+          "Labour not found or you don't have access to edit this labour",
+      });
+    }
+
+    // Validate required fields
+    if (!fName) {
+      return res.status(400).json({
+        success: false,
+        message: "First name is required",
+      });
+    }
+
+    if (!lName) {
+      return res.status(400).json({
+        success: false,
+        message: "Last name is required",
+      });
+    }
+
+    if (!phone) {
+      return res.status(400).json({
+        success: false,
+        message: "Phone number is required",
+      });
+    }
+
+    // Validate phone number format
+    const phoneNumber = parseInt(phone);
+    if (isNaN(phoneNumber) || phoneNumber <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid phone number format",
+      });
+    }
+
+    if (!work) {
+      return res.status(400).json({
+        success: false,
+        message: "Work details are required",
+      });
+    }
+
+    // Check if phone number is already taken by another labour (excluding current labour)
+    const phoneExists = await Labour.findOne({
+      phone: phoneNumber,
+      _id: { $ne: labourId },
+      orgId: orgId,
+    });
+
+    if (phoneExists) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Phone number is already taken by another labour in your organisation",
+      });
+    }
+
+    // Handle profile picture update
+    let profilePicUrl = existingLabour.profilePic; // Keep existing by default
+
+    if (profilePic) {
+      try {
+        // Delete previous profile picture from Cloudinary if it exists
+        if (
+          existingLabour.profilePic &&
+          existingLabour.profilePic.includes("cloudinary.com") &&
+          existingLabour.profilePic !==
+            "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
+        ) {
+          console.log(
+            "🗑️ Deleting previous profile picture from Cloudinary:",
+            existingLabour.profilePic
+          );
+          const deleteResult = await deleteFromCloudinary(
+            existingLabour.profilePic
+          );
+          if (deleteResult) {
+            console.log("✅ Previous profile picture deleted successfully");
+          } else {
+            console.log(
+              "⚠️ Failed to delete previous profile picture, but continuing"
+            );
+          }
+        }
+
+        // Upload new profile picture to Cloudinary
+        console.log("📤 Uploading new profile picture to Cloudinary");
+        const uploadResult = await uploadOnCloudinary(profilePic.path);
+        if (uploadResult?.url) {
+          profilePicUrl = uploadResult.url;
+          console.log(
+            "✅ New profile picture uploaded successfully:",
+            profilePicUrl
+          );
+        } else {
+          console.log("⚠️ Profile picture upload failed, keeping existing one");
+        }
+      } catch (uploadError) {
+        console.error("❌ Profile picture upload error:", uploadError);
+        // Continue with existing profile picture
+      }
+    }
+
+    // Handle documents update
+    let documentsUrl = existingLabour.documentsUrl || []; // Keep existing by default
+
+    if (documents.length > 0) {
+      try {
+        // Delete previous documents from Cloudinary if they exist
+        if (
+          existingLabour.documentsUrl &&
+          existingLabour.documentsUrl.length > 0
+        ) {
+          for (const docUrl of existingLabour.documentsUrl) {
+            if (docUrl.includes("cloudinary.com")) {
+              console.log(
+                "🗑️ Deleting previous document from Cloudinary:",
+                docUrl
+              );
+              await deleteFromCloudinary(docUrl);
+            }
+          }
+        }
+
+        // Upload new documents to Cloudinary
+        const newDocumentsUrl: string[] = [];
+        for (const doc of documents) {
+          try {
+            const uploadResult = await uploadOnCloudinary(doc.path);
+            if (uploadResult?.url) {
+              newDocumentsUrl.push(uploadResult.url);
+            }
+          } catch (uploadError) {
+            console.error("❌ Document upload error:", uploadError);
+            // Continue with other documents
+          }
+        }
+
+        if (newDocumentsUrl.length > 0) {
+          documentsUrl = newDocumentsUrl;
+        }
+      } catch (uploadError) {
+        console.error("❌ Documents update error:", uploadError);
+        // Keep existing documents
+      }
+    }
+
+    // Update the labour
+    const updatedLabour = await Labour.findByIdAndUpdate(
+      labourId,
+      {
+        fName,
+        lName,
+        phone: phoneNumber,
+        work,
+        profilePic: profilePicUrl,
+        documentsUrl: documentsUrl,
+      },
+      { new: true }
+    );
+
+    if (!updatedLabour) {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to update labour",
+      });
+    }
+
+    // Clean up temporary local files
+    try {
+      if (profilePic && profilePic.path) {
+        fs.unlinkSync(profilePic.path);
+      }
+
+      documents.forEach((doc) => {
+        try {
+          fs.unlinkSync(doc.path);
+        } catch (cleanupError) {
+          // Continue with cleanup
+        }
+      });
+    } catch (cleanupError) {
+      // Continue with response
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Labour updated successfully",
+      data: {
+        labourId: updatedLabour._id,
+        labourName: `${updatedLabour.fName} ${updatedLabour.lName}`,
+        labourPhone: updatedLabour.phone,
+        labourWork: updatedLabour.work,
+        labourProfilePic: updatedLabour.profilePic,
+        labourDocumentsUrl: updatedLabour.documentsUrl,
+        organisationId: orgId,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+export const deleteLabour = async (req: Request, res: Response) => {
+  try {
+    const { labourId } = req.params;
+    const user = (req as any).dbUser;
+
+    if (!labourId) {
+      return res.status(400).json({
+        success: false,
+        message: "Labour ID is required",
+      });
+    }
+
+    // Get orgId from the authenticated user's context
+    const orgId = user.orgId;
+
+    if (!orgId) {
+      return res.status(400).json({
+        success: false,
+        message: "User is not associated with any organisation",
+      });
+    }
+
+    // Find the labour and verify it belongs to the user's organisation
+    const existingLabour = await Labour.findOne({
+      _id: labourId,
+      orgId: orgId,
+    });
+
+    if (!existingLabour) {
+      return res.status(404).json({
+        success: false,
+        message:
+          "Labour not found or you don't have access to delete this labour",
+      });
+    }
+
+    // Delete profile picture from Cloudinary if it exists
+    if (
+      existingLabour.profilePic &&
+      existingLabour.profilePic.includes("cloudinary.com") &&
+      existingLabour.profilePic !==
+        "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
+    ) {
+      try {
+        console.log(
+          "🗑️ Deleting profile picture from Cloudinary:",
+          existingLabour.profilePic
+        );
+        await deleteFromCloudinary(existingLabour.profilePic);
+        console.log("✅ Profile picture deleted successfully");
+      } catch (deleteError) {
+        console.error(
+          "⚠️ Failed to delete profile picture from Cloudinary:",
+          deleteError
+        );
+      }
+    }
+
+    // Delete documents from Cloudinary if they exist
+    if (existingLabour.documentsUrl && existingLabour.documentsUrl.length > 0) {
+      for (const docUrl of existingLabour.documentsUrl) {
+        if (docUrl.includes("cloudinary.com")) {
+          try {
+            console.log("🗑️ Deleting document from Cloudinary:", docUrl);
+            await deleteFromCloudinary(docUrl);
+            console.log("✅ Document deleted successfully");
+          } catch (deleteError) {
+            console.error(
+              "⚠️ Failed to delete document from Cloudinary:",
+              deleteError
+            );
+          }
+        }
+      }
+    }
+
+    // Remove labour from organisation
+    const organisation = await Organisation.findById(orgId);
+    if (organisation) {
+      organisation.labourId = organisation.labourId.filter(
+        (id) => !id.equals(labourId)
+      );
+      await organisation.save();
+    }
+
+    // Delete the labour
+    await Labour.findByIdAndDelete(labourId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Labour deleted successfully",
+      data: {
+        labourId: labourId,
+        organisationId: orgId,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
