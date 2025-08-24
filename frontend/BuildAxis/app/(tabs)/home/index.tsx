@@ -1,8 +1,15 @@
 // ✅ Home.tsx (improved layout)
-import { Feather, FontAwesome, FontAwesome5, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  Feather,
+  FontAwesome,
+  FontAwesome5,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "expo-router";
 import { CompanyBar } from "@/components/ui/companyBar";
 import { Safe_area } from "@/components/ui/safeArea";
 import { Overview } from "@/components/ui/summaryBoxes";
@@ -12,59 +19,76 @@ import DateSelector from "@/components/ui/dateSelector";
 export default function Home() {
   const { theme } = useTheme();
 
+  // Reset status bar when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setBarStyle("light-content");
+      StatusBar.setBackgroundColor(theme.primary);
+    }, [theme.primary])
+  );
+
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
-      <Safe_area />
-      <CompanyBar />
+    <>
+      <StatusBar backgroundColor={theme.primary} barStyle="light-content" />
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.background }]}
+      >
+        <Safe_area />
+        <CompanyBar />
 
-      {/* Date Row */}
-      <View style={styles.dateRow}>
-        <Text style={[styles.todayText, { color: theme.text }]}>Today</Text>
-        <View
-          style={[
-          ]}
-        >
-          <DateSelector/>
-          
-
+        {/* Date Row */}
+        <View style={styles.dateRow}>
+          <Text style={[styles.todayText, { color: theme.text }]}>Today</Text>
+          <View style={[]}>
+            <DateSelector />
+          </View>
         </View>
-      </View>
 
-      {/* Grid Overview */}
-      <View style={styles.grid}>
-        <Overview
-          variant="boxes01"
-          Text1="Attendance"
-          text2="Supervisor: 20"
-          text3="Labours: 100"
-          icon={<Ionicons name="people" size={40} color={theme.boxes01[2]} />} 
-        />
+        {/* Grid Overview */}
+        <View style={styles.grid}>
+          <Overview
+            variant="boxes01"
+            Text1="Attendance"
+            text2="Supervisor: 20"
+            text3="Labours: 100"
+            icon={<Ionicons name="people" size={40} color={theme.boxes01[2]} />}
+          />
 
+          <Overview
+            variant="boxes02"
+            Text1="Daily Expenses"
+            text2="10,000 Rs"
+            icon={
+              <Feather name="trending-up" size={40} color={theme.boxes02[2]} />
+            }
+          />
 
-        <Overview
-          variant="boxes02"
-          Text1="Daily Expenses"
-          text2="10,000 Rs"
-          icon={<Feather name="trending-up"  size={40} color={theme.boxes02[2]} />}
-        />
+          <Overview
+            variant="boxes03"
+            Text1="Inventory"
+            text2="Crush sand is required."
+            text3="Bricks are required."
+            icon={
+              <FontAwesome5 name="boxes" size={40} color={theme.boxes03[2]} />
+            }
+          />
 
-        <Overview
-          variant="boxes03"
-          Text1="Inventory"
-          text2="Crush sand is required."
-          text3="Bricks are required."
-          icon={<FontAwesome5 name="boxes" size={40} color={theme.boxes03[2]} />}
-        />
-
-        <Overview
-          variant="boxes04"
-          Text1="Sites"
-          text2="Active: 7"
-          text3="Inactive: 4"
-          icon={<MaterialCommunityIcons name="pier-crane" size={40} color={theme.boxes04[2]} />}
-        />
-      </View>
-    </SafeAreaView>
+          <Overview
+            variant="boxes04"
+            Text1="Sites"
+            text2="Active: 7"
+            text3="Inactive: 4"
+            icon={
+              <MaterialCommunityIcons
+                name="pier-crane"
+                size={40}
+                color={theme.boxes04[2]}
+              />
+            }
+          />
+        </View>
+      </SafeAreaView>
+    </>
   );
 }
 

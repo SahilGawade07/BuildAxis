@@ -1,9 +1,8 @@
-    // const paddingBottom = dropped
-    //   ? layout.height - (layout.height - 300 - insets.top-insets.bottom-insets.bottom)
-    //   :layout.height - (layout.height - 68 - insets.top-insets.bottom-insets.bottom)
+// const paddingBottom = dropped
+//   ? layout.height - (layout.height - 300 - insets.top-insets.bottom-insets.bottom)
+//   :layout.height - (layout.height - 68 - insets.top-insets.bottom-insets.bottom)
 
-
-    import React from "react";
+import React from "react";
 import { useWindowDimensions, StyleSheet, View } from "react-native";
 import { TabView, TabBar } from "react-native-tab-view";
 import AttendanceSummary from "@/app/(tabs)/sites/[siteId]/tabs/attandanceScreen";
@@ -35,18 +34,56 @@ export default function Main_Sites({ dropped }: any) {
   const renderScene = ({ route }: any) => {
     // Adjust paddingBottom dynamically
     const paddingBottom = dropped
-      ? layout.height - (layout.height - 300 - insets.top-insets.bottom-insets.bottom)
-      :layout.height - (layout.height - 68 - insets.top-insets.bottom-insets.bottom)
+      ? layout.height -
+        (layout.height - 300 - insets.top - insets.bottom - insets.bottom)
+      : layout.height -
+        (layout.height - 68 - insets.top - insets.bottom - insets.bottom);
 
     switch (route.key) {
-      case "task": return <View style={[styles.tabContent, { paddingBottom }]}><Assigntask /></View>;
-      case "report": return <View style={[styles.tabContent, { paddingBottom }]}><Report /></View>;
-      case "attendance": return <View style={[styles.tabContent, { paddingBottom }]}><AttendanceSummary /></View>;
-      case "labour": return <View style={[styles.tabContent, { paddingBottom }]}><Labour_list /></View>;
-      case "inventory": return <View style={[styles.tabContent, { paddingBottom }]}><Inventory /></View>;
-      case "material": return <View style={[styles.tabContent, { paddingBottom }]}><ItemTable /></View>;
-      case "expencess": return <View style={[styles.tabContent, { paddingBottom }]}><ExpencessScreen /></View>;
-      default: return null;
+      case "task":
+        return (
+          <View style={[styles.tabContent, { paddingBottom }]}>
+            <Assigntask />
+          </View>
+        );
+      case "report":
+        return (
+          <View style={[styles.tabContent, { paddingBottom }]}>
+            <Report />
+          </View>
+        );
+      case "attendance":
+        return (
+          <View style={[styles.tabContent, { paddingBottom }]}>
+            <AttendanceSummary />
+          </View>
+        );
+      case "labour":
+        return (
+          <View style={[styles.tabContent, { paddingBottom }]}>
+            <Labour_list />
+          </View>
+        );
+      case "inventory":
+        return (
+          <View style={[styles.tabContent, { paddingBottom }]}>
+            <Inventory />
+          </View>
+        );
+      case "material":
+        return (
+          <View style={[styles.tabContent, { paddingBottom }]}>
+            <ItemTable />
+          </View>
+        );
+      case "expencess":
+        return (
+          <View style={[styles.tabContent, { paddingBottom }]}>
+            <ExpencessScreen />
+          </View>
+        );
+      default:
+        return null;
     }
   };
 
@@ -65,12 +102,11 @@ export default function Main_Sites({ dropped }: any) {
             scrollEnabled
             indicatorStyle={{ backgroundColor: theme.secondary }}
             style={{ backgroundColor: theme.listItemFill, marginBottom: 10 }}
-            labelStyle={{ fontWeight: "600" }}
+            tabStyle={{}}
             activeColor={theme.secondary}
             inactiveColor={theme.text}
           />
         )}
-        springConfig={{ damping: 25, stiffness: 180, mass: 1 }}
       />
     </View>
   );

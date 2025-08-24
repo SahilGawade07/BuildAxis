@@ -1,8 +1,14 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  StatusBar,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useTheme } from "@/context/ThemeContext"; 
+import { useTheme } from "@/context/ThemeContext";
 
 interface HeaderBarProps {
   title: string;
@@ -13,15 +19,21 @@ const HeaderBar: React.FC<HeaderBarProps> = ({ title }) => {
   const { theme } = useTheme(); // get theme
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.primary }]}>
-      {/* Back Button */}
-      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-        <Ionicons name="chevron-back" size={24} color={"#ffffff"} />
-      </TouchableOpacity>
+    <>
+      <StatusBar backgroundColor={theme.primary} barStyle="light-content" />
+      <View style={[styles.container, { backgroundColor: theme.primary }]}>
+        {/* Back Button */}
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.backButton}
+        >
+          <Ionicons name="chevron-back" size={24} color={"#ffffff"} />
+        </TouchableOpacity>
 
-      {/* Title */}
-      <Text style={[styles.title, { color: "#ffffff" }]}>{title}</Text>
-    </View>
+        {/* Title */}
+        <Text style={[styles.title, { color: "#ffffff" }]}>{title}</Text>
+      </View>
+    </>
   );
 };
 
@@ -40,6 +52,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    fontWeight: "600"
+    fontWeight: "600",
   },
 });

@@ -1,6 +1,6 @@
 // ... imports remain same
 import React, { useState } from "react";
-import {orgData} from "@/data/orginationData"
+import { orgData } from "@/data/orginationData";
 import {
   View,
   Text,
@@ -46,26 +46,18 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [storageData, setStorageData] = useState<Record<string, string>>({});
-// Check if organizationInfo exists
-if (storageData.organizationInfo) {
-  // Convert JSON string to object
-  const orgInfo = JSON.parse(storageData.organizationInfo);
+  // Check if organizationInfo exists
+  if (storageData.organizationInfo) {
+    // Convert JSON string to object
+    const orgInfo = JSON.parse(storageData.organizationInfo);
 
-// Convert JSON string to JavaScript object
+    // Convert JSON string to JavaScript object
 
-
-
-
-  const orgName = orgInfo.orgName || "N/A";
-  const fetchedAt = orgInfo.fetchedAt || "N/A";
-
-  console.log("Organization Name:", orgName);
-  console.log("Fetched At:", fetchedAt);
-
-} else {
-  console.log("organizationInfo not available yet");
-}
-
+    const orgName = orgInfo.orgName || "N/A";
+    const fetchedAt = orgInfo.fetchedAt || "N/A";
+  } else {
+    // organizationInfo not available yet
+  }
 
   useFocusEffect(
     React.useCallback(() => {
@@ -176,7 +168,7 @@ if (storageData.organizationInfo) {
         router.push("/(tabs)/profile/changePassword");
       },
     },
-     {
+    {
       iconName: "color-palette-outline",
       menuItemName: "site map",
       onPress: () => {

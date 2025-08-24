@@ -50,7 +50,6 @@ export default function ManageOrganization() {
       // Skip fetch if data is fresh (less than 30 seconds old) and not forced
       const now = Date.now();
       if (!forceRefresh && now - lastFetchTime < 30000) {
-        console.log("📱 Data is fresh, skipping fetch");
         return;
       }
 

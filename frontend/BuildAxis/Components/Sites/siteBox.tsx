@@ -13,10 +13,12 @@ export const SiteBox = ({ item }: any) => {
         styles.sitecard,
         { backgroundColor: theme.listItemFill, borderColor: "#ffffff" },
       ]}
-      onPress={() => router.push({
-        pathname: `/sites/${item.id}`,
-        params: { siteName: item.name }
-      })}
+      onPress={() =>
+        router.push({
+          pathname: `/sites/[siteId]` as any,
+          params: { siteId: item.id, siteName: item.name },
+        })
+      }
     >
       {/* Header */}
       <View style={styles.cardHeader}>

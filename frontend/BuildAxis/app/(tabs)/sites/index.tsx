@@ -73,6 +73,14 @@ export default function Site() {
     }, [fetchSites])
   );
 
+  // Reset status bar when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setBarStyle("light-content");
+      StatusBar.setBackgroundColor(theme.primary);
+    }, [theme.primary])
+  );
+
   useEffect(() => {
     fetchSites();
   }, [fetchSites]);
@@ -127,10 +135,7 @@ export default function Site() {
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.backgroundgrey }]}
     >
-      <StatusBar
-        backgroundColor={theme.primary}
-        barStyle={theme.isDark ? "light-content" : "dark-content"}
-      />
+      <StatusBar backgroundColor={theme.primary} barStyle="light-content" />
       <CompanyBar />
 
       <Text style={[styles.sectionTitle, { color: theme.text }]}>Projects</Text>
