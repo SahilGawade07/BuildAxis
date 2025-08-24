@@ -29,7 +29,6 @@ import {
   deleteSupervisor,
   getLabours,
 } from "../controllers/common/manageOrganisation";
-import { getsites, addLaboursToSite } from "../controllers/common/sites";
 import { upload } from "../middlewares/multer";
 import { getsites,addLaboursToSite,getLaboursBySite } from "../controllers/common/sites";
 
