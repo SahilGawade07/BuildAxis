@@ -28,8 +28,10 @@ import {
   getVendorProfileDetails,
   deleteSupervisor,
 } from "../controllers/common/manageOrganisation";
+import { getsites } from "../controllers/common/sites";
 
 const router = Router();
+
 router.use(authenticateJWT);
 router.use(isAuthenticated);
 
@@ -54,6 +56,7 @@ router.post("/add-inventory", addInventory);
 router.patch("/update-task/:taskId", updateTask);
 
 router.get("/manage-org-page-data/:orgId", manageOrgPageData);
+router.get("/siteslist/:orgId", getsites);
 
 router.get("/labour/:labourId", getLabourProfileDetails);
 router.get("/supervisor/:supervisorId", getSupervisorProfileDetails);
