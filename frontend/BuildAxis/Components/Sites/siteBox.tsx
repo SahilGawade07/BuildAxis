@@ -11,46 +11,48 @@ export const SiteBox = ({ item }: any) => {
     <TouchableOpacity
       style={[
         styles.sitecard,
-        {
-          backgroundColor: theme.listItemFill,
-          // borderColor: theme.listItemBorder,
-          borderColor: "#ffffff",
-          
-        },
+        { backgroundColor: theme.listItemFill, borderColor: "#ffffff" },
       ]}
-onPress={() => router.push(`/sites/${item.id}`)}    >
-      {/* Card Header */}
+      onPress={() => router.push(`/sites/${item._id}`)}
+    >
+      {/* Header */}
       <View style={styles.cardHeader}>
         <View style={styles.cardHeaderLeft}>
-          <View
-            style={[styles.imageBox, { backgroundColor: theme.boxes01[0] }]}
-          >
-            <Ionicons name="image-outline" size={28} color={theme.icons} />
+          <View style={[styles.imageBox, { backgroundColor: theme.boxes01[0] }]}>
+            <Ionicons name="home-outline" size={28} color={theme.icons} />
           </View>
-          <Text style={[styles.sitename, { color: theme.text }]}>
-            {item.name}
-          </Text>
+          <View>
+            <Text style={[styles.sitename, { color: theme.text }]}>{item.name}</Text>
+            <Text style={{ fontSize: 12, color: theme.icons }}>{item.customerName}</Text>
+          </View>
         </View>
 
         <View
-          style={[styles.activeBadge, { backgroundColor: theme.secondary }]}
+          style={[
+            styles.activeBadge,
+            {
+              backgroundColor:
+                item.status === "active" ? theme.secondary : theme.icons,
+            },
+          ]}
         >
           <Text style={styles.activeText}>{item.status}</Text>
         </View>
       </View>
 
+      {/* Footer */}
       <View style={[styles.cardFooter, { borderColor: theme.icons }]}>
         <View style={styles.progressRow}>
-          <Ionicons name="radio-button-off" size={18} color={theme.primary} />
+          <Ionicons name="cash-outline" size={18} color={theme.primary} />
           <Text style={[styles.progressText, { color: theme.text }]}>
-            {item.progress}
+            ₹{item.budget.toLocaleString()}
           </Text>
         </View>
 
         <View style={styles.dateRow}>
           <Ionicons name="calendar-outline" size={18} color={theme.text} />
           <Text style={[styles.dateText, { color: theme.text }]}>
-            {item.date}
+            {new Date(item.startDate).toLocaleDateString()} 
           </Text>
         </View>
 
@@ -63,7 +65,6 @@ onPress={() => router.push(`/sites/${item.id}`)}    >
 };
 
 const styles = StyleSheet.create({
-  // Image placeholder box
   imageBox: {
     width: 50,
     height: 50,
@@ -72,16 +73,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 10,
   },
-
-  // Card header styling
   cardHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
   cardHeaderLeft: { flexDirection: "row", alignItems: "center" },
-
-  // Active status badge
   activeBadge: {
     paddingHorizontal: 8,
     paddingVertical: 2,
@@ -89,8 +86,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   activeText: { color: "#fff", fontSize: 12, fontWeight: "500" },
-
-  // Card footer styling
   cardFooter: {
     borderTopWidth: 1,
     marginTop: 10,
@@ -99,12 +94,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-
   progressRow: { flexDirection: "row", alignItems: "center" },
   progressText: { marginLeft: 4, fontSize: 12 },
   dateRow: { flexDirection: "row", alignItems: "center" },
   dateText: { marginLeft: 4, fontSize: 12 },
-
   sitecard: {
     marginHorizontal: 15,
     marginBottom: 20,
@@ -117,7 +110,5 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 1,
   },
-
-  // Project name text
   sitename: { fontSize: 16, fontWeight: "500" },
 });

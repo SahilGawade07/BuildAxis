@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
-
+import axios from "axios";
+import { Sites } from "@/types/sites";
 // ✅ Extract host (IPv4) from Metro URL
 function getLocalIpFromExpoUrl(): string | null {
   const debuggerHost =
@@ -480,4 +481,20 @@ export async function createSupervisorRequest(supervisorData: {
   }
 
   return payload as any;
+}
+
+export async function getSites(orgId: string): Promise<Sites[]> {
+  try {
+    // console.log("------------------------")
+    // console.log("send the request")
+    const res = await axios.get(`${API_BASE_URL}/api/common//siteslist/${orgId}`);
+
+    console.log(res.data)
+    return res.data;
+  } catch (err: any) {
+    // console.log("error")
+    // console.log("------------------------")
+    return err.response?.data?.message;
+    throw new Error(err.response?.data?.message || "Failed to fetch sites");
+  }
 }

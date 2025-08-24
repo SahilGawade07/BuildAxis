@@ -2,7 +2,7 @@ import { CompanyBar } from "@/components/ui/companyBar";
 import { SiteBox } from "@/components/Sites/siteBox";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
   StatusBar,
@@ -14,7 +14,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../../context/ThemeContext";
-
+import { getSites } from "@/lib/api";
+import { Sites } from "@/types/sites";
 export default function Site() {
   const router = useRouter();
   const { theme } = useTheme();
@@ -26,6 +27,24 @@ export default function Site() {
     { id: "4", name: "Blue Ocean", progress: "60%", date: "20/08/2025", status: "Active" },
   ];
 
+
+  const [sites, setSites] = useState<any[]>([]);
+  const [error, setError] = useState<string>("");
+
+  useEffect(() => {
+    async function fetchSites() {
+      try {
+        const data = await getSites("688c88be363b135f8911086f");
+        setSites(data);
+        console.log("data is complete")
+        console.log(data)
+      } catch (err: any) {
+        setError(err.message);
+        console.log(err.message)
+      }
+    }
+    fetchSites();
+  }, []);
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.backgroundgrey }]}>
       <StatusBar backgroundColor={theme.primary} barStyle={theme.isDark ? "light-content" : "dark-content"} />
@@ -58,7 +77,7 @@ export default function Site() {
       </View>
 
       <FlatList
-        data={projects}
+        data={sites}
         renderItem={({ item }) => <SiteBox item={item} />}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingBottom: 20 }}
