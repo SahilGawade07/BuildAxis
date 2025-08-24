@@ -83,7 +83,6 @@
 //           </Text>
 //           <Text style={styles.subtitle}>{item.user}</Text>
 
-
 //         </View>
 
 //         {/* Right Side */}
@@ -91,7 +90,6 @@
 //           <TouchableOpacity>
 //             <Entypo name="dots-three-vertical" size={18} color="black" />
 //           </TouchableOpacity>
-
 
 //         </View>
 //       </View>
@@ -113,7 +111,6 @@
 
 //       </View>
 
-
 //     </View>
 //   );
 
@@ -132,15 +129,13 @@
 // const styles = StyleSheet.create({
 //   card: {
 
-
 //     // padding: 12,
 //     // backgroundColor: "#fff",
 //     // borderRadius: 12,
 //     // marginBottom: 10,
 //     // borderBottomWidth:1,
 //     // borderColor:"#ccc"
-       
-    
+
 //     padding: 12,
 //     backgroundColor: "#fff",
 //     borderRadius: 12,
@@ -194,8 +189,6 @@
 //     marginBottom: 5,
 //   },
 // });
-
-
 
 import React from "react";
 import {
@@ -258,6 +251,56 @@ const projects = [
     status: "On Going",
     price: "$234",
     date: "Oct 2, 2020",
+    image: "https://via.placeholder.com/60",
+  },
+  {
+    id: "6",
+    name: "Project Name",
+    type: "Commercial",
+    user: "John Doe | Lahore",
+    status: "Completed",
+    price: "$500",
+    date: "Oct 3, 2020",
+    image: "https://via.placeholder.com/60",
+  },
+  {
+    id: "7",
+    name: "Project Name",
+    type: "Residential",
+    user: "John Doe | Lahore",
+    status: "On Going",
+    price: "$300",
+    date: "Oct 4, 2020",
+    image: "https://via.placeholder.com/60",
+  },
+  {
+    id: "8",
+    name: "Project Name",
+    type: "Commercial",
+    user: "John Doe | Lahore",
+    status: "Completed",
+    price: "$400",
+    date: "Oct 5, 2020",
+    image: "https://via.placeholder.com/60",
+  },
+  {
+    id: "9",
+    name: "Project Name",
+    type: "Industrial",
+    user: "John Doe | Lahore",
+    status: "Cancelled",
+    price: "",
+    date: "Oct 6, 2020",
+    image: "https://via.placeholder.com/60",
+  },
+  {
+    id: "10",
+    name: "Project Name",
+    type: "Commercial",
+    user: "John Doe | Lahore",
+    status: "On Going",
+    price: "$600",
+    date: "Oct 7, 2020",
     image: "https://via.placeholder.com/60",
   },
 ];
@@ -331,9 +374,7 @@ export default function ProjectList() {
           >
             Status
           </Text>
-          <Text
-            style={[styles.status, { color: statusColors[item.status] }]}
-          >
+          <Text style={[styles.status, { color: statusColors[item.status] }]}>
             {item.status}
           </Text>
         </View>
@@ -352,14 +393,18 @@ export default function ProjectList() {
   );
 
   return (
-    <View style={{  flex: 1,marginHorizontal:3 }}>
-      <FlatList
-        data={projects}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 10 }}
-      />
-    </View>
+    <FlatList
+      data={projects}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.id}
+      contentContainerStyle={{
+        padding: 10,
+        paddingBottom: 80,
+        paddingHorizontal: 3,
+      }}
+      showsVerticalScrollIndicator={false}
+      style={{ flex: 1 }}
+    />
   );
 }
 

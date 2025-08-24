@@ -5,23 +5,21 @@ import { useTheme } from "@/context/ThemeContext";
 import { useLocalSearchParams } from "expo-router";
 import DropImageExample from "@/components/ui/dropdownimg";
 import Main_Sites from "@/app/(tabs)/sites/[siteId]/tabs/index";
+import HeaderBar from "@/components/ui/headerBar";
 
 export default function Main_Site() {
   const { theme } = useTheme();
   const { siteId, siteName } = useLocalSearchParams();
-  const [dropped, setDropped] = React.useState(false);
 
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.background }]}
     >
-      {/* Drop header */}
-      <DropImageExample
-        onDropChange={(value: boolean) => setDropped(value)}
-        title={(siteName as string) || "Site Details"}
-      />
+      {/* Header */}
+      
+      <HeaderBar title={(siteName as string) || "Site Details"} />
       {/* Main Tabs */}
-      <Main_Sites dropped={dropped} />
+      <Main_Sites />
     </SafeAreaView>
   );
 }

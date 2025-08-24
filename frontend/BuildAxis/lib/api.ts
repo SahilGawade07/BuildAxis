@@ -917,3 +917,33 @@ export async function createSiteRequest(siteData: {
     throw error;
   }
 }
+
+// Add Supervisors to Site API Call
+export async function addSupervisorsToSite(
+  siteId: string,
+  supervisorIds: string[],
+  orgId: string
+): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  try {
+    const response = await api.put(`/api/promoter/site/${siteId}`, {
+      supervisors: supervisorIds,
+      orgId: orgId,
+    });
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message:
+            error.response?.statusText || "Failed to add supervisors to site",
+        }
+      );
+    }
+    throw error;
+  }
+}

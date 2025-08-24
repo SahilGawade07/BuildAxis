@@ -143,7 +143,17 @@ export const updateSite = async (req: Request, res: Response) => {
     site.startDate = startDate || site.startDate;
     site.endDate = endDate || site.endDate;
     site.status = status || site.status;
-    site.supervisors = supervisors || site.supervisors;
+
+    // Handle supervisors - add new ones to existing array
+    if (supervisors && Array.isArray(supervisors)) {
+      // Add new supervisors to existing ones, avoiding duplicates
+      const existingSupervisors = site.supervisors || [];
+      const newSupervisors = supervisors.filter(
+        (supervisorId) => !existingSupervisors.includes(supervisorId)
+      );
+      site.supervisors = [...existingSupervisors, ...newSupervisors];
+    }
+
     site.promoters = promoters || site.promoters;
     site.labours = labours || site.labours;
     site.customerName = customerName || site.customerName;

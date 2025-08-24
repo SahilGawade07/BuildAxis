@@ -1,9 +1,7 @@
 
-import { FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme } from "@/context/ThemeContext";
 import React from "react";
-import { router } from "expo-router";
 import { useRouter } from "expo-router";
 
 export const Addbuttonspage = ({ iconname ,path }: any) => {
