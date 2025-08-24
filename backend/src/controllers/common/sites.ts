@@ -1,24 +1,34 @@
 import { Request, Response } from "express";
-import mongoose from "mongoose";
 import { Site } from "../../models/Site";
 
 export const getsites = async (req: Request, res: Response) => {
-    const { orgId } = req.params;
+  const { orgId } = req.params;
 
-    try {
-      
-    
-        const sites = await Site.find({ orgId: orgId });
-        console.log(orgId)
-        console.log("request are resived")
-        if (!sites || sites.length === 0) {
-            
-            return res.status(404).json({ message: "No sites found for this orgId" });
-        }
-console.log("return the data")
-        res.json(sites);
-    } catch (err: any) {
-        console.log("error")
-        res.status(500).json({ error: err.message });
+  try {
+    const sites = await Site.find({ orgId }).select(
+      "name  customerName status startDate budget   "
+    );
+
+    if (!sites || sites.length === 0) {
+      return res.status(404).json({ message: "No sites found for this orgId" });
     }
+
+    // ✅ Format response
+    const formattedSites = sites.map((site) => ({
+      id: site._id, // rename _id → id for frontend convenience
+      name: site.name,
+      customerName: site.customerName,
+      status: site.status,
+      startDate: site.startDate,
+      bugets: site.budget,
+    }));
+
+    return res.status(200).json({
+      success: true,
+      message: "Sites loaded successfully",
+      data: formattedSites,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
 };

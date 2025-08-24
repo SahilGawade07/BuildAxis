@@ -16,35 +16,52 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../../context/ThemeContext";
 import { getSites } from "@/lib/api";
 import { Sites } from "@/types/sites";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function Site() {
   const router = useRouter();
   const { theme } = useTheme();
 
-  const projects = [
-    { id: "1", name: "JJ Hormony", progress: "20%", date: "12/02/2022", status: "Active" },
-    { id: "2", name: "Green Heights", progress: "45%", date: "15/04/2023", status: "Active" },
-    { id: "3", name: "Sky Towers", progress: "75%", date: "01/10/2024", status: "Active" },
-    { id: "4", name: "Blue Ocean", progress: "60%", date: "20/08/2025", status: "Active" },
-  ];
+
 
 
   const [sites, setSites] = useState<any[]>([]);
   const [error, setError] = useState<string>("");
 
-  useEffect(() => {
-    async function fetchSites() {
-      try {
-        const data = await getSites("688c88be363b135f8911086f");
-        setSites(data);
-        console.log("data is complete")
-        console.log(data)
-      } catch (err: any) {
-        setError(err.message);
-        console.log(err.message)
+useEffect(() => {
+  async function fetchSites() {
+    try {
+      const storedInfo = await AsyncStorage.getItem("organizationInfo");
+
+      if (!storedInfo) {
+        console.log("No organization info found in storage");
+        return;
       }
+
+      const parsed = JSON.parse(storedInfo);
+
+      if (!parsed?.orgId) {
+        console.log("No orgId found in parsed data");
+        return;
+      }
+
+      const id = parsed.orgId;
+      console.log("OrgId:", id);
+
+      const data = await getSites(id);
+      setSites(data);
+
+      console.log("✅ Data fetched successfully");
+      console.log(data);
+
+    } catch (err: any) {
+      console.error("❌ Fetch sites error:", err.message);
+      setError(err.message);
     }
-    fetchSites();
-  }, []);
+  }
+
+  fetchSites();
+}, []);
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.backgroundgrey }]}>
       <StatusBar backgroundColor={theme.primary} barStyle={theme.isDark ? "light-content" : "dark-content"} />
