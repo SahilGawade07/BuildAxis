@@ -18,7 +18,10 @@ export default function ExpenseDetailsScreen() {
   const { theme } = useTheme();
   const params = useLocalSearchParams();
   const router = useRouter();
+
+  // Extract parameters from the nested route
   const expenseId = params.expenseId as string;
+  // Get siteId from query parameters
   const siteId = params.siteId as string;
 
   const [expense, setExpense] = useState<any>(null);
@@ -27,6 +30,8 @@ export default function ExpenseDetailsScreen() {
   useEffect(() => {
     if (expenseId) {
       fetchExpenseDetails();
+    } else {
+      setLoading(false);
     }
   }, [expenseId]);
 
@@ -34,11 +39,14 @@ export default function ExpenseDetailsScreen() {
     try {
       setLoading(true);
       const response = await getExpenseById(expenseId);
-      
+
       if (response.success && response.data) {
         setExpense(response.data);
       } else {
-        Alert.alert("Error", response.message || "Failed to fetch expense details");
+        Alert.alert(
+          "Error",
+          response.message || "Failed to fetch expense details"
+        );
       }
     } catch (error) {
       Alert.alert("Error", "Failed to fetch expense details");
@@ -106,7 +114,9 @@ export default function ExpenseDetailsScreen() {
 
   if (loading) {
     return (
-      <View style={[styles.loadingContainer, { backgroundColor: theme.background }]}>
+      <View
+        style={[styles.loadingContainer, { backgroundColor: theme.background }]}
+      >
         <ActivityIndicator size="large" color={theme.primary} />
         <Text style={[styles.loadingText, { color: theme.text }]}>
           Loading expense details...
@@ -117,8 +127,14 @@ export default function ExpenseDetailsScreen() {
 
   if (!expense) {
     return (
-      <View style={[styles.errorContainer, { backgroundColor: theme.background }]}>
-        <FontAwesome6 name="exclamation-triangle" size={48} color={theme.muted} />
+      <View
+        style={[styles.errorContainer, { backgroundColor: theme.background }]}
+      >
+        <FontAwesome6
+          name="exclamation-triangle"
+          size={48}
+          color={theme.muted}
+        />
         <Text style={[styles.errorText, { color: theme.text }]}>
           Expense not found
         </Text>
@@ -135,18 +151,31 @@ export default function ExpenseDetailsScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
-      <View style={[styles.header, { backgroundColor: theme.listItemFill, borderColor: theme.listItemBorder }]}>
+      <View
+        style={[
+          styles.header,
+          {
+            backgroundColor: theme.listItemFill,
+            borderColor: theme.listItemBorder,
+          },
+        ]}
+      >
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
           <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.text }]}>Expense Details</Text>
+        <Text style={[styles.headerTitle, { color: theme.text }]}>
+          Expense Details
+        </Text>
         <View style={styles.placeholder} />
       </View>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Status Badge */}
         <View style={styles.statusContainer}>
           <View
@@ -167,7 +196,15 @@ export default function ExpenseDetailsScreen() {
         </View>
 
         {/* Main Info Card */}
-        <View style={[styles.mainCard, { backgroundColor: theme.listItemFill, borderColor: theme.listItemBorder }]}>
+        <View
+          style={[
+            styles.mainCard,
+            {
+              backgroundColor: theme.listItemFill,
+              borderColor: theme.listItemBorder,
+            },
+          ]}
+        >
           {/* Category and Amount */}
           <View style={styles.categoryRow}>
             <View
@@ -184,7 +221,8 @@ export default function ExpenseDetailsScreen() {
             </View>
             <View style={styles.categoryInfo}>
               <Text style={[styles.categoryText, { color: theme.muted }]}>
-                {expense.category?.charAt(0).toUpperCase() + expense.category?.slice(1)}
+                {expense.category?.charAt(0).toUpperCase() +
+                  expense.category?.slice(1)}
               </Text>
               <Text style={[styles.amountText, { color: theme.text }]}>
                 {formatAmount(expense.amount)}
@@ -208,22 +246,37 @@ export default function ExpenseDetailsScreen() {
               Payment Method
             </Text>
             <Text style={[styles.paymentMethodText, { color: theme.text }]}>
-              {expense.paymentMethod?.charAt(0).toUpperCase() + expense.paymentMethod?.slice(1)}
+              {expense.paymentMethod?.charAt(0).toUpperCase() +
+                expense.paymentMethod?.slice(1)}
             </Text>
           </View>
         </View>
 
         {/* Details Card */}
-        <View style={[styles.detailsCard, { backgroundColor: theme.listItemFill, borderColor: theme.listItemBorder }]}>
+        <View
+          style={[
+            styles.detailsCard,
+            {
+              backgroundColor: theme.listItemFill,
+              borderColor: theme.listItemBorder,
+            },
+          ]}
+        >
           <Text style={[styles.cardTitle, { color: theme.text }]}>Details</Text>
-          
+
           {/* Date */}
           <View style={styles.detailRow}>
             <View style={styles.detailIcon}>
-              <Ionicons name="calendar-outline" size={20} color={theme.primary} />
+              <Ionicons
+                name="calendar-outline"
+                size={20}
+                color={theme.primary}
+              />
             </View>
             <View style={styles.detailContent}>
-              <Text style={[styles.detailLabel, { color: theme.muted }]}>Date</Text>
+              <Text style={[styles.detailLabel, { color: theme.muted }]}>
+                Date
+              </Text>
               <Text style={[styles.detailValue, { color: theme.text }]}>
                 {formatDate(expense.date)}
               </Text>
@@ -236,7 +289,9 @@ export default function ExpenseDetailsScreen() {
               <Ionicons name="person-outline" size={20} color={theme.primary} />
             </View>
             <View style={styles.detailContent}>
-              <Text style={[styles.detailLabel, { color: theme.muted }]}>Paid By</Text>
+              <Text style={[styles.detailLabel, { color: theme.muted }]}>
+                Paid By
+              </Text>
               <Text style={[styles.detailValue, { color: theme.text }]}>
                 {expense.paidBy?.fName} {expense.paidBy?.lName}
               </Text>
@@ -247,10 +302,16 @@ export default function ExpenseDetailsScreen() {
           {expense.siteId && (
             <View style={styles.detailRow}>
               <View style={styles.detailIcon}>
-                <Ionicons name="location-outline" size={20} color={theme.primary} />
+                <Ionicons
+                  name="location-outline"
+                  size={20}
+                  color={theme.primary}
+                />
               </View>
               <View style={styles.detailContent}>
-                <Text style={[styles.detailLabel, { color: theme.muted }]}>Site</Text>
+                <Text style={[styles.detailLabel, { color: theme.muted }]}>
+                  Site
+                </Text>
                 <Text style={[styles.detailValue, { color: theme.text }]}>
                   {expense.siteId.name}
                 </Text>
@@ -262,10 +323,16 @@ export default function ExpenseDetailsScreen() {
           {expense.vendorId && (
             <View style={styles.detailRow}>
               <View style={styles.detailIcon}>
-                <Ionicons name="business-outline" size={20} color={theme.primary} />
+                <Ionicons
+                  name="business-outline"
+                  size={20}
+                  color={theme.primary}
+                />
               </View>
               <View style={styles.detailContent}>
-                <Text style={[styles.detailLabel, { color: theme.muted }]}>Vendor</Text>
+                <Text style={[styles.detailLabel, { color: theme.muted }]}>
+                  Vendor
+                </Text>
                 <Text style={[styles.detailValue, { color: theme.text }]}>
                   {expense.vendorId.vendorName}
                 </Text>
@@ -276,12 +343,25 @@ export default function ExpenseDetailsScreen() {
 
         {/* Receipts Card */}
         {expense.receipts && expense.receipts.length > 0 && (
-          <View style={[styles.receiptsCard, { backgroundColor: theme.listItemFill, borderColor: theme.listItemBorder }]}>
-            <Text style={[styles.cardTitle, { color: theme.text }]}>Receipts</Text>
+          <View
+            style={[
+              styles.receiptsCard,
+              {
+                backgroundColor: theme.listItemFill,
+                borderColor: theme.listItemBorder,
+              },
+            ]}
+          >
+            <Text style={[styles.cardTitle, { color: theme.text }]}>
+              Receipts
+            </Text>
             <View style={styles.receiptsGrid}>
               {expense.receipts.map((receipt: string, index: number) => (
                 <TouchableOpacity key={index} style={styles.receiptItem}>
-                  <Image source={{ uri: receipt }} style={styles.receiptImage} />
+                  <Image
+                    source={{ uri: receipt }}
+                    style={styles.receiptImage}
+                  />
                 </TouchableOpacity>
               ))}
             </View>
@@ -290,7 +370,15 @@ export default function ExpenseDetailsScreen() {
 
         {/* Notes Card */}
         {expense.notes && (
-          <View style={[styles.notesCard, { backgroundColor: theme.listItemFill, borderColor: theme.listItemBorder }]}>
+          <View
+            style={[
+              styles.notesCard,
+              {
+                backgroundColor: theme.listItemFill,
+                borderColor: theme.listItemBorder,
+              },
+            ]}
+          >
             <Text style={[styles.cardTitle, { color: theme.text }]}>Notes</Text>
             <Text style={[styles.notesText, { color: theme.text }]}>
               {expense.notes}

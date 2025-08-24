@@ -277,7 +277,9 @@ export const getSiteExpenses = async (req: Request, res: Response) => {
     // Fetch expenses for this site only with populated user info
     const expenses = await Expense.find({ siteId })
       .populate("paidBy", "fName lName")
-      .select("description amount date paidBy status category paymentMethod")
+      .select(
+        "_id description amount date paidBy status category paymentMethod siteId"
+      )
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
@@ -339,7 +341,7 @@ export const getExpenseById = async (req: Request, res: Response) => {
     const expense = await Expense.findById(expenseId)
       .populate("paidBy", "fName lName email phone")
       .populate("siteId", "name location")
-      .populate("vendorId", "vendorName contactPerson phoneNo");
+      .populate("vendor", "vendorName contactPerson phoneNo");
 
     if (!expense) {
       return res.status(404).json({
@@ -349,8 +351,10 @@ export const getExpenseById = async (req: Request, res: Response) => {
     }
 
     // Check if user has access to this expense (through site access)
+    // Use the original siteId (not populated) for the query
+    const siteId = expense.siteId._id || expense.siteId;
     const site = await Site.findOne({
-      _id: expense.siteId,
+      _id: siteId,
       orgId: dbUser.orgId,
       promoters: dbUser._id,
     });

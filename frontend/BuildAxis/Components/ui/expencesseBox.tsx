@@ -53,11 +53,23 @@ export const Expencess = ({ item }: any) => {
 
   // Handle expense item click
   const handleExpensePress = () => {
-    router.push(`/(tabs)/sites/${item.siteId}/tabs/screens/expense-details/${item._id}`);
+    if (!item.siteId) {
+      console.error("No siteId found in expense item");
+      return;
+    }
+
+    // Navigate to expense details with siteId as query parameter
+    router.push(
+      `/(tabs)/sites/${item.siteId}/tabs/screens/expense-details/${item._id}?siteId=${item.siteId}`
+    );
   };
 
   return (
-    <TouchableOpacity activeOpacity={0.9} style={styles.wrapper} onPress={handleExpensePress}>
+    <TouchableOpacity
+      activeOpacity={0.9}
+      style={styles.wrapper}
+      onPress={handleExpensePress}
+    >
       <View
         style={[
           styles.sitecard,
@@ -138,8 +150,8 @@ export const Expencess = ({ item }: any) => {
 };
 
 const styles = StyleSheet.create({
-  wrapper: { 
-    marginHorizontal: 20, 
+  wrapper: {
+    marginHorizontal: 20,
     marginBottom: 16,
     marginTop: 8,
   },
@@ -163,8 +175,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 16,
   },
-  cardHeaderLeft: { 
-    flexDirection: "row", 
+  cardHeaderLeft: {
+    flexDirection: "row",
     alignItems: "flex-start",
     flex: 1,
   },
@@ -185,13 +197,19 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     minWidth: 80,
-    alignItems: 'center',
+    alignItems: "center",
   },
-  statusText: { 
-    fontSize: 12, 
+  statusText: {
+    fontSize: 12,
     fontWeight: "700",
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     letterSpacing: 0.5,
+  },
+
+  // Click indicator
+  clickIndicator: {
+    marginLeft: 8,
+    opacity: 0.6,
   },
 
   // Divider
@@ -209,50 +227,50 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
 
-  amountRow: { 
-    flexDirection: "row", 
+  amountRow: {
+    flexDirection: "row",
     alignItems: "center",
-    backgroundColor: 'rgba(0,0,0,0.03)',
+    backgroundColor: "rgba(0,0,0,0.03)",
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 12,
   },
-  amountText: { 
-    marginLeft: 8, 
-    fontSize: 15, 
+  amountText: {
+    marginLeft: 8,
+    fontSize: 15,
     fontWeight: "700",
-    color: '#2D3748',
+    color: "#2D3748",
   },
 
-  dateRow: { 
-    flexDirection: "row", 
+  dateRow: {
+    flexDirection: "row",
     alignItems: "center",
-    backgroundColor: 'rgba(0,0,0,0.03)',
+    backgroundColor: "rgba(0,0,0,0.03)",
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 12,
   },
-  dateText: { 
-    marginLeft: 8, 
-    fontSize: 13, 
+  dateText: {
+    marginLeft: 8,
+    fontSize: 13,
     fontWeight: "600",
-    color: '#4A5568',
+    color: "#4A5568",
   },
 
   // Typography
-  billName: { 
-    fontSize: 16, 
+  billName: {
+    fontSize: 16,
     fontWeight: "700",
     lineHeight: 22,
     marginBottom: 4,
   },
-  paidBy: { 
-    fontSize: 13, 
+  paidBy: {
+    fontSize: 13,
     opacity: 0.7,
     lineHeight: 18,
   },
   textContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
 });

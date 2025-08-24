@@ -6,7 +6,10 @@ export default function ScreensLayout() {
     <Stack>
       <Stack.Screen name="addexpenses" />
       <Stack.Screen name="updatematerial" />
-      <Stack.Screen name="expense-details" />
+      <Stack.Screen 
+        name="expense-details" 
+        options={{ headerShown: false }}
+      />
     </Stack>
   );
 }

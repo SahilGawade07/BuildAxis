@@ -41,10 +41,18 @@ export const ExpencessScreen = () => {
       const response = await getSiteExpenses(siteId, page);
 
       if (response.success && response.data) {
+        // Add siteId to each expense if it's missing
+        const expensesWithSiteId = (response.data.expenses || []).map(
+          (expense: any) => ({
+            ...expense,
+            siteId: expense.siteId || siteId,
+          })
+        );
+
         if (isRefresh || page === 1) {
-          setExpenses(response.data.expenses || []);
+          setExpenses(expensesWithSiteId);
         } else {
-          setExpenses((prev) => [...prev, ...(response.data?.expenses || [])]);
+          setExpenses((prev) => [...prev, ...expensesWithSiteId]);
         }
 
         setCurrentPage(response.data.currentPage || 1);
@@ -80,9 +88,9 @@ export const ExpencessScreen = () => {
   };
 
   // Render expense item
-  const renderExpenseItem = ({ item }: { item: any }) => (
-    <Expencess item={item} />
-  );
+  const renderExpenseItem = ({ item }: { item: any }) => {
+    return <Expencess item={item} />;
+  };
 
   // Render empty state
   const renderEmptyState = () => (

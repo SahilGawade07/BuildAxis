@@ -64,10 +64,12 @@ router.get("/services", getAllServices);
 
 router.post("/add-expenses", upload.array("receipts", 10), addExpense);
 router.get("/view-expenses/:siteId", getSiteExpenses);
-router.get("/expense/:expenseId", getExpenseById);
 router.get("/site-tools/:siteId", getSiteTools);
 router.get("/site-inventory/:siteId", getSiteInventory);
 router.get("/organization-vendors", getOrganizationVendors);
+
+// More specific routes
+router.get("/expense/:expenseId", getExpenseById);
 
 router.post("/add-inventory", addInventory);
 
