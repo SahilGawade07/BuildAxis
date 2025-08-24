@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { Sites } from "@/types/sites";
+import { Labour } from "@/types/labour";
 // ✅ Extract host (IPv4) from Metro URL
 function getLocalIpFromExpoUrl(): string | null {
   const debuggerHost =
@@ -1121,8 +1122,6 @@ export async function getAllTasksRequest(params?: {
 }
 
 // Labour get data
-import { Labour } from "@/types/labour";
-
 export async function getLabours(orgId: string): Promise<Labour[]> {
   try {
     const response = await apiRequest(`/api/common/labourlists/${orgId}`);

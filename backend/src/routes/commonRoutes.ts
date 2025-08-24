@@ -26,9 +26,11 @@ import {
   getLabourProfileDetails,
   getSupervisorProfileDetails,
   getVendorProfileDetails,
-  deleteSupervisor,getLabours
+  deleteSupervisor,
+  getLabours,
 } from "../controllers/common/manageOrganisation";
-import { getsites } from "../controllers/common/sites";
+import { getsites, addLaboursToSite } from "../controllers/common/sites";
+import { upload } from "../middlewares/multer";
 
 const router = Router();
 
