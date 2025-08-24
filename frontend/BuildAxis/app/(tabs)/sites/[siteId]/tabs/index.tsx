@@ -23,12 +23,12 @@ export default function Main_Sites({ dropped }: any) {
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: "task", title: "Assign Task" },
-    { key: "report", title: "Report" },
+    { key: "task", title: "Tasks" },
+    { key: "report", title: "Reports" },
     { key: "attendance", title: "Attendance" },
-    { key: "labour", title: "Labour" },
+    { key: "labour", title: "Labours" },
     { key: "inventory", title: "Inventory" },
-    { key: "material", title: "Material" },
+    { key: "material", title: "Materials" },
     { key: "expencess", title: "Expencess" },
   ]);
 
