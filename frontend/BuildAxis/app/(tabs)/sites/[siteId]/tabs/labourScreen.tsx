@@ -35,6 +35,7 @@ export default function Labour_list() {
   const [popup, setpopup] = useState(false);
   const { siteId, siteName } = useLocalSearchParams();
   const { theme } = useTheme();
+  const [refreshKey, setRefreshKey] = useState(0); // 👈 trigger refresh
 
 
 
@@ -45,7 +46,7 @@ export default function Labour_list() {
 
 
 
-      <PeopleList />
+      <PeopleList siteId={siteId as string}  />
       {/* Labour List */}
       {/* <FlatList
         data={data}
@@ -61,6 +62,7 @@ export default function Labour_list() {
       <Addbuttonspage
         iconname={<FontAwesome6 name="add" size={20} color="white" />}
         path={`/(tabs)/sites/${siteId}/tabs/addlabourToSite`}
+        onPressDone={() => setRefreshKey(prev => prev + 1)} // 👈 trigger after adding
       />
 
 

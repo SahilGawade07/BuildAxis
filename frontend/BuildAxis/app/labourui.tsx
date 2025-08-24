@@ -113,6 +113,7 @@
 //     },
 // });
 
+import { useFocusEffect } from "@react-navigation/native";
 
 
 import React, { useEffect, useState } from "react";
@@ -127,26 +128,46 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { getLabours} from "@/lib/api"; // ✅ adjust import path
-import {Labour} from "@/types/labour"
+import { fetchLaboursBySite, getLabours } from "@/lib/api"; // ✅ adjust import path
+import { Labour } from "@/types/labour"
 
 // 👷 Component
-export default function PeopleList() {
+const PeopleList = ({ siteId }: { siteId: string }) => {
   const [labours, setLabours] = useState<Labour[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = await getLabours("688c88be363b135f8911086f"); // ✅ fetch from backend
-        setLabours(data);
-      } catch (err) {
-        console.error("Error fetching labours:", err);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     try {
+  //       const res = await fetchLaboursBySite(siteId);
+  //       setLabours(res.data)
+  //     } catch (err) {
+  //       console.error("Error fetching labours:", err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   })();
+  // }, []);
+
+
+  const loadLabours = async () => {
+    setLoading(true);
+    try {
+      const res = await fetchLaboursBySite(siteId);
+      setLabours(res.data);
+    } catch (err) {
+      console.error("Error fetching labours:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+useFocusEffect(
+  React.useCallback(() => {
+    loadLabours();
+  }, [siteId])
+); // 👈 will run again after refreshKey changes
+
 
   const renderItem = ({ item }: { item: Labour }) => (
     <TouchableOpacity style={styles.card} activeOpacity={0.8}>
@@ -242,3 +263,4 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
 });
+export default PeopleList;

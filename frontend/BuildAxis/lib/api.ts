@@ -995,3 +995,26 @@ console.log("labourIds:", labourIds);
 
   return response.data;
 };
+
+
+//display the only sites labours
+export const fetchLaboursBySite = async (siteId: string) => {
+  try {
+    // console.log("reach")
+    const res = await axios.get(
+      `http://10.156.175.131:8000/api/common/getsiteslabour/${siteId}`,
+      {
+        headers: {
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OGIxNGQwZmQ3OWY1OTBiYmI2NWJhMCIsImVtYWlsIjoic2FoaWxAZ21haWwuY29tIiwicm9sZSI6InByb21vdGVyIiwiaWF0IjoxNzU2MDYzNzk5LCJleHAiOjE3NTYxNTAxOTl9.d4Bkoxb_yFpfufiRbzLr2n5LhaAHLgkOlQRw_JNFZwM",
+        },
+      }
+    );
+//     console.log("call")
+// console.log(res.data)
+    return res.data; // { success, message, data: [...] }
+  } catch (err) {
+    console.error("Error fetching labours:", err);
+    return { success: false, message: "Failed to load labours", data: [] };
+  }
+};

@@ -35,7 +35,7 @@ const { siteId, siteName } = useLocalSearchParams();
   ]);
 
   const renderScene = ({ route }: any) => {
-    console.log(siteId)
+    // console.log(siteId)
     switch (route.key) {
       case "task":
         return (

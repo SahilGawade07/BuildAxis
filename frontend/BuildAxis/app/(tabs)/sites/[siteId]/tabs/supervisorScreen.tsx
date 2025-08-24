@@ -41,7 +41,7 @@ export default function Supervisor_list() {
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.background }]}
     >
-      <PeopleList />
+      <PeopleList siteId={siteId} />
 
       <Addbuttonspage
         iconname={<FontAwesome6 name="add" size={20} color="white" />}

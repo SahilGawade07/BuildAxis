@@ -42,6 +42,7 @@ export const getsites = async (req: Request, res: Response) => {
 
 // push the labour id 
 import mongoose from "mongoose";
+import { Labour } from "../../models/Labour";
 
 
 export const addLaboursToSite = async (req: Request, res: Response) => {
@@ -81,5 +82,69 @@ export const addLaboursToSite = async (req: Request, res: Response) => {
   } catch (err: any) {
     console.error(err);
     return res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+
+//display the list of labour
+// display the list of labours
+export const getLaboursBySite = async (req: Request, res: Response) => {
+  const { siteId } = req.params;
+
+  try {
+    // ✅ Check valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(siteId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid siteId",
+        data: [],
+      });
+    }
+
+    // ✅ Find the site and populate only selected fields of labours
+    const site = await Site.findById(siteId).populate({
+      path: "labours",
+      select: "_id fName lName profilePic work", // only selected fields
+    });
+
+    if (!site) {
+      return res.status(404).json({
+        success: false,
+        message: "Site not found",
+        data: [],
+      });
+    }
+
+    // ✅ If no labours assigned
+    if (!site.labours || site.labours.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: "No labours assigned to this site",
+        data: [],
+      });
+    }
+
+    // ✅ Format labours data
+    const formattedLabours = site.labours.map((labour: any) => ({
+      id: labour._id,
+      fName: labour.fName,
+      lName: labour.lName,
+      profilePic: labour.profilePic,
+      work: labour.work,
+    }));
+
+    // ✅ Send formatted response
+    return res.json({
+      success: true,
+      message: "Labours loaded successfully",
+      data: formattedLabours,
+    });
+  } catch (err) {
+    console.error("Error fetching labours:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      data: [],
+    });
   }
 };
