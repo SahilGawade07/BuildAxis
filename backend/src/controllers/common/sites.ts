@@ -6,11 +6,14 @@ export const getsites = async (req: Request, res: Response) => {
 
   try {
     const sites = await Site.find({ orgId }).select(
-      "name  customerName status startDate budget   "
+      "name customerName status startDate budget"
     );
 
     if (!sites || sites.length === 0) {
-      return res.status(404).json({ message: "No sites found for this orgId" });
+      return res.status(404).json({
+        success: false,
+        message: "No sites found for this organization",
+      });
     }
 
     // ✅ Format response
@@ -29,6 +32,9 @@ export const getsites = async (req: Request, res: Response) => {
       data: formattedSites,
     });
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
   }
 };

@@ -4,4 +4,5 @@ export interface Sites {
   customerName: string;
   status: string;
   startDate: string;
+  bugets: number;
 }

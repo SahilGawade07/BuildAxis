@@ -23,8 +23,8 @@ import { getsites } from "../controllers/common/sites";
 
 const router = Router();
 
-// router.use(authenticateJWT);
-// router.use(isAuthenticated);
+router.use(authenticateJWT);
+router.use(isAuthenticated);
 
 router.get("/my-profile", getMyProfile);
 router.put("/my-profile", updateMyProfile);
@@ -47,7 +47,6 @@ router.patch("/update-task/:taskId", updateTask);
 
 router.get("/manage-org-page-data/:orgId", manageOrgPageData);
 router.get("/siteslist/:orgId", getsites);
-
 
 // router.post("/create-task", createTask);
 

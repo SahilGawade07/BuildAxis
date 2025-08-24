@@ -483,14 +483,17 @@ export async function createSupervisorRequest(supervisorData: {
   return payload as any;
 }
 
-
-
-
 export async function getSites(orgId: string): Promise<Sites[]> {
   try {
-    const res = await axios.get(`${API_BASE_URL}/api/common/siteslist/${orgId}`);
-    return res.data.data; // ✅ return only the array
+    const response = await apiRequest(`/api/common/siteslist/${orgId}`);
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.message || "API request failed");
+    }
+
+    return result.data; // ✅ return only the array
   } catch (err: any) {
-    throw new Error(err.response?.data?.message || "Failed to fetch sites");
+    throw new Error(err.message || "Failed to fetch sites");
   }
 }

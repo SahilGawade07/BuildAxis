@@ -13,19 +13,23 @@ export const SiteBox = ({ item }: any) => {
         styles.sitecard,
         { backgroundColor: theme.listItemFill, borderColor: "#ffffff" },
       ]}
-      onPress={() => router.push(`/sites/${item._id}`)}
+      onPress={() => router.push(`/sites/${item.id}`)}
     >
       {/* Header */}
       <View style={styles.cardHeader}>
         <View style={styles.cardHeaderLeft}>
-          <View style={[styles.imageBox, { backgroundColor: theme.boxes01[0] }]}>
+          <View
+            style={[styles.imageBox, { backgroundColor: theme.boxes01[0] }]}
+          >
             <Ionicons name="home-outline" size={28} color={theme.icons} />
           </View>
           <View>
-            <Text style={[styles.sitename, { color: theme.text }]}>{item.name}</Text>
-            <Text style={{ fontSize: 12, color: theme.icons }}>{item.customerName}</Text>
-
-
+            <Text style={[styles.sitename, { color: theme.text }]}>
+              {item.name}
+            </Text>
+            <Text style={{ fontSize: 12, color: theme.icons }}>
+              {item.customerName}
+            </Text>
           </View>
         </View>
 
@@ -45,14 +49,15 @@ export const SiteBox = ({ item }: any) => {
 
       {/* Footer */}
       <View style={[styles.cardFooter, { borderColor: theme.icons }]}>
-
-                    {/* ✅ Budget pill */}
-            <View style={[styles.budgetTag, { backgroundColor: theme.primary + "22" }]}>
-              <Ionicons name="cash-outline" size={14} color={theme.primary} />
-              <Text style={[styles.budgetText, { color: theme.primary }]}>
-                ₹{item.bugets}
-              </Text>
-            </View>
+        {/* ✅ Budget pill */}
+        <View
+          style={[styles.budgetTag, { backgroundColor: theme.primary + "22" }]}
+        >
+          <Ionicons name="cash-outline" size={14} color={theme.primary} />
+          <Text style={[styles.budgetText, { color: theme.primary }]}>
+            ₹{item.bugets}
+          </Text>
+        </View>
         <View style={styles.dateRow}>
           <Ionicons name="calendar-outline" size={18} color={theme.text} />
           <Text style={[styles.dateText, { color: theme.text }]}>
