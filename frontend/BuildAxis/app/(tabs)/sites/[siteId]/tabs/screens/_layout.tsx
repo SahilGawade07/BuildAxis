@@ -3,9 +3,10 @@ import { Stack } from "expo-router";
 
 export default function ScreensLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack>
       <Stack.Screen name="addexpenses" />
       <Stack.Screen name="updatematerial" />
+      <Stack.Screen name="expense-details" />
     </Stack>
   );
 }
