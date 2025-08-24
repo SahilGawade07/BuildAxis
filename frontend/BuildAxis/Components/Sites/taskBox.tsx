@@ -4,7 +4,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
 
-export const TaskBox = ({ item }: any) => {
+export const TaskBox = ({ item, siteId }: any) => {
   const { theme } = useTheme();
 
   return (
@@ -17,7 +17,11 @@ export const TaskBox = ({ item }: any) => {
         },
       ]}
       onPress={() => {
-        router.push("/taskDetails");
+        if (siteId) {
+          router.push(`/sites/${siteId}/taskDetails`);
+        } else {
+          router.push("/taskDetails");
+        }
       }}
       activeOpacity={0.8}
     >
