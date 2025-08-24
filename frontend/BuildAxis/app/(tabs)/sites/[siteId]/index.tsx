@@ -3,7 +3,6 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@/context/ThemeContext";
 import { useLocalSearchParams } from "expo-router";
-import DropImageExample from "@/components/ui/dropdownimg";
 import Main_Sites from "@/app/(tabs)/sites/[siteId]/tabs/index";
 import HeaderBar from "@/components/ui/headerBar";
 
