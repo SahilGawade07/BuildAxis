@@ -948,3 +948,174 @@ export async function addSupervisorsToSite(
     throw error;
   }
 }
+
+// Create Task API Call
+export async function createTaskRequest(taskData: {
+  title: string;
+  site: string;
+  description?: string;
+  supervisors?: string[];
+  assignedToSupervisors?: string[];
+  assignedToLabourers?: string[];
+  status?: string;
+  priority?: string;
+  due?: string;
+  inventoryUsed?: string[];
+  materials?: Array<{
+    name: string;
+    quantity: number;
+    unit: string;
+  }>;
+  attachments?: Array<{
+    uri: string;
+    name: string;
+    type: string;
+  }>;
+  images?: Array<{
+    uri: string;
+    name: string;
+    type: string;
+  }>;
+}): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  try {
+    const formData = new FormData();
+
+    // Add text fields
+    formData.append("title", taskData.title);
+    formData.append("site", taskData.site);
+    if (taskData.description)
+      formData.append("description", taskData.description);
+    if (taskData.status) formData.append("status", taskData.status);
+    if (taskData.priority) formData.append("priority", taskData.priority);
+    if (taskData.due) formData.append("due", taskData.due);
+
+    // Add arrays as JSON strings
+    if (taskData.supervisors)
+      formData.append("supervisors", JSON.stringify(taskData.supervisors));
+    if (taskData.assignedToSupervisors)
+      formData.append(
+        "assignedToSupervisors",
+        JSON.stringify(taskData.assignedToSupervisors)
+      );
+    if (taskData.assignedToLabourers)
+      formData.append(
+        "assignedToLabourers",
+        JSON.stringify(taskData.assignedToLabourers)
+      );
+    if (taskData.inventoryUsed)
+      formData.append("inventoryUsed", JSON.stringify(taskData.inventoryUsed));
+    // Always send materials as JSON string, even if empty
+    formData.append("materials", JSON.stringify(taskData.materials || []));
+
+    // Add file attachments - for React Native, we need to handle files differently
+    if (taskData.attachments && taskData.attachments.length > 0) {
+      for (const attachment of taskData.attachments) {
+        try {
+          // For React Native, we need to create a file object that works with FormData
+          const fileInfo = {
+            uri: attachment.uri,
+            type: attachment.type || "application/octet-stream",
+            name: attachment.name || "attachment",
+          };
+
+          // Append as a file object that React Native can handle
+          formData.append("attachments", fileInfo as any);
+          console.log("Added attachment to formData:", fileInfo);
+        } catch (fileError) {
+          console.error("Error processing attachment:", fileError);
+          // If we can't convert the file, skip it
+        }
+      }
+    }
+
+    // Add images - for React Native, we need to handle files differently
+    if (taskData.images && taskData.images.length > 0) {
+      for (const image of taskData.images) {
+        try {
+          // For React Native, we need to create a file object that works with FormData
+          const fileInfo = {
+            uri: image.uri,
+            type: image.type || "image/jpeg",
+            name: image.name || "image",
+          };
+
+          // Append as a file object that React Native can handle
+          formData.append("attachments", fileInfo as any);
+          console.log("Added image to formData:", fileInfo);
+        } catch (fileError) {
+          console.error("Error processing image:", fileError);
+          // If we can't convert the file, skip it
+        }
+      }
+    }
+
+    console.log("FormData created with attachments and images");
+
+    const response = await api.post("/api/common/create-task", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    console.log("API Response:", response.data);
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message: error.response?.statusText || "Failed to create task",
+        }
+      );
+    }
+    throw error;
+  }
+}
+
+// Get All Tasks API Call
+export async function getAllTasksRequest(params?: {
+  siteId?: string;
+  status?: string;
+  priority?: string;
+  page?: number;
+  limit?: number;
+}): Promise<{
+  success: boolean;
+  message: string;
+  data?: {
+    tasks: any[];
+    pagination: {
+      current: number;
+      total: number;
+      count: number;
+      totalTasks: number;
+    };
+  };
+}> {
+  try {
+    const queryParams = new URLSearchParams();
+    if (params?.siteId) queryParams.append("siteId", params.siteId);
+    if (params?.status) queryParams.append("status", params.status);
+    if (params?.priority) queryParams.append("priority", params.priority);
+    if (params?.page) queryParams.append("page", params.page.toString());
+    if (params?.limit) queryParams.append("limit", params.limit.toString());
+
+    const response = await api.get(
+      `/api/common/tasks?${queryParams.toString()}`
+    );
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message: error.response?.statusText || "Failed to fetch tasks",
+        }
+      );
+    }
+    throw error;
+  }
+}

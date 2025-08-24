@@ -7,6 +7,11 @@ export default function SiteDetailsLayout() {
       <Stack.Screen name="index" /> {/* /sites/[siteId] */}
       <Stack.Screen name="taskDetails" /> {/* /sites/[siteId]/taskDetails */}
       <Stack.Screen name="CreateReport" /> {/* /sites/[siteId]/CreateReport */}
+      <Stack.Screen name="createTask" /> {/* /sites/[siteId]/createTask */}
+      <Stack.Screen name="selectSupervisors" />{" "}
+      {/* /sites/[siteId]/selectSupervisors */}
+      <Stack.Screen name="selectLabours" />{" "}
+      {/* /sites/[siteId]/selectLabours */}
       <Stack.Screen name="tabs" /> {/* /sites/[siteId]/tabs */}
     </Stack>
   );

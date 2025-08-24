@@ -28,5 +28,19 @@ const storage = multer.diskStorage({
   },
 });
 
-// Export configured multer
-export const upload = multer({ storage });
+// Custom file filter for React Native compatibility
+const fileFilter = (req: any, file: any, cb: any) => {
+  console.log("📁 Processing file:", file.originalname, "Type:", file.mimetype);
+  
+  // Accept all file types for now
+  cb(null, true);
+};
+
+// Export configured multer with file filter
+export const upload = multer({ 
+  storage,
+  fileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  }
+});

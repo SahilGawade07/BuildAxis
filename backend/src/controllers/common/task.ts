@@ -5,6 +5,7 @@ import { User } from "../../models/User";
 import { Labour } from "../../models/Labour";
 import mongoose, { Types } from "mongoose";
 import { Inventory } from "../../models/Inventory";
+import { uploadOnCloudinary } from "../../utils/cloudinary";
 
 export const checkSiteAccess = async (
   req: Request,
@@ -94,9 +95,13 @@ export const checkTaskAccess = async (
   }
 };
 
-// Create Task
+// Create Task with file upload support
 export const createTask = async (req: Request, res: Response) => {
   try {
+    console.log("Create task request body:", req.body); // Debug log
+    console.log("Create task user:", (req as any).dbUser); // Debug log
+    console.log("Create task files:", req.files); // Debug log for files
+
     const {
       title,
       site,
@@ -106,25 +111,116 @@ export const createTask = async (req: Request, res: Response) => {
       status,
       priority,
       due,
-      inventoryUsed,
+      inventoryUsed = [],
       description,
-      attachment,
+      materials,
     } = req.body;
 
     const user = (req as any).dbUser;
 
     // ✅ Validate required fields
-    if (!title || !site) {
+    if (!title || !title.trim()) {
       return res.status(400).json({
         success: false,
-        message: "Title and site are required fields",
+        message: "Task title is required",
       });
     }
 
+    if (!site) {
+      return res.status(400).json({
+        success: false,
+        message: "Site ID is required",
+      });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(site)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid site ID format",
+      });
+    }
+
+    // Validate that the site exists and user has access to it
+    const siteExists = await Site.findById(site);
+    if (!siteExists) {
+      return res.status(404).json({
+        success: false,
+        message: "Site not found",
+      });
+    }
+
+    // Check if user has access to this site
+    if (String(siteExists.orgId) !== String(user.orgId)) {
+      return res.status(403).json({
+        success: false,
+        message: "You do not have access to this site",
+      });
+    }
+
+    // Handle file uploads - upload to Cloudinary and store URLs
+    const attachments: string[] = [];
+    const images: string[] = [];
+
+    console.log("Files received:", req.files); // Debug log
+
+    if (req.files && Array.isArray(req.files)) {
+      for (const file of req.files as Express.Multer.File[]) {
+        try {
+          console.log("Processing file:", file.originalname, "Path:", file.path);
+
+          // Upload file to Cloudinary
+          const uploadResult = await uploadOnCloudinary(file.path);
+
+          if (uploadResult?.secure_url) {
+            // Determine if it's an image or document based on mimetype
+            if (file.mimetype.startsWith("image/")) {
+              images.push(uploadResult.secure_url);
+              console.log(
+                "Image uploaded to Cloudinary:",
+                uploadResult.secure_url
+              );
+            } else {
+              attachments.push(uploadResult.secure_url);
+              console.log(
+                "Document uploaded to Cloudinary:",
+                uploadResult.secure_url
+              );
+            }
+          } else {
+            console.error(
+              "Failed to upload file to Cloudinary:",
+              file.originalname
+            );
+          }
+        } catch (uploadError) {
+          console.error("Error uploading file to Cloudinary:", uploadError);
+          // Continue with other files
+        }
+      }
+    } else {
+      console.log("No files received or files is not an array");
+    }
+
+    // Parse arrays from JSON strings
     const supervisorAssignIds = Array.isArray(assignedToSupervisors)
       ? assignedToSupervisors
+      : assignedToSupervisors
+      ? JSON.parse(assignedToSupervisors)
       : [];
 
+    const labourerAssignIds = Array.isArray(assignedToLabourers)
+      ? assignedToLabourers
+      : assignedToLabourers
+      ? JSON.parse(assignedToLabourers)
+      : [];
+
+    const supervisorIds = Array.isArray(supervisors)
+      ? supervisors
+      : supervisors
+      ? JSON.parse(supervisors)
+      : [];
+
+    // Validate assignedToSupervisors
     if (supervisorAssignIds.length > 0) {
       const supervisorsToAssign = await User.find({
         _id: { $in: supervisorAssignIds },
@@ -141,11 +237,7 @@ export const createTask = async (req: Request, res: Response) => {
       }
     }
 
-    // --- Validate assignedToLabourers ---
-    const labourerAssignIds = Array.isArray(assignedToLabourers)
-      ? assignedToLabourers
-      : [];
-
+    // Validate assignedToLabourers
     if (labourerAssignIds.length > 0) {
       const labourersToAssign = await Labour.find({
         _id: { $in: labourerAssignIds },
@@ -161,8 +253,23 @@ export const createTask = async (req: Request, res: Response) => {
       }
     }
 
-    // --- Validate supervisors (task overseers) ---
-    const supervisorIds = Array.isArray(supervisors) ? supervisors : [];
+    // Validate due date
+    if (!due) {
+      return res.status(400).json({
+        success: false,
+        message: "Due date is required",
+      });
+    }
+
+    const dueDate = new Date(due);
+    if (isNaN(dueDate.getTime())) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid due date format",
+      });
+    }
+
+    // Validate supervisors (task overseers)
     if (supervisorIds.length > 0) {
       const validSupervisors = await User.find({
         _id: { $in: supervisorIds },
@@ -179,8 +286,44 @@ export const createTask = async (req: Request, res: Response) => {
       }
     }
 
-    // --- Create the task ---
-    const newTask = await Task.create({
+    // Parse materials safely
+    let parsedMaterials = [];
+    if (materials) {
+      try {
+        parsedMaterials =
+          typeof materials === "string" ? JSON.parse(materials) : materials;
+
+        // Validate materials structure
+        if (Array.isArray(parsedMaterials)) {
+          for (const material of parsedMaterials) {
+            if (
+              !material.name ||
+              typeof material.quantity !== "number" ||
+              !material.unit
+            ) {
+              return res.status(400).json({
+                success: false,
+                message:
+                  "Invalid material format. Each material must have name, quantity, and unit",
+              });
+            }
+          }
+        } else {
+          return res.status(400).json({
+            success: false,
+            message: "Materials must be an array",
+          });
+        }
+      } catch (parseError) {
+        console.error("Error parsing materials:", parseError);
+        return res.status(400).json({
+          success: false,
+          message: "Invalid materials format",
+        });
+      }
+    }
+
+    console.log("Creating task with data:", {
       title,
       supervisors: supervisorIds,
       site,
@@ -192,23 +335,97 @@ export const createTask = async (req: Request, res: Response) => {
       due,
       inventoryUsed,
       description,
-      attachment,
+      attachments,
+      images,
+      materials: parsedMaterials,
     });
+
+    // Create the task
+    console.log("About to create task with validated data:", {
+      title: title.trim(),
+      supervisors: supervisorIds.map(
+        (id: string) => new mongoose.Types.ObjectId(id)
+      ),
+      site: new mongoose.Types.ObjectId(site),
+      createdBy: user._id,
+      assignedToSupervisors: supervisorAssignIds.map(
+        (id: string) => new mongoose.Types.ObjectId(id)
+      ),
+      assignedToLabourers: labourerAssignIds.map(
+        (id: string) => new mongoose.Types.ObjectId(id)
+      ),
+      status: status || "open",
+      priority: priority || "medium",
+      due: dueDate,
+      inventoryUsed: [],
+      description: description || "",
+      attachments,
+      images,
+      materials: parsedMaterials,
+    });
+
+    const newTask = await Task.create({
+      title: title.trim(),
+      supervisors: supervisorIds.map(
+        (id: string) => new mongoose.Types.ObjectId(id)
+      ), // Task overseers (only for promoters)
+      site: new mongoose.Types.ObjectId(site),
+      createdBy: user._id,
+      assignedToSupervisors: supervisorAssignIds.map(
+        (id: string) => new mongoose.Types.ObjectId(id)
+      ), // Supervisors assigned to work on task
+      assignedToLabourers: labourerAssignIds.map(
+        (id: string) => new mongoose.Types.ObjectId(id)
+      ),
+      status: status || "open",
+      priority: priority || "medium",
+      due: dueDate, // This should be the validated dueDate
+      inventoryUsed: [],
+      description: description || "",
+      attachments, // Store Cloudinary URLs
+      images, // Store Cloudinary URLs
+      materials: parsedMaterials,
+    });
+
+    console.log("Task created successfully:", newTask._id);
 
     const populatedTask = await Task.findById(newTask._id)
       .populate("site", "name location")
       .populate("createdBy", "fName lName email")
-      .populate("assignedToSupervisors", "fName lName email role") // Populate assigned supervisors
-      .populate("assignedToLabourers", "fName lName phone email") // Adjust fields as per Labour schema
-      .populate("supervisors", "fName lName email"); // Task overseers
+      .populate("assignedToSupervisors", "fName lName email role")
+      .populate("assignedToLabourers", "fName lName phone email")
+      .populate("supervisors", "fName lName email");
 
     return res.status(201).json({
       success: true,
       message: "Task created successfully",
       data: populatedTask,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating task:", error);
+    console.error("Error details:", {
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+    });
+
+    // Handle specific error types
+    if (error.name === "ValidationError") {
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        error: error.message,
+      });
+    }
+
+    if (error.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid ID format",
+        error: error.message,
+      });
+    }
+
     return res.status(500).json({
       success: false,
       message: "Server error",
@@ -242,7 +459,7 @@ export const getTask = async (req: Request, res: Response) => {
   }
 };
 
-// Get All Tasks (with filters)
+// Get All Tasks (with filters and role-based visibility)
 export const getAllTasks = async (req: Request, res: Response) => {
   try {
     const user = (req as any).dbUser;
@@ -268,6 +485,21 @@ export const getAllTasks = async (req: Request, res: Response) => {
     const siteIds = userSites.map((site) => site._id);
     filter.site = { $in: siteIds };
 
+    // Role-based filtering
+    if (user.role === "supervisor") {
+      // Supervisors can only see tasks they are assigned to or created by them
+      filter.$or = [
+        { createdBy: user._id },
+        { assignedToSupervisors: user._id },
+        {
+          assignedToLabourers: {
+            $in: await getLabourIdsForSupervisor(user._id),
+          },
+        },
+      ];
+    }
+    // Promoters can see all tasks in their organization
+
     if (siteId) filter.site = siteId;
     if (status) filter.status = status;
     if (priority) filter.priority = priority;
@@ -281,7 +513,8 @@ export const getAllTasks = async (req: Request, res: Response) => {
     const tasks = await Task.find(filter)
       .populate("site", "name location")
       .populate("createdBy", "fName lName email")
-      .populate("assignedTo", "fName lName email")
+      .populate("assignedToSupervisors", "fName lName email role")
+      .populate("assignedToLabourers", "fName lName phone")
       .populate("supervisors", "fName lName email")
       .sort(sortOptions)
       .skip(skip)
@@ -311,6 +544,20 @@ export const getAllTasks = async (req: Request, res: Response) => {
   }
 };
 
+// Helper function to get labour IDs that a supervisor manages
+async function getLabourIdsForSupervisor(
+  supervisorId: string
+): Promise<string[]> {
+  try {
+    // This would need to be implemented based on your labour-supervisor relationship
+    // For now, returning empty array - you can implement this based on your data model
+    return [];
+  } catch (error) {
+    console.error("Error getting labour IDs for supervisor:", error);
+    return [];
+  }
+}
+
 // ✅ Update Task Controller
 export const updateTask = async (req: Request, res: Response) => {
   try {
@@ -335,14 +582,20 @@ export const updateTask = async (req: Request, res: Response) => {
 
     // ✅ Safe permission check
     const isCreator = task.createdBy && task.createdBy.toString() === userId;
-    const isSupervisor =
+    const isAssignedSupervisor =
+      Array.isArray(task.assignedToSupervisors) &&
+      task.assignedToSupervisors.some((id) => id.toString() === userId);
+    const isTaskOverseer =
       Array.isArray(task.supervisors) &&
       task.supervisors.some((id) => id.toString() === userId);
 
+    // Promoters can update any task in their organization
+    // Supervisors can only update tasks they are assigned to or created by them
     if (
       !(
         isCreator ||
-        (userRole === "supervisor" && isSupervisor) ||
+        (userRole === "supervisor" &&
+          (isAssignedSupervisor || isTaskOverseer)) ||
         userRole === "promoter"
       )
     ) {
@@ -373,20 +626,21 @@ export const updateTask = async (req: Request, res: Response) => {
     if (due) task.due = new Date(due);
     if (progress !== undefined) task.progress = progress;
     if (attachment !== undefined) {
-      // Ensure task.attachment is always an array
-      if (!Array.isArray(task.attachment)) {
-        // If it's a string (old data), convert to array
-        task.attachment = task.attachment ? [task.attachment] : [];
-      }
-
+      // Handle file attachments - store URLs directly
       if (Array.isArray(attachment)) {
-        task.attachment.push(
-          ...attachment.filter(
-            (url: string) => typeof url === "string" && url.trim() !== ""
-          )
+        const attachmentUrls = attachment.filter(
+          (url: string) => typeof url === "string" && url.trim() !== ""
         );
-      } else if (typeof attachment === "string") {
-        task.attachment.push(attachment.trim());
+
+        if (!Array.isArray(task.attachments)) {
+          task.attachments = [];
+        }
+        task.attachments.push(...attachmentUrls);
+      } else if (typeof attachment === "string" && attachment.trim() !== "") {
+        if (!Array.isArray(task.attachments)) {
+          task.attachments = [];
+        }
+        task.attachments.push(attachment);
       }
     }
 

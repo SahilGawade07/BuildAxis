@@ -11,9 +11,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 
 import Back_Text_Butt from "@/components/ui/backBtn";
 import { CompanyBar } from "@/components/ui/companyBar";
@@ -39,6 +42,15 @@ export default function DynamicHeaderScreen() {
   const windowHeight = Dimensions.get("window").height - insets.top;
   const router = useRouter();
 
+  // Get siteId and siteName from route parameters
+  const params = useLocalSearchParams();
+  const siteId = Array.isArray(params.siteId)
+    ? params.siteId[0]
+    : params.siteId;
+  const siteName = Array.isArray(params.siteName)
+    ? params.siteName[0]
+    : params.siteName;
+
   const menuItems = [
     "Assign Task",
     "Report",
@@ -50,10 +62,34 @@ export default function DynamicHeaderScreen() {
   ];
 
   const projects = [
-    { id: "1", name: "JJ Hormony", progress: "20%", date: "12/02/2022", status: "Active" },
-    { id: "2", name: "Green Heights", progress: "45%", date: "15/04/2023", status: "Active" },
-    { id: "3", name: "Sky Towers", progress: "75%", date: "01/10/2024", status: "Active" },
-    { id: "4", name: "Blue Ocean", progress: "60%", date: "20/08/2025", status: "Active" },
+    {
+      id: "1",
+      name: "JJ Hormony",
+      progress: "20%",
+      date: "12/02/2022",
+      status: "Active",
+    },
+    {
+      id: "2",
+      name: "Green Heights",
+      progress: "45%",
+      date: "15/04/2023",
+      status: "Active",
+    },
+    {
+      id: "3",
+      name: "Sky Towers",
+      progress: "75%",
+      date: "01/10/2024",
+      status: "Active",
+    },
+    {
+      id: "4",
+      name: "Blue Ocean",
+      progress: "60%",
+      date: "20/08/2025",
+      status: "Active",
+    },
   ];
 
   useEffect(() => setPage(active), [active]);
@@ -64,7 +100,7 @@ export default function DynamicHeaderScreen() {
         return (
           <FlatList
             data={projects}
-            renderItem={TaskBox}
+            renderItem={({ item }) => <TaskBox item={item} siteId={siteId} />}
             keyExtractor={(item) => item.id}
             contentContainerStyle={{ paddingTop: 10 }}
           />
@@ -110,7 +146,10 @@ export default function DynamicHeaderScreen() {
 
       {/* Dynamic Header */}
       <Animated.View
-        style={[styles.header, { height: headerHeight, paddingTop: insets.top }]}
+        style={[
+          styles.header,
+          { height: headerHeight, paddingTop: insets.top },
+        ]}
       >
         <Animated.View
           style={{
@@ -121,9 +160,11 @@ export default function DynamicHeaderScreen() {
           <CompanyBar />
           <Safe_area />
 
-          <Back_Text_Butt path="/tabs/Sites/Site" text="Site Name" />
+          <Back_Text_Butt path="/tabs/sites" text={siteName || "Site Name"} />
 
-          <View style={{ height: 200, marginVertical: 5, alignItems: "center" }}>
+          <View
+            style={{ height: 200, marginVertical: 5, alignItems: "center" }}
+          >
             <Image
               source={require("@/assets/images/Construction.png")}
               style={{ width: "100%", height: "100%" }}
@@ -144,7 +185,9 @@ export default function DynamicHeaderScreen() {
                   onPress={() => setActive(item)}
                   style={styles.menuItem}
                 >
-                  <Text style={[styles.text, active === item && styles.activeText1]}>
+                  <Text
+                    style={[styles.text, active === item && styles.activeText1]}
+                  >
                     {item}
                   </Text>
                 </TouchableOpacity>
@@ -168,7 +211,7 @@ export default function DynamicHeaderScreen() {
           width: "100%",
         }}
       >
-        <Back_Text_Butt path="/tabs/Sites/Site" text={page} />
+        <Back_Text_Butt path="/tabs/sites" text={page} />
       </Animated.View>
 
       {/* Scroll Content */}
@@ -186,7 +229,7 @@ export default function DynamicHeaderScreen() {
       {/* Floating Button */}
       <TouchableOpacity
         style={styles.floatingButton}
-        onPress={() => router.push("../CreateReport")}
+        onPress={() => router.push(`/sites/${siteId}/CreateReport`)}
         activeOpacity={0.8}
       >
         <Text style={styles.floatingButtonText}>Generate Report</Text>
