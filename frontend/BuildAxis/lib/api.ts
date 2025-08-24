@@ -948,3 +948,50 @@ export async function addSupervisorsToSite(
     throw error;
   }
 }
+
+
+
+//labour get data
+import {Labour} from "@/types/labour"
+
+export async function getLabours(orgId: string): Promise<Labour[]> {
+  try {
+    const response = await apiRequest(`/api/common/labourlists/${orgId}`);
+    const result = response.data;
+
+    if (!result.success) {
+      throw new Error(result.message || "API request failed");
+    }
+
+    return result.data; // ✅ return only array of labours
+  } catch (err: any) {
+    throw new Error(err.message || "Failed to fetch labours");
+  }
+}
+
+
+
+//push the labours
+
+
+export const addLaboursToSite = async (siteId: string, labourIds: string[]) => {
+
+console.log("dddf :",siteId)
+
+console.log("siteId:", siteId);
+console.log("labourIds:", labourIds);
+
+
+  const response = await axios.post(
+    `http://10.156.175.131:8000/api/common/addlabours/${siteId}`,
+    { labourIds }, // backend expects this key
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OGIxNGQwZmQ3OWY1OTBiYmI2NWJhMCIsImVtYWlsIjoic2FoaWxAZ21haWwuY29tIiwicm9sZSI6InByb21vdGVyIiwiaWF0IjoxNzU2MDQ5NTQxLCJleHAiOjE3NTYxMzU5NDF9.1dtQbCrRlsj1Lg1YxwB3vQ6ok1QCIB-GXSdSYBcWERU`,
+      },
+    }
+  );
+
+  return response.data;
+};

@@ -14,11 +14,14 @@ import Supervisor_list from "@/app/(tabs)/sites/[siteId]/tabs/supervisorScreen";
 import Report from "@/app/(tabs)/sites/[siteId]/tabs/report";
 import { Assigntask } from "./assigntask";
 import { useTheme } from "@/context/ThemeContext";
+import { useLocalSearchParams } from "expo-router";
 
+
+  const { siteId, siteName } = useLocalSearchParams();
 export default function Main_Sites() {
   const { theme } = useTheme();
   const layout = useWindowDimensions();
-
+const { siteId, siteName } = useLocalSearchParams();
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     { key: "task", title: "Tasks" },
@@ -32,6 +35,7 @@ export default function Main_Sites() {
   ]);
 
   const renderScene = ({ route }: any) => {
+    console.log(siteId)
     switch (route.key) {
       case "task":
         return (

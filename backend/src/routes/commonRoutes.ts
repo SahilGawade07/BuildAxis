@@ -26,9 +26,9 @@ import {
   getLabourProfileDetails,
   getSupervisorProfileDetails,
   getVendorProfileDetails,
-  deleteSupervisor,
+  deleteSupervisor,getLabours
 } from "../controllers/common/manageOrganisation";
-import { getsites } from "../controllers/common/sites";
+import { getsites,addLaboursToSite } from "../controllers/common/sites";
 
 const router = Router();
 
@@ -56,7 +56,10 @@ router.post("/add-inventory", addInventory);
 router.patch("/update-task/:taskId", updateTask);
 
 router.get("/manage-org-page-data/:orgId", manageOrgPageData);
+router.get("/labourlists/:orgId", getLabours);
+
 router.get("/siteslist/:orgId", getsites);
+router.post("/addlabours/:siteId", addLaboursToSite);
 
 router.get("/labour/:labourId", getLabourProfileDetails);
 router.get("/supervisor/:supervisorId", getSupervisorProfileDetails);

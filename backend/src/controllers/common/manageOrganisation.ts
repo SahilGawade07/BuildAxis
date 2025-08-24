@@ -4,6 +4,7 @@ import { User } from "../../models/User";
 import { Labour } from "../../models/Labour";
 import { Vendor } from "../../models/Vendor";
 import { Service } from "../../models/Services";
+import mongoose from "mongoose";
 
 export const manageOrgPageData = async (req: Request, res: Response) => {
   try {
@@ -489,6 +490,47 @@ export const deleteSupervisor = async (req: Request, res: Response) => {
     return res.status(500).json({
       success: false,
       message: error.message || "Internal server error",
+    });
+  }
+};
+
+
+//display labours
+export const getLabours = async (req: Request, res: Response) => {
+  const { orgId } = req.params;
+
+  try {
+    // ✅ Ensure valid ObjectId
+const labours = await Labour.find({ orgId }) // directly as string
+      
+      .select("fName lName profilePic _id work");
+
+    if (!labours || labours.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No labours found for this organization",
+      });
+    }
+
+    // ✅ Format response
+    const formattedLabours = labours.map((labour) => ({
+      _id: labour._id,
+      fName: labour.fName,
+      lName: labour.lName,
+      profilePic: labour.profilePic,
+      work: labour.work,
+    }));
+
+    return res.status(200).json({
+      success: true,
+      message: "Labours loaded successfully",
+      data: formattedLabours,
+    });
+  } catch (err: any) {
+    console.error("Error fetching labours:", err);
+    res.status(500).json({
+      success: false,
+      error: err.message,
     });
   }
 };
