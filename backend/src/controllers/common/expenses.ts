@@ -308,6 +308,74 @@ export const getSiteExpenses = async (req: Request, res: Response) => {
   }
 };
 
+// Get single expense by ID
+export const getExpenseById = async (req: Request, res: Response) => {
+  try {
+    const { expenseId } = req.params;
+    const dbUser = (req as any).dbUser;
+
+    if (!expenseId) {
+      return res.status(400).json({
+        success: false,
+        message: "Expense ID is required",
+      });
+    }
+
+    if (!dbUser) {
+      return res.status(401).json({
+        success: false,
+        message: "User not authenticated",
+      });
+    }
+
+    if (!dbUser.orgId) {
+      return res.status(400).json({
+        success: false,
+        message: "User organization not found",
+      });
+    }
+
+    // Find the expense and populate related data
+    const expense = await Expense.findById(expenseId)
+      .populate("paidBy", "fName lName email phone")
+      .populate("siteId", "name location")
+      .populate("vendorId", "vendorName contactPerson phoneNo");
+
+    if (!expense) {
+      return res.status(404).json({
+        success: false,
+        message: "Expense not found",
+      });
+    }
+
+    // Check if user has access to this expense (through site access)
+    const site = await Site.findOne({
+      _id: expense.siteId,
+      orgId: dbUser.orgId,
+      promoters: dbUser._id,
+    });
+
+    if (!site) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to view this expense",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: expense,
+      message: "Expense retrieved successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
 // Get vendors for the organization
 export const getOrganizationVendors = async (req: Request, res: Response) => {
   try {
