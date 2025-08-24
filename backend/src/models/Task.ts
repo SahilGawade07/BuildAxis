@@ -6,7 +6,8 @@ export interface ITask extends Document {
   site: Types.ObjectId; // Reference to Site model
   createdBy: Types.ObjectId; // Promoter who created
   supervisors: Types.ObjectId[]; // Multiple supervisors (User with role: 'supervisor')
-  labourers: Types.ObjectId[]; // Multiple labourers (from Labour collection)
+  assignedToSupervisors: Types.ObjectId[]; // Supervisors assigned to work on task
+  assignedToLabourers: Types.ObjectId[]; // Labourers assigned to work on task
   status:
     | "open"
     | "in_progress"
@@ -18,7 +19,12 @@ export interface ITask extends Document {
   due: Date;
   inventoryUsed: Types.ObjectId[]; // Multiple inventory items
   description?: string;
-  attachment?: string[]; // e.g., PDF, document
+  attachments?: string[]; // Array of Cloudinary URLs
+  materials?: Array<{
+    name: string;
+    quantity: number;
+    unit: string;
+  }>;
   images: string[]; // Array of image URLs
   progress: number; // Completion percentage: 0 to 100
 }
@@ -54,8 +60,16 @@ const taskSchema = new Schema<ITask>(
       },
     ],
 
-    // Multiple labourers assigned
-    labourers: [
+    // Supervisors assigned to work on the task
+    assignedToSupervisors: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User", // These should be users with role: 'supervisor'
+      },
+    ],
+
+    // Labourers assigned to work on the task
+    assignedToLabourers: [
       {
         type: Schema.Types.ObjectId,
         ref: "Labour", // Reference to Labour collection
@@ -99,11 +113,19 @@ const taskSchema = new Schema<ITask>(
       trim: true,
     },
 
-    // Optional file (PDF, doc, etc.)
-    attachment: [
+    // File attachments - store Cloudinary URLs
+    attachments: [
       {
         type: String,
-        trim: true,
+      },
+    ],
+
+    // Materials required for the task
+    materials: [
+      {
+        name: { type: String, required: true },
+        quantity: { type: Number, required: true },
+        unit: { type: String, required: true },
       },
     ],
 

@@ -11,7 +11,7 @@ import {
   updateVendor,
   deleteVendor,
 } from "../controllers/common/vendor";
-import { createTask } from "../controllers/common/task";
+import { createTask, getAllTasks } from "../controllers/common/task";
 import { addExpense, getSiteExpenses } from "../controllers/common/expenses";
 import {
   addService,
@@ -26,8 +26,11 @@ import {
   getLabourProfileDetails,
   getSupervisorProfileDetails,
   getVendorProfileDetails,
-  deleteSupervisor,getLabours
+  deleteSupervisor,
+  getLabours,
 } from "../controllers/common/manageOrganisation";
+import { getsites, addLaboursToSite } from "../controllers/common/sites";
+import { upload } from "../middlewares/multer";
 import { getsites,addLaboursToSite,getLaboursBySite } from "../controllers/common/sites";
 
 const router = Router();
@@ -67,6 +70,7 @@ router.get("/supervisor/:supervisorId", getSupervisorProfileDetails);
 router.delete("/supervisors/:supervisorId", deleteSupervisor);
 router.get("/vendor/:vendorId", getVendorProfileDetails);
 
-// router.post("/create-task", createTask);
+router.post("/create-task", upload.array("attachments", 10), createTask);
+router.get("/tasks", getAllTasks);
 
 export default router;
