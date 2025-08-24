@@ -884,3 +884,36 @@ export async function getSites(orgId: string): Promise<Sites[]> {
     throw new Error(err.message || "Failed to fetch sites");
   }
 }
+
+// Create Site API Call
+export async function createSiteRequest(siteData: {
+  name: string;
+  address: string;
+  description?: string;
+  budget: number;
+  startDate: string;
+  endDate: string;
+  customerName: string;
+  orgId: string;
+  supervisors?: string[];
+  labours?: string[];
+}): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  try {
+    const response = await api.post("/api/promoter/site", siteData);
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message: error.response?.statusText || "Failed to create site",
+        }
+      );
+    }
+    throw error;
+  }
+}
