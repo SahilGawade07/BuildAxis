@@ -89,6 +89,7 @@ export default function ViewAllScreen() {
         const paginationInfo = response.data?.pagination;
 
         if (isRefresh || page === 1) {
+          
           setPeople(newPeople);
         } else {
           setPeople((prev) => [...prev, ...newPeople]);

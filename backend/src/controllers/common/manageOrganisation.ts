@@ -51,7 +51,7 @@ export const manageOrgPageData = async (req: Request, res: Response) => {
         } else if (role === "labour") {
           // Get labours with pagination
           const labours = await Labour.find({ orgId })
-            .select("fName lName profilePic _id phone work")
+            .select("fName lName profilePic _id work")
             .skip(skip)
             .limit(limit)
             .sort({ createdAt: -1 });
@@ -62,7 +62,6 @@ export const manageOrgPageData = async (req: Request, res: Response) => {
             fName: labour.fName,
             lName: labour.lName,
             profilePic: labour.profilePic,
-            phone: labour.phone,
             work: labour.work,
             type: "labour",
           }));
@@ -78,7 +77,7 @@ export const manageOrgPageData = async (req: Request, res: Response) => {
 
           // Get vendors with pagination
           const vendors = await Vendor.find({ _id: { $in: org.vendor } })
-            .select("vendorName _id contactPerson phoneNo")
+            .select("vendorName _id")
             .skip(skip)
             .limit(limit)
             .sort({ createdAt: -1 });
@@ -89,8 +88,6 @@ export const manageOrgPageData = async (req: Request, res: Response) => {
           people = vendors.map((vendor) => ({
             _id: vendor._id,
             vendorName: vendor.vendorName,
-            contactPerson: vendor.contactPerson,
-            phoneNo: vendor.phoneNo,
             type: "vendor",
           }));
         }
@@ -114,14 +111,14 @@ export const manageOrgPageData = async (req: Request, res: Response) => {
 
         // Get all labours with pagination
         const labours = await Labour.find({ orgId })
-          .select("fName lName profilePic _id phone work")
+          .select("fName lName profilePic _id work")
           .skip(skip)
           .limit(limit)
           .sort({ createdAt: -1 });
 
         // Get all vendors with pagination
         const vendors = await Vendor.find({ _id: { $in: org.vendor } })
-          .select("vendorName _id contactPerson phoneNo")
+          .select("vendorName _id")
           .skip(skip)
           .limit(limit)
           .sort({ createdAt: -1 });

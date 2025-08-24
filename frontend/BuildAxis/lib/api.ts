@@ -298,6 +298,7 @@ export async function getViewAllPeople(
   const response = await apiRequest(
     `/api/common/manage-org-page-data/${orgId}?${params.toString()}`
   );
+  
   return response.data;
 }
 

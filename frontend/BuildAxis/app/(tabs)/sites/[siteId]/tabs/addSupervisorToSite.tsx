@@ -100,7 +100,7 @@ export default function AddSupervisorToSite() {
       }
     }
 
-    setSupervisors(allSupervisors);
+    setSupervisors(allSupervisors);    
   };
 
   const toggleSupervisorSelection = (supervisorId: string) => {
