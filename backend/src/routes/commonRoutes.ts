@@ -11,8 +11,20 @@ import {
   updateVendor,
   deleteVendor,
 } from "../controllers/common/vendor";
-import { createTask, getAllTasks } from "../controllers/common/task";
-import { addExpense, getSiteExpenses } from "../controllers/common/expenses";
+import {
+  createTask,
+  getAllTasks,
+  getTask,
+  checkTaskAccess,
+} from "../controllers/common/task";
+import {
+  addExpense,
+  getSiteExpenses,
+  getExpenseById,
+  getSiteTools,
+  getSiteInventory,
+  getOrganizationVendors,
+} from "../controllers/common/expenses";
 import {
   addService,
   getAllServices,
@@ -50,8 +62,12 @@ router.delete("/vendors/:vendorId", deleteVendor);
 router.post("/add-service", addService);
 router.get("/services", getAllServices);
 
-router.post("/add-expenses", addExpense);
+router.post("/add-expenses", upload.array("receipts", 10), addExpense);
 router.get("/view-expenses/:siteId", getSiteExpenses);
+router.get("/expense/:expenseId", getExpenseById);
+router.get("/site-tools/:siteId", getSiteTools);
+router.get("/site-inventory/:siteId", getSiteInventory);
+router.get("/organization-vendors", getOrganizationVendors);
 
 router.post("/add-inventory", addInventory);
 
@@ -70,5 +86,6 @@ router.get("/vendor/:vendorId", getVendorProfileDetails);
 
 router.post("/create-task", upload.array("attachments", 10), createTask);
 router.get("/tasks", getAllTasks);
+router.get("/tasks/:taskId", checkTaskAccess, getTask);
 
 export default router;
