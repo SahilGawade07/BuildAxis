@@ -19,7 +19,7 @@ export default function Main_Site() {
       
       <HeaderBar title={(siteName as string) || "Site Details"} />
       {/* Main Tabs */}
-      <Main_Sites />
+      <Main_Sites  />
     </SafeAreaView>
   );
 }

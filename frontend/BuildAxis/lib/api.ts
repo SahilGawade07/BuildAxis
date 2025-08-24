@@ -298,7 +298,7 @@ export async function getViewAllPeople(
   const response = await apiRequest(
     `/api/common/manage-org-page-data/${orgId}?${params.toString()}`
   );
-  
+
   return response.data;
 }
 
@@ -1113,6 +1113,52 @@ export async function getAllTasksRequest(params?: {
         error.response?.data || {
           success: false,
           message: error.response?.statusText || "Failed to fetch tasks",
+        }
+      );
+    }
+    throw error;
+  }
+}
+
+// Labour get data
+import { Labour } from "@/types/labour";
+
+export async function getLabours(orgId: string): Promise<Labour[]> {
+  try {
+    const response = await apiRequest(`/api/common/labourlists/${orgId}`);
+    const result = response.data;
+
+    if (!result.success) {
+      throw new Error(result.message || "API request failed");
+    }
+
+    return result.data; // ✅ return only array of labours
+  } catch (err: any) {
+    throw new Error(err.message || "Failed to fetch labours");
+  }
+}
+
+// Add labours to site
+export async function addLaboursToSite(
+  siteId: string,
+  labourIds: string[]
+): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  try {
+    const response = await api.post(`/api/common/addlabours/${siteId}`, {
+      labourIds,
+    });
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message:
+            error.response?.statusText || "Failed to add labours to site",
         }
       );
     }

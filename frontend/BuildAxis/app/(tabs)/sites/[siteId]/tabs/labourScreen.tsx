@@ -19,6 +19,10 @@ import { FloatingButtons } from "@/components/ui/floatingbutton";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { Addbuttonspage } from "@/components/ui/addbuttonforpage";
 import PeopleList from "@/app/labourui"
+import { useLocalSearchParams } from "expo-router";
+
+
+
 const data = [
   { id: "1", name: "Shraddha Sawant" },
   { id: "2", name: "Shraddha Sawant" },
@@ -29,7 +33,7 @@ const data = [
 export default function Labour_list() {
   const [active, setActive] = useState("Present");
   const [popup, setpopup] = useState(false);
-
+  const { siteId, siteName } = useLocalSearchParams();
   const { theme } = useTheme();
 
 
@@ -41,7 +45,7 @@ export default function Labour_list() {
 
 
 
-<PeopleList/>
+      <PeopleList />
       {/* Labour List */}
       {/* <FlatList
         data={data}
@@ -55,11 +59,10 @@ export default function Labour_list() {
 
 
       <Addbuttonspage
-        iconname={
-          <FontAwesome6 name="add" size={20} color="white" />
-        }
-        path="/(tabs)/sites/[siteId]/tabs/labourDetails"
+        iconname={<FontAwesome6 name="add" size={20} color="white" />}
+        path={`/(tabs)/sites/${siteId}/tabs/addlabourToSite`}
       />
+
 
     </SafeAreaView>
   );
@@ -67,7 +70,7 @@ export default function Labour_list() {
 
 const styles = StyleSheet.create({
   container: {
- 
+
     flex: 1,
   },
   date: {
