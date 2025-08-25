@@ -58,6 +58,7 @@ export const checkTaskAccess = async (
   try {
     const user = (req as any).dbUser;
     const taskId = req.params.taskId;
+    console.log("Checking task access for taskId:", taskId, "user:", user._id);
 
     if (!taskId) {
       return res.status(400).json({
@@ -68,6 +69,7 @@ export const checkTaskAccess = async (
 
     const task = await Task.findById(taskId).populate("site");
     if (!task) {
+      console.log("Task not found:", taskId);
       return res.status(404).json({
         success: false,
         message: "Task not found",
@@ -75,18 +77,22 @@ export const checkTaskAccess = async (
     }
 
     const site = task.site as any;
+    console.log("Task site orgId:", site.orgId, "User orgId:", user.orgId);
 
     // Check if user has access to this task's site
-    if (String(site.organisationId) !== String(user.orgId)) {
+    if (String(site.orgId) !== String(user.orgId)) {
+      console.log("Access denied - org mismatch");
       return res.status(403).json({
         success: false,
         message: "You do not have access to this task",
       });
     }
 
+    console.log("Task access granted");
     (req as any).task = task;
     next();
   } catch (error) {
+    console.error("Error in checkTaskAccess:", error);
     return res.status(500).json({
       success: false,
       message: "Server error",
@@ -166,7 +172,12 @@ export const createTask = async (req: Request, res: Response) => {
     if (req.files && Array.isArray(req.files)) {
       for (const file of req.files as Express.Multer.File[]) {
         try {
-          console.log("Processing file:", file.originalname, "Path:", file.path);
+          console.log(
+            "Processing file:",
+            file.originalname,
+            "Path:",
+            file.path
+          );
 
           // Upload file to Cloudinary
           const uploadResult = await uploadOnCloudinary(file.path);
@@ -437,13 +448,17 @@ export const createTask = async (req: Request, res: Response) => {
 export const getTask = async (req: Request, res: Response) => {
   try {
     const task = (req as any).task;
+    console.log("Getting task details for:", task._id);
 
     const populatedTask = await Task.findById(task._id)
-      .populate("site", "name location")
+      .populate("site", "name address")
       .populate("createdBy", "fName lName email")
-      .populate("assignedTo", "fName lName email")
+      .populate("assignedToSupervisors", "fName lName email phone")
+      .populate("assignedToLabourers", "fName lName phone email")
       .populate("supervisors", "fName lName email")
-      .populate("inventoryUsed", "name quantity");
+      .populate("inventoryUsed", "name quantity unit specification");
+
+    console.log("Populated task:", populatedTask ? "Found" : "Not found");
 
     return res.status(200).json({
       success: true,
@@ -451,6 +466,7 @@ export const getTask = async (req: Request, res: Response) => {
       data: populatedTask,
     });
   } catch (error) {
+    console.error("Error in getTask:", error);
     return res.status(500).json({
       success: false,
       message: "Server error",
@@ -479,9 +495,7 @@ export const getAllTasks = async (req: Request, res: Response) => {
     const filter: any = {};
 
     // Get sites that belong to user's organization
-    const userSites = await Site.find({ organisationId: user.orgId }).select(
-      "_id"
-    );
+    const userSites = await Site.find({ orgId: user.orgId }).select("_id");
     const siteIds = userSites.map((site) => site._id);
     filter.site = { $in: siteIds };
 
@@ -511,11 +525,11 @@ export const getAllTasks = async (req: Request, res: Response) => {
     sortOptions[sortBy as string] = sortOrder === "desc" ? -1 : 1;
 
     const tasks = await Task.find(filter)
-      .populate("site", "name location")
-      .populate("createdBy", "fName lName email")
-      .populate("assignedToSupervisors", "fName lName email role")
-      .populate("assignedToLabourers", "fName lName phone")
-      .populate("supervisors", "fName lName email")
+      .populate("site", "name address")
+      .populate("createdBy", "fName lName")
+      .populate("assignedToSupervisors", "fName lName")
+      .populate("assignedToLabourers", "fName lName")
+      .select("title status priority due progress createdAt")
       .sort(sortOptions)
       .skip(skip)
       .limit(Number(limit));

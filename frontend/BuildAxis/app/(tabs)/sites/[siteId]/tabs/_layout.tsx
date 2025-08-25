@@ -11,6 +11,7 @@ export default function SiteTabsLayout() {
       <Stack.Screen name="expencessScreen" />
       <Stack.Screen name="attandanceScreen" />
       <Stack.Screen name="InventoryScreen" />
+      <Stack.Screen name="screens" />
     </Stack>
   );
 }
