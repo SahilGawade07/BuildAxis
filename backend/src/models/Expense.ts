@@ -7,11 +7,12 @@ export interface IExpense extends Document {
   date: Date;
   paidBy: Types.ObjectId;
   paymentMethod: "cash" | "card" | "UPI" | "bank transfer" | "cheque" | "other";
-  category: "daily" | "material" | "inventory" | "rental" | "other";
-  receiptUrl?: string;
+  category: "daily" | "tool" | "inventory" | "rental" | "other";
+  receiptUrls?: string[]; // Multiple receipt images
   status: "fullyPaid" | "partiallyPaid" | "fullyUnpaid";
   vendor?: Types.ObjectId;
-  tools?: Types.ObjectId;
+  tool?: Types.ObjectId; // Reference to Tool
+  inventory?: Types.ObjectId; // Reference to Inventory
   dueAmount?: number;
   note?: string;
 }
@@ -51,9 +52,9 @@ const expenseSchema = new Schema<IExpense>(
       enum: ["daily", "tool", "inventory", "rental", "other"],
       required: true,
     },
-    receiptUrl: {
+    receiptUrls: [{
       type: String,
-    },
+    }],
     status: {
       type: String,
       enum: ["fullyPaid", "partiallyPaid", "fullyUnpaid"],
@@ -63,9 +64,13 @@ const expenseSchema = new Schema<IExpense>(
       type: Schema.Types.ObjectId,
       ref: "Vendor",
     },
-    tools: {
+    tool: {
       type: Schema.Types.ObjectId,
-      ref: "Tools",
+      ref: "Tool",
+    },
+    inventory: {
+      type: Schema.Types.ObjectId,
+      ref: "Inventory",
     },
     dueAmount: {
       type: Number,

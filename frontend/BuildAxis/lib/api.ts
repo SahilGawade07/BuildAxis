@@ -1121,6 +1121,27 @@ export async function getAllTasksRequest(params?: {
   }
 }
 
+// Get single task details
+export async function getTaskDetails(taskId: string): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  try {
+    const response = await api.get(`/api/common/tasks/${taskId}`);
+    return response.data;
+  } catch (error: any) {
+    console.error("Task details error:", error.response?.data || error.message);
+    return {
+      success: false,
+      message:
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to fetch task details",
+    };
+  }
+}
+
 // Labour get data
 export async function getLabours(orgId: string): Promise<Labour[]> {
   try {
@@ -1137,40 +1158,261 @@ export async function getLabours(orgId: string): Promise<Labour[]> {
   }
 }
 
-
-
-//push the labours
-export const addLaboursToSite = async (siteId: string, labourIds: string[]) => {
-
-console.log("dddf :",siteId)
-
-console.log("siteId:", siteId);
-console.log("labourIds:", labourIds);
-
-
-  const response = await axios.post(
-    `http://192.168.1.17:8000/api/common/addlabours/${siteId}`,
-    { labourIds }, // backend expects this key
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization:             "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OGIxNGQwZmQ3OWY1OTBiYmI2NWJhMCIsImVtYWlsIjoic2FoaWxAZ21haWwuY29tIiwicm9sZSI6InByb21vdGVyIiwiaWF0IjoxNzU2MTAxMTAzLCJleHAiOjE3NTYxODc1MDN9.nvqyoznFqtz-485RUiMEoyUMvou0OrQHUcUSZcBBquc",
-
-      },
-    }
-  );
-
-  return response.data;
-};
-
-
-//display the only sites labours
-export const fetchLaboursBySite = async (siteId: string) => {
+// Add labours to site
+export async function addLaboursToSite(
+  siteId: string,
+  labourIds: string[]
+): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
   try {
-    const res = await api.get(`/api/common/getsiteslabour/${siteId}`);
-    return res.data; // { success, message, data: [...] }
-  } catch (err: any) {
-    console.error("Error fetching labours:", err.response?.data || err.message);
-    return { success: false, message: "Failed to load labours", data: [] };
+    const response = await api.post(`/api/common/addlabours/${siteId}`, {
+      labourIds,
+    });
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message:
+            error.response?.statusText || "Failed to add labours to site",
+        }
+      );
+    }
+    throw error;
   }
-};
+}
+
+// Add Expense API Call
+export async function addExpenseRequest(expenseData: {
+  siteId: string;
+  description: string;
+  amount: number;
+  date: string;
+  paidBy: string;
+  paymentMethod: string;
+  category: string;
+  status?: string;
+  vendor?: string;
+  note?: string;
+  dueAmount?: number;
+
+  // Tool-specific
+  toolName?: string;
+  toolUnit?: string;
+  toolQuantity?: number;
+  toolCategory?: string;
+  toolRemark?: string;
+  existingToolId?: string;
+
+  // Inventory-specific
+  inventoryName?: string;
+  inventoryQuantity?: number;
+  unitPrice?: number;
+  unit?: string;
+  existingInventoryId?: string;
+
+  // Receipt images
+  receipts?: Array<{
+    uri: string;
+    name: string;
+    type: string;
+  }>;
+}): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  try {
+    const formData = new FormData();
+
+    // Add text fields
+    formData.append("siteId", expenseData.siteId);
+    formData.append("description", expenseData.description);
+    formData.append("amount", expenseData.amount.toString());
+    formData.append("date", expenseData.date);
+    formData.append("paidBy", expenseData.paidBy);
+    formData.append("paymentMethod", expenseData.paymentMethod);
+    formData.append("category", expenseData.category);
+
+    if (expenseData.status) formData.append("status", expenseData.status);
+    if (expenseData.vendor) formData.append("vendor", expenseData.vendor);
+    if (expenseData.note) formData.append("note", expenseData.note);
+    if (expenseData.dueAmount)
+      formData.append("dueAmount", expenseData.dueAmount.toString());
+
+    // Add tool-specific fields
+    if (expenseData.toolName) formData.append("toolName", expenseData.toolName);
+    if (expenseData.toolUnit) formData.append("toolUnit", expenseData.toolUnit);
+    if (expenseData.toolQuantity)
+      formData.append("toolQuantity", expenseData.toolQuantity.toString());
+    if (expenseData.toolCategory)
+      formData.append("toolCategory", expenseData.toolCategory);
+    if (expenseData.toolRemark)
+      formData.append("toolRemark", expenseData.toolRemark);
+    if (expenseData.existingToolId)
+      formData.append("existingToolId", expenseData.existingToolId);
+
+    // Add inventory-specific fields
+    if (expenseData.inventoryName)
+      formData.append("inventoryName", expenseData.inventoryName);
+    if (expenseData.inventoryQuantity)
+      formData.append(
+        "inventoryQuantity",
+        expenseData.inventoryQuantity.toString()
+      );
+    if (expenseData.unitPrice)
+      formData.append("unitPrice", expenseData.unitPrice.toString());
+    if (expenseData.unit) formData.append("unit", expenseData.unit);
+    if (expenseData.existingInventoryId)
+      formData.append("existingInventoryId", expenseData.existingInventoryId);
+
+    // Add receipt images
+    if (expenseData.receipts && expenseData.receipts.length > 0) {
+      for (const receipt of expenseData.receipts) {
+        const fileInfo = {
+          uri: receipt.uri,
+          type: receipt.type || "image/jpeg",
+          name: receipt.name || "receipt",
+        };
+        formData.append("receipts", fileInfo as any);
+      }
+    }
+
+    const response = await api.post("/api/common/add-expenses", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message: error.response?.statusText || "Failed to add expense",
+        }
+      );
+    }
+    throw error;
+  }
+}
+
+// Get site tools
+export async function getSiteTools(siteId: string): Promise<{
+  success: boolean;
+  message: string;
+  data?: any[];
+}> {
+  try {
+    const response = await api.get(`/api/common/site-tools/${siteId}`);
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message: error.response?.statusText || "Failed to fetch site tools",
+        }
+      );
+    }
+    throw error;
+  }
+}
+
+// Get site inventory
+export async function getSiteInventory(siteId: string): Promise<{
+  success: boolean;
+  message: string;
+  data?: any[];
+}> {
+  try {
+    const response = await api.get(`/api/common/site-inventory/${siteId}`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message: error.response?.statusText || "Failed to fetch site inventory",
+        }
+      );
+    }
+    throw error;
+  }
+}
+
+// Get site expenses
+export async function getSiteExpenses(siteId: string, page: number = 1): Promise<{
+  success: boolean;
+  message: string;
+  data?: {
+    expenses: any[];
+    currentPage: number;
+    totalPages: number;
+    totalExpenses: number;
+  };
+}> {
+  try {
+    const response = await api.get(`/api/common/view-expenses/${siteId}?page=${page}`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message: error.response?.statusText || "Failed to fetch site expenses",
+        }
+      );
+    }
+    throw error;
+  }
+}
+
+// Get single expense by ID
+export async function getExpenseById(expenseId: string): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> {
+  try {
+    const response = await api.get(`/api/common/expense/${expenseId}`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message: error.response?.statusText || "Failed to fetch expense details",
+        }
+      );
+    }
+    throw error;
+  }
+}
+
+// Get organization vendors
+export async function getOrganizationVendors(): Promise<{
+  success: boolean;
+  message: string;
+  data?: any[];
+}> {
+  try {
+    const response = await api.get(`/api/common/organization-vendors`);
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return (
+        error.response?.data || {
+          success: false,
+          message:
+            error.response?.statusText || "Failed to fetch organization vendors",
+        }
+      );
+    }
+    throw error;
+  }
+}

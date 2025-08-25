@@ -17,8 +17,7 @@ export const addInventory = async (req: Request, res: Response) => {
       paidBy,
       paymentMethod,
       note,
-      receiptUrl, 
-      status, 
+      status,
     } = req.body;
 
     // 1️⃣ Create Inventory
@@ -47,8 +46,8 @@ export const addInventory = async (req: Request, res: Response) => {
       paymentMethod,
       category: "inventory",
       vendor,
-      status, 
-      receiptUrl,
+      status,
+      // receiptUrls will be handled separately if needed
       note,
     });
 
@@ -71,7 +70,6 @@ export const addInventory = async (req: Request, res: Response) => {
     });
   }
 };
-
 
 // Get All Inventories
 export const getInventories = async (_req: Request, res: Response) => {
