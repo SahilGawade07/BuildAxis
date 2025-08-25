@@ -1186,6 +1186,17 @@ export async function addLaboursToSite(
   }
 }
 
+//get ladour by id
+export const fetchLaboursBySite = async (siteId: string) => {
+  try {
+    const res = await api.get(`/api/common/getsiteslabour/${siteId}`);
+    return res.data; // { success, message, data: [...] }
+  } catch (err: any) {
+    console.error("Error fetching labours:", err.response?.data || err.message);
+    return { success: false, message: "Failed to load labours", data: [] };
+  }
+};
+
 // Add Expense API Call
 export async function addExpenseRequest(expenseData: {
   siteId: string;
