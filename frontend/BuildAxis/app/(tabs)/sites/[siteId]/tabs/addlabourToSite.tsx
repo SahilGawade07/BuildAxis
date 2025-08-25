@@ -6,7 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
-  SafeAreaView,
+  
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,6 +15,7 @@ import { Labour } from "@/types/labour";
 import { addLaboursToSite } from "@/lib/api";
 import HeaderBar from "@/components/ui/headerBar";
 import { useLocalSearchParams } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LabourSelectionPage({ orgId }: { orgId: string }) {
   const [labours, setLabours] = useState<Labour[]>([]);

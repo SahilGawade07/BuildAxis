@@ -1140,8 +1140,6 @@ export async function getLabours(orgId: string): Promise<Labour[]> {
 
 
 //push the labours
-
-
 export const addLaboursToSite = async (siteId: string, labourIds: string[]) => {
 
 console.log("dddf :",siteId)
@@ -1151,12 +1149,13 @@ console.log("labourIds:", labourIds);
 
 
   const response = await axios.post(
-    `http://10.156.175.131:8000/api/common/addlabours/${siteId}`,
+    `http://192.168.1.17:8000/api/common/addlabours/${siteId}`,
     { labourIds }, // backend expects this key
     {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OGIxNGQwZmQ3OWY1OTBiYmI2NWJhMCIsImVtYWlsIjoic2FoaWxAZ21haWwuY29tIiwicm9sZSI6InByb21vdGVyIiwiaWF0IjoxNzU2MDQ5NTQxLCJleHAiOjE3NTYxMzU5NDF9.1dtQbCrRlsj1Lg1YxwB3vQ6ok1QCIB-GXSdSYBcWERU`,
+        Authorization:             "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OGIxNGQwZmQ3OWY1OTBiYmI2NWJhMCIsImVtYWlsIjoic2FoaWxAZ21haWwuY29tIiwicm9sZSI6InByb21vdGVyIiwiaWF0IjoxNzU2MTAxMTAzLCJleHAiOjE3NTYxODc1MDN9.nvqyoznFqtz-485RUiMEoyUMvou0OrQHUcUSZcBBquc",
+
       },
     }
   );
@@ -1168,21 +1167,10 @@ console.log("labourIds:", labourIds);
 //display the only sites labours
 export const fetchLaboursBySite = async (siteId: string) => {
   try {
-    // console.log("reach")
-    const res = await axios.get(
-      `http://10.156.175.131:8000/api/common/getsiteslabour/${siteId}`,
-      {
-        headers: {
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OGIxNGQwZmQ3OWY1OTBiYmI2NWJhMCIsImVtYWlsIjoic2FoaWxAZ21haWwuY29tIiwicm9sZSI6InByb21vdGVyIiwiaWF0IjoxNzU2MDYzNzk5LCJleHAiOjE3NTYxNTAxOTl9.d4Bkoxb_yFpfufiRbzLr2n5LhaAHLgkOlQRw_JNFZwM",
-        },
-      }
-    );
-//     console.log("call")
-// console.log(res.data)
+    const res = await api.get(`/api/common/getsiteslabour/${siteId}`);
     return res.data; // { success, message, data: [...] }
-  } catch (err) {
-    console.error("Error fetching labours:", err);
+  } catch (err: any) {
+    console.error("Error fetching labours:", err.response?.data || err.message);
     return { success: false, message: "Failed to load labours", data: [] };
   }
 };
