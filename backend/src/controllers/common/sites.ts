@@ -87,9 +87,74 @@ export const addLaboursToSite = async (req: Request, res: Response) => {
 
 
 //display the list of labour
-// display the list of labours
+// // display the list of labours
+// export const getLaboursBySite = async (req: Request, res: Response) => {
+//   const { siteId } = req.params;
+
+//   try {
+//     // ✅ Check valid ObjectId
+//     if (!mongoose.Types.ObjectId.isValid(siteId)) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Invalid siteId",
+//         data: [],
+//       });
+//     }
+
+//     // ✅ Find the site and populate only selected fields of labours
+//     const site = await Site.findById(siteId).populate({
+//       path: "labours",
+//       select: "_id fName lName profilePic work", // only selected fields
+//     });
+
+//     if (!site) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Site not found",
+//         data: [],
+//       });
+//     }
+
+//     // ✅ If no labours assigned
+//     if (!site.labours || site.labours.length === 0) {
+//       return res.status(200).json({
+//         success: true,
+//         message: "No labours assigned to this site",
+//         data: [],
+//       });
+//     }
+
+//     // ✅ Format labours data
+//     const formattedLabours = site.labours.map((labour: any) => ({
+//       id: labour._id,
+//       fName: labour.fName,
+//       lName: labour.lName,
+//       profilePic: labour.profilePic,
+//       work: labour.work,
+//     }));
+
+//     // ✅ Send formatted response
+//     return res.json({
+//       success: true,
+//       message: "Labours loaded successfully",
+//       data: formattedLabours,
+//     });
+//   } catch (err) {
+//     console.error("Error fetching labours:", err);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Server error",
+//       data: [],
+//     });
+//   }
+// };
+
+
+
+
+// Common API to get labours or supervisors of a site
 export const getLaboursBySite = async (req: Request, res: Response) => {
-  const { siteId } = req.params;
+  const { siteId, type } = req.params; // type = "labour" | "supervisor"
 
   try {
     // ✅ Check valid ObjectId
@@ -101,10 +166,22 @@ export const getLaboursBySite = async (req: Request, res: Response) => {
       });
     }
 
-    // ✅ Find the site and populate only selected fields of labours
+    // ✅ Validate type
+    if (!["labour", "supervisor"].includes(type)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid type. Use 'labour' or 'supervisor'.",
+        data: [],
+      });
+    }
+
+    // ✅ Decide which field to populate
+    const field = type === "labour" ? "labours" : "supervisors";
+
+    // ✅ Find site and populate required field
     const site = await Site.findById(siteId).populate({
-      path: "labours",
-      select: "_id fName lName profilePic work", // only selected fields
+      path: field,
+      select: "_id fName lName profilePic work role", // add role if needed
     });
 
     if (!site) {
@@ -115,32 +192,35 @@ export const getLaboursBySite = async (req: Request, res: Response) => {
       });
     }
 
-    // ✅ If no labours assigned
-    if (!site.labours || site.labours.length === 0) {
+    // ✅ Extract data
+    const people = site[field];
+
+    if (!people || people.length === 0) {
       return res.status(200).json({
         success: true,
-        message: "No labours assigned to this site",
+        message: `No ${type}s assigned to this site`,
         data: [],
       });
     }
 
-    // ✅ Format labours data
-    const formattedLabours = site.labours.map((labour: any) => ({
-      id: labour._id,
-      fName: labour.fName,
-      lName: labour.lName,
-      profilePic: labour.profilePic,
-      work: labour.work,
+    // ✅ Format data
+    const formatted = people.map((p: any) => ({
+      id: p._id,
+      fName: p.fName,
+      lName: p.lName,
+      profilePic: p.profilePic,
+      work: p.work,
+      role: p.role || type, // fallback
     }));
 
-    // ✅ Send formatted response
+    // ✅ Send response
     return res.json({
       success: true,
-      message: "Labours loaded successfully",
-      data: formattedLabours,
+      message: `${type.charAt(0).toUpperCase() + type.slice(1)}s loaded successfully`,
+      data: formatted,
     });
   } catch (err) {
-    console.error("Error fetching labours:", err);
+    console.error("Error fetching people:", err);
     return res.status(500).json({
       success: false,
       message: "Server error",
