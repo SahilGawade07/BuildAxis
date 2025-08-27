@@ -1187,9 +1187,9 @@ export async function addLaboursToSite(
 }
 
 //get ladour by id
-export const fetchLaboursBySite = async (siteId: string) => {
+export const fetchLaboursBySite = async (siteId: string,type:string) => {
   try {
-    const res = await api.get(`/api/common/getsiteslabour/${siteId}`);
+    const res = await api.get(`/api/common/getsiteslabour/${siteId}/${type}`);
     return res.data; // { success, message, data: [...] }
   } catch (err: any) {
     console.error("Error fetching labours:", err.response?.data || err.message);
