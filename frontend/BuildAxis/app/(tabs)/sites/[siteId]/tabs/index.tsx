@@ -33,11 +33,8 @@ export default function Main_Sites() {
   ]);
 
   const renderScene = ({ route }: any) => {
-<<<<<<< HEAD
     // console.log(siteId)
-=======
-    console.log(siteId);
->>>>>>> 73d9dde1f7b6d07196a617b0e82d1dd2aeb337f6
+
     switch (route.key) {
       case "task":
         return (

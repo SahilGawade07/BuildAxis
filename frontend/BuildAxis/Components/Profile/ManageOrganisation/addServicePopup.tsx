@@ -119,7 +119,7 @@ export default function AddServicePopup({
                   disabled={loading}
                 >
                   <Text
-                    style={[styles.cancelButtonText, { color: theme.text }]}
+                    style={[styles.cancelButtonText, { color: theme.text2 }]}
                   >
                     Cancel
                   </Text>
@@ -133,7 +133,7 @@ export default function AddServicePopup({
                   {loading ? (
                     <ActivityIndicator color={theme.text} size="small" />
                   ) : (
-                    <Text style={[styles.addButtonText, { color: theme.text }]}>
+                    <Text style={[styles.addButtonText, { color: theme.text2 }]}>
                       Add Service
                     </Text>
                   )}

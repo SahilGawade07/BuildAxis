@@ -93,7 +93,7 @@ export default function AddLabourPopup({
         style={[styles.selectButton, { backgroundColor: theme.secondary }]}
         onPress={handleSelectFromContacts}
       >
-        <Text style={[styles.selectButtonText, { color: theme.text }]}>
+        <Text style={[styles.selectButtonText, { color: theme.text2 }]}>
           Select from Contacts
         </Text>
       </TouchableOpacity>
@@ -108,7 +108,7 @@ export default function AddLabourPopup({
         onPress={handleAddLabour}
         disabled={loading}
       >
-        <Text style={[styles.addButtonText, { color: theme.text }]}>
+        <Text style={[styles.addButtonText, { color: theme.text2 }]}>
           {loading ? "Adding..." : "Add to Organisation"}
         </Text>
       </TouchableOpacity>

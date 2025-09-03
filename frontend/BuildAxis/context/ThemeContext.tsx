@@ -68,6 +68,7 @@ export const Colors = {
   sepratorLine: "#b2b2b2",
 
   text: "#222",
+  text2: "#ffffff",
   icons: "#6B7280",
   muted: "#6B7280", 
   textforboxex: "#6D6D6D",      
