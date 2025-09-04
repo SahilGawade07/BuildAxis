@@ -41,8 +41,7 @@ export default function Supervisor_list() {
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.background }]}
     >
-      <PeopleList siteId={siteId} />
-
+      <PeopleList siteId={siteId} type={"supervisor"} />
       <Addbuttonspage
         iconname={<FontAwesome6 name="add" size={20} color="white" />}
         path={`/(tabs)/sites/${siteId}/tabs/addSupervisorToSite`}

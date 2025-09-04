@@ -6,7 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
-  SafeAreaView,
+  
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,6 +15,8 @@ import { Labour } from "@/types/labour";
 import { addLaboursToSite } from "@/lib/api";
 import HeaderBar from "@/components/ui/headerBar";
 import { useLocalSearchParams } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function LabourSelectionPage({ orgId }: { orgId: string }) {
   const [labours, setLabours] = useState<Labour[]>([]);
@@ -24,6 +26,7 @@ export default function LabourSelectionPage({ orgId }: { orgId: string }) {
   const {  siteName } = useLocalSearchParams<{ siteId:string; siteName: string }>();
   const { siteId } = useLocalSearchParams<{ siteId: string }>();
 
+  const { theme } = useTheme();
 
   useEffect(() => {
     (async () => {
@@ -66,7 +69,7 @@ export default function LabourSelectionPage({ orgId }: { orgId: string }) {
     const isSelected = selected.includes(item._id);
     return (
       <TouchableOpacity
-        style={[styles.card, isSelected && styles.cardSelected]}
+        style={[styles.card, isSelected && styles.cardSelected,{borderColor:theme.primary}]}
         activeOpacity={0.8}
         onPress={() => toggleSelect(item._id)}
       >
@@ -88,7 +91,7 @@ export default function LabourSelectionPage({ orgId }: { orgId: string }) {
         <Ionicons
           name={isSelected ? "checkbox" : "square-outline"}
           size={22}
-          color={isSelected ? "#4A90E2" : "#aaa"}
+          color={isSelected ? theme.primary: "#aaa"}
         />
       </TouchableOpacity>
     );
@@ -117,7 +120,7 @@ export default function LabourSelectionPage({ orgId }: { orgId: string }) {
 
       <TouchableOpacity
         style={[
-          styles.button,
+          styles.button,{backgroundColor:theme.primary},
           submitting && { opacity: 0.6 },
           selected.length === 0 && { backgroundColor: "#ccc" }
         ]}
@@ -135,7 +138,7 @@ export default function LabourSelectionPage({ orgId }: { orgId: string }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F5F6FA" },
   card: { flexDirection: "row", alignItems: "center", padding: 14, marginBottom: 12, backgroundColor: "#fff", borderRadius: 12, shadowColor: "#000", shadowOpacity: 0.08, shadowRadius: 6, shadowOffset: { width: 0, height: 3 }, elevation: 2 },
-  cardSelected: { borderWidth: 1.5, borderColor: "#4A90E2" },
+  cardSelected: { borderWidth: 2, borderColor: "#004089ff" },
   avatarContainer: { marginRight: 14 },
   avatarPlaceholder: { width: 40, height: 40, borderRadius: 20, backgroundColor: "#4A90E2", justifyContent: "center", alignItems: "center" },
   avatar: { width: 40, height: 40, borderRadius: 20 },

@@ -132,7 +132,7 @@ import { fetchLaboursBySite, getLabours } from "@/lib/api"; // ✅ adjust import
 import { Labour } from "@/types/labour"
 
 // 👷 Component
-const PeopleList = ({ siteId }: { siteId: string }) => {
+const PeopleList = ({ siteId ,type}: { siteId: string,type:string }) => {
   const [labours, setLabours] = useState<Labour[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -153,7 +153,7 @@ const PeopleList = ({ siteId }: { siteId: string }) => {
   const loadLabours = async () => {
     setLoading(true);
     try {
-      const res = await fetchLaboursBySite(siteId);
+      const res = await fetchLaboursBySite(siteId,type);
       setLabours(res.data);
     } catch (err) {
       console.error("Error fetching labours:", err);
