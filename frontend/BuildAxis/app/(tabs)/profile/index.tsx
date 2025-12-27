@@ -1,6 +1,5 @@
 // ... imports remain same
 import React, { useState } from "react";
-import { orgData } from "@/data/orginationData";
 import {
   View,
   Text,
@@ -15,7 +14,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -24,12 +22,6 @@ import LogoutButton from "@/components/Profile/LogoutBtn";
 import { router } from "expo-router";
 import { useTheme } from "../../../context/ThemeContext";
 import { Feather } from "@expo/vector-icons";
-
-interface MenuItem {
-  iconName: React.ComponentProps<typeof Ionicons>["name"];
-  menuItemName: string;
-  onPress: () => void;
-}
 
 interface UserData {
   fName: string;
